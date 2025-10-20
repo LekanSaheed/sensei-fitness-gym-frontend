@@ -6,13 +6,7 @@ import ProtectedRoute from "@/guards/protected-routes";
 import { useRouter } from "next/router";
 import React, { ReactNode, Suspense } from "react";
 
-const AdminLayout = ({
-  children,
-  params,
-}: {
-  children: ReactNode;
-  params: Promise<{ member: string }>;
-}) => {
+const AdminLayout = ({ children }: { children: ReactNode }) => {
   return (
     <AuthProvider>
       <Suspense>
