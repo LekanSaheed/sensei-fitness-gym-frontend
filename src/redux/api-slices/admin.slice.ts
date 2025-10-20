@@ -132,7 +132,7 @@ const adminApi = api.injectEndpoints({
           body: payload,
           method: "post",
         }),
-        invalidatesTags: ["members-sub", "payment-logs"],
+        invalidatesTags: ["members-sub", "payment-logs", "members", "member"],
       }),
     };
   },

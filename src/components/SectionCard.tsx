@@ -80,7 +80,7 @@ const SectionCard: FunctionComponent<SectionCardProps> = ({
                           setOpen(false);
                         }}
                         key={`${option?.label}_${String(option?.value)}`}
-                        className={`text-[10px] rounded-[4px] cursor-pointer px-2 py-0.5 hover:bg-gray-100 ${
+                        className={`text-[10px] rounded-[4px] mb-1 cursor-pointer px-2 py-0.5 hover:bg-gray-100 ${
                           isSelected ? "bg-default/10 text-default" : ""
                         }`}
                       >
