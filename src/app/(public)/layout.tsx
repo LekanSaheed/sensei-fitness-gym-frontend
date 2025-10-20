@@ -1,8 +1,12 @@
 import LandingPageWrapper from "@/components/landing-page/wrapper";
-import React, { ReactNode } from "react";
+import React, { ReactNode, Suspense } from "react";
 
 const PublicLayout = ({ children }: { children: ReactNode }) => {
-  return <LandingPageWrapper>{children}</LandingPageWrapper>;
+  return (
+    <LandingPageWrapper>
+      <Suspense>{children}</Suspense>
+    </LandingPageWrapper>
+  );
 };
 
 export default PublicLayout;
