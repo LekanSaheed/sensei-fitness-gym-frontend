@@ -7,7 +7,7 @@ import { useActivateSubQuery } from "@/redux/api-slices/subscription.slice";
 import { Clock, CloseCircle, TickCircle } from "iconsax-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import React from "react";
+import React, { Suspense } from "react";
 
 const PaymentConfirmationPage = () => {
   const searchParams = useSearchParams();
@@ -66,4 +66,12 @@ const PaymentConfirmationPage = () => {
   );
 };
 
-export default PaymentConfirmationPage;
+const PaymentPage = () => {
+  return (
+    <Suspense>
+      <PaymentConfirmationPage />
+    </Suspense>
+  );
+};
+
+export default PaymentPage;
