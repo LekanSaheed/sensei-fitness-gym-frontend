@@ -5,7 +5,7 @@ const authSlice = api.injectEndpoints({
   endpoints(build) {
     return {
       login: build.mutation<
-        ResponseType<{ token: string }>,
+        ResponseType<string>,
         { username: string; password: string }
       >({
         query: (payload) => ({

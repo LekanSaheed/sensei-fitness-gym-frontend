@@ -14,7 +14,7 @@ import { useUpdateSearchParams } from "@/hooks/useSearchParams";
 
 export interface SectionCardProps {
   description: string;
-  value: any;
+  value: unknown;
   footer?: ReactNode;
   loading?: boolean;
   dropdown?: {
@@ -50,7 +50,7 @@ const SectionCard: FunctionComponent<SectionCardProps> = ({
           {loading ? (
             <div className="animate-pulse h-[15px] w-[60%] bg-slate-200 rounded-[10px] lg:h-[30px]" />
           ) : (
-            value
+            (value as string)
           )}
         </CardTitle>
         {dropdown?.options?.length > 1 && (
@@ -73,7 +73,10 @@ const SectionCard: FunctionComponent<SectionCardProps> = ({
                     return (
                       <li
                         onClick={() => {
-                          updateSearchParams(dropdown?.keyName, option?.value);
+                          updateSearchParams(
+                            dropdown?.keyName,
+                            option?.value as string
+                          );
                           setOpen(false);
                         }}
                         key={`${option?.label}_${String(option?.value)}`}

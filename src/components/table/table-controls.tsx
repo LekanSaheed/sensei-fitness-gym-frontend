@@ -25,7 +25,7 @@ import SelectInput from "../select-input";
 import DatePicker from "../date-picker";
 
 export interface TableFilter {
-  options: { label: string; value: any }[];
+  options: { label: string; value: string | number | undefined | null }[];
   title: string;
   keyName: string;
   doNotDefaultFirstElement?: boolean;

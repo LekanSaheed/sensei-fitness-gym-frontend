@@ -15,9 +15,9 @@ import InputProvider from "./providers/input-provider";
 
 export interface SelectDropdownOption {
   label: string;
-  value: any;
+  value: unknown;
   img?: string;
-  externalId?: any;
+  externalId?: unknown;
 }
 
 interface ISelectProps {

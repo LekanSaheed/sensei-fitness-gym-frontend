@@ -2,6 +2,7 @@ export interface ErrorResponse {
   error?: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface ResponseType<T = any> {
   success?: boolean;
   data?: T;
@@ -27,8 +28,10 @@ export interface PaginationInfo {
   totalItems: number;
 }
 
-export interface PaginatedResponse<T = any>
-  extends ResponseType<{ paginationInfo: PaginationInfo; data: T }> {}
+export type PaginatedResponse<T = unknown> = ResponseType<{
+  paginationInfo: PaginationInfo;
+  data: T;
+}>;
 
 export interface ICheckIn {
   _id: string;

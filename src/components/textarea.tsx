@@ -1,7 +1,7 @@
 import React, { FunctionComponent, TextareaHTMLAttributes } from "react";
 import InputProvider, { InputProviderProps } from "./providers/input-provider";
 
-interface TextAreaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {}
+type TextAreaProps = TextareaHTMLAttributes<HTMLTextAreaElement>;
 
 const TextArea: FunctionComponent<
   TextAreaProps & Partial<InputProviderProps>

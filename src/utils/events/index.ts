@@ -1,18 +1,18 @@
 class EventEmitter {
-  private events: { [eventName: string]: ((...args: any[]) => void)[] };
+  private events: { [eventName: string]: ((...args: unknown[]) => void)[] };
 
   constructor() {
     this.events = {};
   }
 
-  on(eventName: string, callback: (...args: any[]) => void) {
+  on(eventName: string, callback: (...args: unknown[]) => void) {
     if (!this.events[eventName]) {
       this.events[eventName] = [];
     }
     this.events[eventName].push(callback);
   }
 
-  off(eventName: string, callback: (...args: any[]) => void) {
+  off(eventName: string, callback: (...args: unknown[]) => void) {
     if (this.events[eventName]) {
       this.events[eventName] = this.events[eventName].filter(
         (cb) => cb !== callback
@@ -20,7 +20,7 @@ class EventEmitter {
     }
   }
 
-  emit(eventName: string, ...args: any[]) {
+  emit(eventName: string, ...args: unknown[]) {
     if (this.events[eventName]) {
       this.events[eventName].forEach((callback) => callback(...args));
     }

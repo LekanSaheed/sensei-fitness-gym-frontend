@@ -64,10 +64,10 @@ const RenewSubPage = () => {
       amount: registrationFee!,
       hide: user?.registrationFeePaid,
     },
-    { label: "Subscription fee", amount: RawSelectedPlan?.price! },
+    { label: "Subscription fee", amount: RawSelectedPlan?.price || 0 },
     {
       label: "Trainer fee",
-      amount: RawSelectedPlan?.trainerFee!,
+      amount: RawSelectedPlan?.trainerFee || 0,
       hide: !includeTrainer,
     },
   ];

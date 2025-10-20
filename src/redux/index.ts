@@ -14,7 +14,10 @@ const combinedReducer = combineReducers({
   [api.reducerPath]: api.reducer,
   // ... more reducers
 });
-const rootReducer = (state: any, action: Action) => {
+const rootReducer = (
+  state: ReturnType<typeof combinedReducer> | undefined,
+  action: Action
+) => {
   return combinedReducer(state, action);
 };
 

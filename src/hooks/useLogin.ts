@@ -32,10 +32,10 @@ const useLogin = () => {
 
       toast.error(errorData?.error || "An error occured");
     } else {
-      const response: ResponseType = (res as any)?.data;
+      const response = res?.data;
 
       if (response?.success) {
-        fetchUserAndLogin(response?.data, (user) => {
+        fetchUserAndLogin(response?.data as string, (user) => {
           if (user?.role === "admin") {
             return router.push(ADMIN_DASHBOARD);
           }

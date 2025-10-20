@@ -225,9 +225,9 @@ const ActivateMemberSubModal = ({
 
   const checkUserIn = async () => {
     const res = await activate({
-      userId: state?.selectedMember?._id!,
+      userId: state?.selectedMember?._id || "",
       includesTrainer: state.includesTrainer,
-      planId: state.selectedPlan?.externalId,
+      planId: state.selectedPlan?.externalId as string,
     });
 
     if ("error" in res && isFetchBaseQueryError(res.error)) {
@@ -283,7 +283,9 @@ const ActivateMemberSubModal = ({
           )}
           label="Include Trainer?"
           options={BooleanOptions}
-          onSelect={(o) => handleStateChange({ includesTrainer: o?.value })}
+          onSelect={(o) =>
+            handleStateChange({ includesTrainer: o?.value as boolean })
+          }
         />
       )}
       <Input

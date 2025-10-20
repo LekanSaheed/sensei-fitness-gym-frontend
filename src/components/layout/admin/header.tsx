@@ -17,7 +17,7 @@ import {
   USERS_SUBSCRIPTIONS,
 } from "@/constants/routes";
 
-const Header: FunctionComponent<{}> = ({}) => {
+const Header = () => {
   const isSubPath = useIsSubPath();
 
   const router = useRouter();

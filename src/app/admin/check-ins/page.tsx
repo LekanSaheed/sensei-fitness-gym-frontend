@@ -108,10 +108,14 @@ const CheckInsPage = () => {
   const checkInLoading =
     getCheckInAnalyticsQuery?.isLoading || getCheckInAnalyticsQuery?.isFetching;
 
-  const cards: { description: string; value: any; footer?: ReactNode }[] = [
+  const cards: {
+    description: string;
+    value: number | string;
+    footer?: ReactNode;
+  }[] = [
     {
       description: "Check-ins Today",
-      value: checkInAnalytics?.today,
+      value: checkInAnalytics?.today || 0,
       footer:
         Number(checkInAnalytics?.today || 0) >
         Number(checkInAnalytics?.yesterday || 0)
@@ -124,9 +128,9 @@ const CheckInsPage = () => {
               Number(checkInAnalytics?.today || 0)
             } today`,
     },
-    { description: "This Week", value: checkInAnalytics?.thisWeek },
-    { description: "This Month", value: checkInAnalytics?.thisMonth },
-    { description: "All Time", value: checkInAnalytics?.total },
+    { description: "This Week", value: checkInAnalytics?.thisWeek || 0 },
+    { description: "This Month", value: checkInAnalytics?.thisMonth || 0 },
+    { description: "All Time", value: checkInAnalytics?.total || 0 },
   ];
 
   const [open, setOpen] = useState(false);
@@ -138,7 +142,7 @@ const CheckInsPage = () => {
         })}
       </div>
       <Table
-        totalRecords={paginationInfo?.totalItems!}
+        totalRecords={paginationInfo?.totalItems || 0}
         loading={loading}
         error={isError}
         refetch={refetch}
@@ -231,7 +235,7 @@ const CheckInUserModal = ({
   const [checkIn, checkInStatus] = useCheckUserInMutation();
 
   const checkUserIn = async () => {
-    const res = await checkIn({ userId: state?.selectedMember?._id! });
+    const res = await checkIn({ userId: state?.selectedMember?._id || "" });
 
     if ("error" in res && isFetchBaseQueryError(res.error)) {
       const errorData = res.error.data as ErrorResponse;

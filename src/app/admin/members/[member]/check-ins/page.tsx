@@ -52,7 +52,7 @@ const UserCheckInPage = () => {
   const [checkIn, checkInStatus] = useCheckUserInMutation();
 
   const checkUserIn = async () => {
-    const res = await checkIn({ userId: params?.member?.toString()! });
+    const res = await checkIn({ userId: params?.member?.toString() || "" });
 
     if ("error" in res && isFetchBaseQueryError(res.error)) {
       const errorData = res.error.data as ErrorResponse;
@@ -74,7 +74,7 @@ const UserCheckInPage = () => {
       <Table
         loading={loading}
         error={isError}
-        totalRecords={paginationInfo?.totalItems!}
+        totalRecords={paginationInfo?.totalItems || 0}
         refetch={refetch}
         showSearch={false}
         columns={columns}

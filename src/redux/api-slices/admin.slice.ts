@@ -33,7 +33,7 @@ const adminApi = api.injectEndpoints({
         query: (query) => `/admin/members?${formatQuery(query)}`,
         providesTags: ["members"],
       }),
-      getMemberById: build.query<ResponseType<IUser>, any>({
+      getMemberById: build.query<ResponseType<IUser>, string>({
         query: (id) => `/admin/members/${id}`,
         providesTags: ["member"],
       }),

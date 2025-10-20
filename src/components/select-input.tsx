@@ -10,7 +10,7 @@ import { useUpdateSearchParams } from "@/hooks/useSearchParams";
 
 export interface DropdownOption {
   label: string;
-  value: any;
+  value: string | number | null | undefined;
 }
 
 const SelectInput: FunctionComponent<{
@@ -24,7 +24,7 @@ const SelectInput: FunctionComponent<{
 
   return (
     <Select
-      defaultValue={selected?.value}
+      defaultValue={selected?.value as string}
       onValueChange={(option) => {
         if (queryKey) {
           updateSearchParams(queryKey, option);
@@ -37,7 +37,7 @@ const SelectInput: FunctionComponent<{
       <SelectContent>
         {options.map((option, id) => {
           return (
-            <SelectItem key={id} value={option.value}>
+            <SelectItem key={id} value={option.value as string}>
               {option.label}
             </SelectItem>
           );

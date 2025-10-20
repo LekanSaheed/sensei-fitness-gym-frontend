@@ -48,7 +48,7 @@ interface TableProps<T> {
 
 const Table = <
   T extends {
-    [key: string]: any;
+    [key: string]: unknown;
   }
 >({
   columns = [],
@@ -174,7 +174,7 @@ const Table = <
                       {renderable_columns.map((col, id) => {
                         const cell = cellMap?.find((c) => c[0] === col?.field);
 
-                        const cellValue = cell?.[1] as any;
+                        const cellValue = cell?.[1] as string | number | null;
 
                         const colDeets = renderable_columns.find(
                           (c) => c?.field === cell?.[0]
@@ -198,7 +198,7 @@ const Table = <
                             }`}
                           >
                             {fieldType === "currency"
-                              ? FormatNumber.ngnAmount(cellValue)
+                              ? FormatNumber.ngnAmount(cellValue as number)
                               : fieldType === "date"
                               ? !!cellValue
                                 ? moment(cellValue)?.format("llll")

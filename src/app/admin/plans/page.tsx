@@ -86,10 +86,10 @@ const CreateNewPlan: FunctionComponent<{
 }> = ({ open, setOpen }) => {
   const { state, handleStateChange } = useStateReducer<EditablePlanFields>({
     description: "",
-    durationInDays: "" as any,
+    durationInDays: "" as unknown as number,
     name: "",
-    price: "" as any,
-    trainerFee: "" as any,
+    price: "" as unknown as number,
+    trainerFee: "" as unknown as number,
   });
 
   const disabled = Object.entries(state).some((s) => !s[1]);
@@ -231,7 +231,7 @@ const UpdatePlan: FunctionComponent<{
   const [update, updateStatus] = useUpdatePlanMutation();
 
   const updatePlan = async () => {
-    const res = await update({ id: selectedPlan?._id!, payload: state });
+    const res = await update({ id: selectedPlan?._id || "", payload: state });
 
     if ("error" in res && isFetchBaseQueryError(res.error)) {
       const errorData = res.error.data as ErrorResponse;

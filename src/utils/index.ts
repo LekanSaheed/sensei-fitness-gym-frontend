@@ -14,13 +14,13 @@ export const isErrorWithMessage = (
     typeof error === "object" &&
     error != null &&
     "message" in error &&
-    typeof (error as any).message === "string"
+    typeof (error as { message: string }).message === "string"
   );
 };
 
-export const onlyFieldsWithValue = <T extends object | {}>(obj: T) => {
+export const onlyFieldsWithValue = <T extends object>(obj: T) => {
   const newObj: T = {} as T;
-  for (let key of Object.entries(obj)) {
+  for (const key of Object.entries(obj)) {
     if (key[1]) {
       newObj[key[0] as keyof T] = key[1];
     }

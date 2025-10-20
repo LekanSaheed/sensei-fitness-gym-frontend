@@ -17,7 +17,7 @@ export interface ButtonProps {
   color?: "default" | "black" | "white" | "gray";
   font?: "bold" | "regular";
   className?: string;
-  icon?: Icon | any;
+  icon?: Icon;
   iconVariant?: IconProps["variant"];
   onClick?: ButtonHTMLAttributes<HTMLButtonElement>["onClick"];
   size?: "sm" | "md" | "lg";

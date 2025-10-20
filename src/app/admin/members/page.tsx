@@ -121,7 +121,7 @@ const UsersPage = () => {
         error={isError}
         refetch={refetch}
         useSerial
-        totalRecords={paginationInfo?.totalItems!}
+        totalRecords={paginationInfo?.totalItems || 0}
         columns={columns}
         rows={rows}
         onRowClick={(row) => {

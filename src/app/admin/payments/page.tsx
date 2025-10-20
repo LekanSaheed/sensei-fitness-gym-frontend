@@ -95,7 +95,7 @@ const PaymentsPage = () => {
 
           const details: {
             label: string;
-            value: any;
+            value: number | string;
             hide?: boolean;
             type?: "default" | "currency";
           }[] = [
@@ -151,7 +151,7 @@ const PaymentsPage = () => {
                         <span className="text-gray-500">{p?.label}:</span>{" "}
                         <span className="font-medium">
                           {p?.type === "currency"
-                            ? FormatNumber.ngnAmount(p?.value)
+                            ? FormatNumber.ngnAmount((p?.value as number) || 0)
                             : p?.value}
                         </span>
                       </li>
