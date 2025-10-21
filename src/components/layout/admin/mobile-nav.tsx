@@ -43,7 +43,7 @@ const AdminMobileNav = () => {
           </Avatar>
         </div>
       </div>
-      <nav className="md:hidden sticky z-[1000] top-0 bg-white">
+      <nav className="md:hidden sticky z-[2] top-0 bg-white">
         <ul className="flex overflow-x-auto p-4  border-b border-b-gray-400 gap-4">
           {links.map((link, id) => {
             const isActive = link.path === pathname;

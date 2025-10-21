@@ -21,6 +21,15 @@ const jakarta = Plus_Jakarta_Sans({
 export const metadata: Metadata = {
   title: "Sensei Fitness",
   description: "Promoting Wellness",
+  viewport: {
+    initialScale: 1,
+    maximumScale: 1,
+    width: "device-width",
+  },
+  appleWebApp: {
+    capable: true,
+    title: "Sensei Fitness",
+  },
 };
 
 export default function RootLayout({
