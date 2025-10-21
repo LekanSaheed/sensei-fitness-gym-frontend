@@ -41,7 +41,7 @@ const TableControls: FunctionComponent<{
   showSearch?: boolean;
   showDateRange?: boolean;
   customNode?: ReactNode;
-}> = ({ search, filters, showSearch, showDateRange, customNode }) => {
+}> = ({ search, filters = [], showSearch, showDateRange, customNode }) => {
   const searchParams = useSearchParams();
 
   const isSearching = useIsSearching();
@@ -89,57 +89,59 @@ const TableControls: FunctionComponent<{
       )}
 
       <div className="flex flex-col-reverse  sm:flex-row gap-4 justify-between mb-3">
-        <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
           <div className="w-full sm:max-w-[350px]">
             {showSearch && <SearchInput {...search} />}
           </div>
-          <ul className="flex gap-3">
-            {filters?.map((filter, id) => {
-              const selectedValue = searchParams.get(filter?.keyName);
+          {filters?.length > 0 && (
+            <ul className="flex gap-3 ">
+              {filters?.map((filter, id) => {
+                const selectedValue = searchParams.get(filter?.keyName);
 
-              const selected = filter.options.find(
-                (option) => option.value === selectedValue
-              );
-              return (
-                <li key={id}>
-                  <SelectInput
-                    options={filter?.options}
-                    placeholder={filter?.title}
-                    triggerClassName={filter?.classNames?.trigger}
-                    selected={
-                      selected ||
-                      (filter?.doNotDefaultFirstElement
-                        ? null
-                        : filter.options[0])
-                    }
-                    queryKey={filter?.keyName}
-                  />
-                </li>
-              );
-            })}
-            {showDateRange && (
-              <>
-                <li>
-                  <DatePicker
-                    placeholder="Start Date"
-                    date={startDate}
-                    setDate={(date) => {
-                      updateSearchParams("startDate", date.toISOString());
-                    }}
-                  />
-                </li>
-                <li>
-                  <DatePicker
-                    placeholder="End Date"
-                    date={endDate}
-                    setDate={(date) => {
-                      updateSearchParams("endDate", date.toISOString());
-                    }}
-                  />
-                </li>
-              </>
-            )}
-          </ul>
+                const selected = filter.options.find(
+                  (option) => option.value === selectedValue
+                );
+                return (
+                  <li key={id}>
+                    <SelectInput
+                      options={filter?.options}
+                      placeholder={filter?.title}
+                      triggerClassName={filter?.classNames?.trigger}
+                      selected={
+                        selected ||
+                        (filter?.doNotDefaultFirstElement
+                          ? null
+                          : filter.options[0])
+                      }
+                      queryKey={filter?.keyName}
+                    />
+                  </li>
+                );
+              })}
+              {showDateRange && (
+                <>
+                  <li>
+                    <DatePicker
+                      placeholder="Start Date"
+                      date={startDate}
+                      setDate={(date) => {
+                        updateSearchParams("startDate", date.toISOString());
+                      }}
+                    />
+                  </li>
+                  <li>
+                    <DatePicker
+                      placeholder="End Date"
+                      date={endDate}
+                      setDate={(date) => {
+                        updateSearchParams("endDate", date.toISOString());
+                      }}
+                    />
+                  </li>
+                </>
+              )}
+            </ul>
+          )}
         </div>
         <div className="flex gap-4">{customNode}</div>
       </div>

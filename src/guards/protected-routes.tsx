@@ -23,9 +23,7 @@ const ProtectedRoute: FunctionComponent<ProtectedRouteProps> = ({
   useEffect(() => {
     if (!loading && !authenticated) {
       // if (!router.isReady) return;
-      router.push(
-        `/login?return_url=${router.createQueryString("return_url", pathname)}`
-      );
+      router.push(`/login?return_url=${pathname}`);
     }
   }, [loading, authenticated, router]);
   //   if (!isProtected) return children;

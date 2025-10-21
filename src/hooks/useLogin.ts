@@ -6,7 +6,7 @@ import { ErrorResponse, ResponseType } from "@/types";
 import type IUser from "@/types/User";
 import { isFetchBaseQueryError } from "@/utils";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
@@ -17,6 +17,8 @@ const useLogin = () => {
   const { fetchUserAndLogin, loading } = useFetchUserAndLogin();
 
   const router = useRouter();
+
+  const searchParams = useSearchParams();
 
   const loginUser = async ({
     username,
@@ -36,8 +38,14 @@ const useLogin = () => {
 
       if (response?.success) {
         fetchUserAndLogin(response?.data as string, (user) => {
+          const return_url = searchParams.get("return_url");
+
           if (user?.role === "admin") {
             return router.push(ADMIN_DASHBOARD);
+          }
+
+          if (return_url) {
+            return router.push(return_url);
           }
 
           router.push(DASHBOARD);
