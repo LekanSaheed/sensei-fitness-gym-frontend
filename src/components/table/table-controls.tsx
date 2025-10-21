@@ -90,7 +90,7 @@ const TableControls: FunctionComponent<{
 
       <div className="flex flex-col-reverse  sm:flex-row gap-4 justify-between mb-3">
         <div className="flex flex-col sm:flex-row gap-4">
-          <div className="w-full max-w-[350px]">
+          <div className="w-full sm:max-w-[350px]">
             {showSearch && <SearchInput {...search} />}
           </div>
           <ul className="flex gap-3">
