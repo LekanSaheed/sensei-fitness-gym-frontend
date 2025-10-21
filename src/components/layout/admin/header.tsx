@@ -75,13 +75,11 @@ const Header = () => {
         <ArrowLeft
           size={30}
           onClick={() => router.back()}
-          className="cursor-pointer"
+          className="cursor-pointer mr-4"
           color="#000"
         />
       )}
-      <h1 className="text-[24px] font-black ml-4">
-        {pathlabel?.label || "Route"}
-      </h1>
+      <h1 className="text-[24px] font-black ">{pathlabel?.label || "Route"}</h1>
     </header>
   );
 };

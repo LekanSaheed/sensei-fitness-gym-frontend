@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 
@@ -21,17 +21,14 @@ const jakarta = Plus_Jakarta_Sans({
 export const metadata: Metadata = {
   title: "Sensei Fitness",
   description: "Promoting Wellness",
-  viewport: {
-    initialScale: 1,
-    maximumScale: 1,
-    width: "device-width",
-  },
-  appleWebApp: {
-    capable: true,
-    title: "Sensei Fitness",
-  },
 };
 
+export const viewport: Viewport = {
+  initialScale: 1,
+  maximumScale: 1,
+  width: "device-width",
+  userScalable: false,
+};
 export default function RootLayout({
   children,
 }: Readonly<{
