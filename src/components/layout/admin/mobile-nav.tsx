@@ -18,7 +18,7 @@ const AdminMobileNav = () => {
 
   return (
     <>
-      <div className=" flex items-center justify-between p-4 pb-2 border-b border-b-gray-400">
+      <div className=" flex items-center md:hidden justify-between p-4 pb-2 border-b border-b-gray-400">
         <div className="relative h-[40px] w-[130px]">
           <Image
             alt="logo"

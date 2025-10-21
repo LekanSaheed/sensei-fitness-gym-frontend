@@ -23,5 +23,6 @@ export const api = createApi({
     "members-sub",
     "member",
     "payment-logs",
+    "admin-invites",
   ],
 });

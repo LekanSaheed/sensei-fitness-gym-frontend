@@ -18,9 +18,9 @@ export const isErrorWithMessage = (
   );
 };
 
-export const onlyFieldsWithValue = <T extends object>(obj: T) => {
+export const onlyFieldsWithValue = <T>(obj: T) => {
   const newObj: T = {} as T;
-  for (const key of Object.entries(obj)) {
+  for (const key of Object.entries(obj as object)) {
     if (key[1]) {
       newObj[key[0] as keyof T] = key[1];
     }

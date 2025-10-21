@@ -9,6 +9,7 @@ import {
   useSearchParams,
 } from "next/navigation";
 import {
+  ACCESS_CONTROL,
   ADMIN_DASHBOARD,
   MANAGE_PLANS,
   MEMBERS,
@@ -64,6 +65,9 @@ const Header = () => {
     },
     [USERS_SUBSCRIPTIONS]: {
       label: "Member Subscriptions",
+    },
+    [ACCESS_CONTROL]: {
+      label: "Access Control",
     },
   };
 

@@ -22,7 +22,7 @@ export const ADMIN_DASHBOARD = `/admin`;
 
 export const MEMBERS = `${ADMIN_DASHBOARD}/members`;
 
-export const ADMINS = `${ADMIN_DASHBOARD}/mods`;
+export const ACCESS_CONTROL = `${ADMIN_DASHBOARD}/access-control`;
 
 export const USER_CHECK_INS = `${ADMIN_DASHBOARD}/check-ins`;
 

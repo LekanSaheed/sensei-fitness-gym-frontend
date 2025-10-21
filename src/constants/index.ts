@@ -11,7 +11,7 @@ import {
 import {
   ADMIN_DASHBOARD,
   ADMIN_SETTINGS,
-  ADMINS,
+  ACCESS_CONTROL,
   CHECK_INS,
   DASHBOARD,
   MANAGE_PLANS,
@@ -54,21 +54,22 @@ export const routesAndTheirPermissions: Record<string, Permission[]> = {
   [USERS_SUBSCRIPTIONS]: ["view_members_subscriptions"],
   [MANAGE_PLANS]: ["view_subscription_plans"],
   [PAYMENT_LOGS]: ["view_payment_logs"],
+  [ACCESS_CONTROL]: ["view_access_control"],
 };
 
 export const admin_side_bar: IMenu[] = [
-  { links: [{ label: "Dashboard", path: ADMIN_DASHBOARD, icon: Home3 }] },
   {
     links: [
+      { label: "Dashboard", path: ADMIN_DASHBOARD, icon: Home3 },
       {
         label: "Members",
         path: MEMBERS,
         icon: People,
         permissions: routesAndTheirPermissions[MEMBERS],
       },
-      { label: "Admins", path: ADMINS, icon: SecurityUser },
     ],
   },
+
   {
     links: [
       {
@@ -97,5 +98,15 @@ export const admin_side_bar: IMenu[] = [
       },
     ],
   },
-  { links: [{ label: "Settings", path: ADMIN_SETTINGS, icon: Setting2 }] },
+  {
+    links: [
+      { label: "Settings", path: ADMIN_SETTINGS, icon: Setting2 },
+      {
+        label: "Access Control",
+        path: ACCESS_CONTROL,
+        icon: SecurityUser,
+        permissions: routesAndTheirPermissions[ACCESS_CONTROL],
+      },
+    ],
+  },
 ];

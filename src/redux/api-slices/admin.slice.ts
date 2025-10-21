@@ -10,6 +10,7 @@ import { formatQuery } from "@/utils";
 import { ISubscription, ISubscriptionPlan } from "./subscription.slice";
 import { EditablePlanFields } from "@/app/admin/plans/page";
 import PaymentLog from "@/types/PaymentLog";
+import { Permission } from "@/hooks/usePermissions";
 
 export type UserWithSub = IUser & {
   latestSubscription: Pick<
@@ -23,6 +24,13 @@ export type UserWithSub = IUser & {
   > | null;
 };
 
+export interface AdminInvitation {
+  email: string;
+  permissions: Permission[];
+  status: "pending" | "completed";
+  createdAt: string;
+  _id: string;
+}
 const adminApi = api.injectEndpoints({
   endpoints(build) {
     return {
@@ -134,6 +142,40 @@ const adminApi = api.injectEndpoints({
         }),
         invalidatesTags: ["members-sub", "payment-logs", "members", "member"],
       }),
+      getAdmins: build.query<
+        ResponseType<IUser[]>,
+        Partial<{ search: string }>
+      >({
+        query: (query) => `/admin/admins?${formatQuery(query)}`,
+      }),
+      getPermissions: build.query<
+        ResponseType<{ name: Permission; description: string }[]>,
+        null
+      >({
+        query: () => `/admin/permissions`,
+      }),
+      inviteAdmin: build.mutation<
+        ResponseType,
+        { email: string; permissions: Permission[] }
+      >({
+        query: (payload) => ({
+          url: "/admin/invite",
+          method: "post",
+          body: payload,
+        }),
+        invalidatesTags: ["admin-invites"],
+      }),
+      getInvitations: build.query<ResponseType<AdminInvitation[]>, null>({
+        query: () => "/admin/invite",
+        providesTags: ["admin-invites"],
+      }),
+      resendInviteNotification: build.mutation<ResponseType, { id: string }>({
+        query: (payload) => ({
+          url: "/admin/invite/resend",
+          body: payload,
+          method: "post",
+        }),
+      }),
     };
   },
 });
@@ -152,4 +194,9 @@ export const {
   useGetMemberByIdQuery,
   useGetMembersSubscriptionsQuery,
   useActivateMemberSubMutation,
+  useGetAdminsQuery,
+  useGetPermissionsQuery,
+  useInviteAdminMutation,
+  useGetInvitationsQuery,
+  useResendInviteNotificationMutation,
 } = adminApi;
