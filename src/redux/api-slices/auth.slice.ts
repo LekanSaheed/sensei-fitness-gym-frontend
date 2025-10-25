@@ -50,6 +50,24 @@ const authSlice = api.injectEndpoints({
           method: "post",
         }),
       }),
+      getInvitation: build.query<ResponseType<{ email: string }>, string>({
+        query: (id) => `/auth/get-invitation?id=${id}`,
+      }),
+      createAdminAccount: build.mutation<
+        ResponseType<{ token: string }>,
+        {
+          firstname: string;
+          lastname: string;
+          invitation_id: string;
+          password: string;
+        }
+      >({
+        query: (payload) => ({
+          url: "/auth/admin-signup",
+          body: payload,
+          method: "post",
+        }),
+      }),
     };
   },
 });
@@ -60,4 +78,6 @@ export const {
   useCheckUsernameQuery,
   useCreateAccountMutation,
   useLoginMutation,
+  useGetInvitationQuery,
+  useCreateAdminAccountMutation,
 } = authSlice;

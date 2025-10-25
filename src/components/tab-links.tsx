@@ -1,5 +1,6 @@
 "use client";
 
+import useRouter from "@/hooks/useRouter";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -7,15 +8,27 @@ import React, { FunctionComponent } from "react";
 
 const TabLinks: FunctionComponent<{
   links: { label: string; path: string }[];
-}> = ({ links }) => {
+  includeQuery?: boolean;
+}> = ({ links, includeQuery = false }) => {
   const pathname = usePathname();
+
+  const router = useRouter();
 
   return (
     <nav className="flex gap-3 border-b border-b-gray-300  mb-3">
       {links.map((link, id) => {
         const isActive = link.path === pathname;
         return (
-          <Link replace key={id} href={link.path} className={`text-[14px]`}>
+          <Link
+            replace
+            key={id}
+            href={
+              includeQuery
+                ? `${link.path}?${router.createQueryString("null", "null")}`
+                : link.path
+            }
+            className={`text-[14px]`}
+          >
             {" "}
             <span
               className={`py-2 transition inline-block  ${

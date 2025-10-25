@@ -35,6 +35,8 @@ const Header = () => {
 
   console.log(MEMBER_ROUTE);
 
+  const namePrefix = memberName?.split(" ")[0];
+
   const pathLabels: Record<string, { label: string }> = {
     [ADMIN_DASHBOARD]: {
       label: "Home",
@@ -52,13 +54,13 @@ const Header = () => {
       label: "Subscription Plans",
     },
     [`${MEMBER_ROUTE}/check-ins`]: {
-      label: "Member Check-ins",
+      label: `${namePrefix || "Member"} Check-ins`,
     },
     [`${MEMBER_ROUTE}/subscriptions`]: {
-      label: "Member Subscriptions",
+      label: `${namePrefix || "Member"} Subscriptions`,
     },
     [`${MEMBER_ROUTE}/payments`]: {
-      label: "Member Payments Logs",
+      label: `${namePrefix || "Member"} Payments Logs`,
     },
     [PAYMENT_LOGS]: {
       label: "Payments Logs",

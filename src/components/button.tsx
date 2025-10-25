@@ -114,7 +114,7 @@ const Button: FunctionComponent<ButtonProps> = ({
       type={type}
       disabled={disabled || loading}
       onClick={onClick}
-      className={`rounded-[10px] cursor-pointer active:opacity-50 transition active:scale-[0.9]  text-white border border-transparent ${
+      className={`rounded-[10px] backdrop-blur-sm cursor-pointer active:opacity-50 transition active:scale-[0.9]  text-white border border-transparent ${
         fullWidth ? "w-full flex items-center justify-center" : ""
       }  ${selectedColor} ${selectedFont} ${selectedSize} ${
         fullRadius ? "rounded-full" : ""
@@ -143,7 +143,7 @@ const Button: FunctionComponent<ButtonProps> = ({
           )}
           {loading && (
             <motion.div>
-              <Spinner />
+              <Spinner className="text-[15px]" />
               {/* <Spinner sxclass="text-[20px] " /> */}
             </motion.div>
           )}

@@ -18,13 +18,13 @@ const QuickActions = () => {
   return (
     <div className="my-4">
       <Heading>Quick actions</Heading>
-      <div className="flex justify-between ">
+      <div className="flex justify-evenly gap-4">
         {actions.map((action, id) => {
           return (
             <Link
               key={id}
               href={action.path}
-              className="inline-flex flex-col bg-white p-3 rounded-[10px] items-center"
+              className="inline-flex flex-col bg-white p-3 rounded-[10px] items-center w-full max-w-[120px]"
             >
               <div className="text-default mb-2 size-[50px] border border-default/15 rounded-full inline-flex items-center justify-center bg-default/10">
                 {React.createElement(action?.icon, {

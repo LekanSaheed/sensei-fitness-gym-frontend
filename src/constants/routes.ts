@@ -4,6 +4,8 @@ export const SIGNUP = "/signup";
 
 export const COMPLETE_SIGNUP = "/signup/complete";
 
+export const ADMIN_SIGNUP = "/signup/admin";
+
 export const DASHBOARD = "/dashboard";
 
 export const SUBSCRIPTIONS = `${DASHBOARD}/subscriptions`;

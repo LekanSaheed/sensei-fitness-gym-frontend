@@ -88,6 +88,7 @@ const UserCheckInPage = () => {
                 loading={checkInStatus.isLoading}
                 color="black"
                 size="sm"
+                permissions={["check_member_in"]}
               />
             }
             loading={checkInStatus.isLoading}

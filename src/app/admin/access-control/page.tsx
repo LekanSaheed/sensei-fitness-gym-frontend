@@ -10,15 +10,21 @@ import Table, { ColumnProps } from "@/components/table";
 import { ItemMedia } from "@/components/ui/item";
 import { Switch } from "@/components/ui/switch";
 import { DEFAULT_ERROR_MESSAGE } from "@/constants";
-import usePermissions, { Permission } from "@/hooks/usePermissions";
+import usePermissions, {
+  Permission,
+  useUserCanPerformAction,
+} from "@/hooks/usePermissions";
 import useStateReducer from "@/hooks/useStateReducer";
+import useUser from "@/hooks/useUser";
 import {
   useGetAdminsQuery,
   useGetInvitationsQuery,
   useInviteAdminMutation,
   useResendInviteNotificationMutation,
+  useUpdateAdminMutation,
 } from "@/redux/api-slices/admin.slice";
 import { ErrorResponse } from "@/types";
+import IUser from "@/types/User";
 import {
   collocateMemberName,
   isFetchBaseQueryError,
@@ -48,9 +54,10 @@ const AccessControl = () => {
   const admins = data?.data || [];
 
   const { state, handleStateChange } = useStateReducer({
-    inviteModal: false,
-    adminModal: false,
+    selectedAdmin: "",
   });
+
+  const selectedAdmin = admins.find((a) => a?._id === state.selectedAdmin);
   return (
     <div>
       <Table
@@ -67,6 +74,9 @@ const AccessControl = () => {
             numberOfPermissions: (admin?.permissions || []).length,
           };
         })}
+        onRowClick={(row) => {
+          handleStateChange({ selectedAdmin: row?._id });
+        }}
         customNode={
           <>
             <SheetModal
@@ -89,7 +99,6 @@ const AccessControl = () => {
               description="Type the email address of the person you want to invite as an admin"
               trigger={
                 <Button
-                  onClick={() => handleStateChange({ inviteModal: true })}
                   permissions={["invite_admin"]}
                   label="Invite Admin"
                   color="black"
@@ -102,7 +111,145 @@ const AccessControl = () => {
           </>
         }
       />
+      {state.selectedAdmin && (
+        <EditControl
+          selected={selectedAdmin}
+          open={!!state.selectedAdmin}
+          setOpen={() => handleStateChange({ selectedAdmin: "" })}
+        />
+      )}
     </div>
+  );
+};
+
+const EditControl: FunctionComponent<{
+  open: boolean;
+  selected: IUser | undefined;
+  setOpen: (bool: boolean) => void;
+}> = ({ open, setOpen, selected }) => {
+  const { error, loading, permissions, refetch } = usePermissions();
+
+  const { state, handleStateChange } = useStateReducer({
+    selectedPermissions: selected?.permissions || [],
+  });
+
+  const user = useUser();
+
+  const canPerform = useUserCanPerformAction();
+
+  const canUpdate = canPerform(["update_admin"]);
+
+  const isSameUser =
+    user?.email?.toLowerCase() === selected?.email?.toLowerCase();
+
+  const noUpdate =
+    state.selectedPermissions.every((p) =>
+      selected?.permissions?.includes(p)
+    ) && selected?.permissions?.length === state.selectedPermissions.length;
+
+  const [update, updateStatus] = useUpdateAdminMutation();
+
+  const updateAdmin = async () => {
+    const res = await update({
+      id: selected?._id || "",
+      payload: { permissions: state.selectedPermissions },
+    });
+
+    if ("error" in res && isFetchBaseQueryError(res.error)) {
+      const errorData = res.error?.data as ErrorResponse;
+
+      toast.error(errorData?.error || DEFAULT_ERROR_MESSAGE);
+    } else {
+      const response = res?.data;
+
+      if (response?.success) {
+        toast.success("Successful");
+        setOpen(false);
+      } else {
+        toast.error(response?.error || DEFAULT_ERROR_MESSAGE);
+      }
+    }
+  };
+  return (
+    <SheetModal
+      title={selected ? `${collocateMemberName(selected!)}` : ""}
+      description="Activate or Deactivate permissions for this admin"
+      open={open}
+      setOpen={setOpen}
+    >
+      <div>
+        <h2 className="font-semibold text-gray-900 z-[2] text-[12px] pb-3 bg-white sticky top-[0px]">
+          Select what this admin can access
+        </h2>
+        <SectionLoader loading={loading} error={error} refetch={refetch} />
+        <ul>
+          {permissions.map((permission, id) => {
+            const checked = state.selectedPermissions.includes(permission.name);
+
+            const disabled =
+              !canUpdate ||
+              (state.selectedPermissions.includes("super_user") &&
+                permission.name !== "super_user");
+
+            return (
+              <li
+                aria-disabled={disabled}
+                key={id}
+                className="flex transition aria-disabled:pointer-events-none aria-disabled:bg-gray-100 aria-disabled:text-gray-500 justify-between px-4 items-center rounded-[5px] py-2 border mb-2 "
+              >
+                <div>
+                  <h1 className="font-semibold text-[14px]">
+                    {" "}
+                    {permission.name}
+                  </h1>
+                  <p className="text-gray-500 text-[12px]">
+                    {permission.description}
+                  </p>
+                </div>
+                <div>
+                  <Switch
+                    onCheckedChange={() => {
+                      if (checked) {
+                        handleStateChange({
+                          selectedPermissions: state.selectedPermissions.filter(
+                            (p) => p !== permission.name
+                          ),
+                        });
+                      } else {
+                        if (permission.name === "super_user") {
+                          return handleStateChange({
+                            selectedPermissions: ["super_user"],
+                          });
+                        }
+                        handleStateChange({
+                          selectedPermissions: [
+                            ...state.selectedPermissions,
+                            permission.name,
+                          ],
+                        });
+                      }
+                    }}
+                    checked={checked || disabled}
+                    disabled={disabled || isSameUser}
+                  />
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+      <div className="sticky bottom-0">
+        <Button
+          type="submit"
+          label="Update admin Permissions"
+          fullWidth
+          color="black"
+          onClick={updateAdmin}
+          loading={updateStatus.isLoading}
+          disabled={isSameUser || noUpdate}
+        />
+      </div>
+    </SheetModal>
   );
 };
 

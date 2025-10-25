@@ -7,6 +7,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import { NEW_CHECK_IN, RENEW_SUBSCRIPTION } from "@/constants/routes";
 import moment from "moment";
 import { label } from "framer-motion/client";
+import { Avatar, AvatarFallback } from "../ui/avatar";
+import { collocateMemberName, getInitials } from "@/utils";
 
 const Header = () => {
   const user = useUser();
@@ -70,7 +72,11 @@ const Header = () => {
               </>
             ) : (
               <div className="flex items-center">
-                <div className="size-[40px] rounded-full mr-2 shrink-0 bg-amber-400"></div>
+                <Avatar className="size-11 border border-gray-400 mr-2">
+                  <AvatarFallback>
+                    {getInitials(collocateMemberName(user!))}
+                  </AvatarFallback>
+                </Avatar>
                 <div>
                   <h1 className="text-[18px] font-bold">
                     Hi, {user?.firstname}.

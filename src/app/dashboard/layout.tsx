@@ -11,13 +11,15 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
     <AuthProvider>
       <Suspense>
         <ProtectedRoute>
-          <div className="bg-[#f2f2f2] font-jakarta">
-            <Header />
-            <div className="p-4 min-h-screen">
-              {children} <div className="h-[80px]" />
-            </div>
+          <div className="bg-[#f2f2f2]">
+            <div className="  sm:max-w-[800px] mx-auto">
+              <Header />
+              <div className="p-4 min-h-screen">
+                {children} <div className="h-[80px]" />
+              </div>
 
-            <MobileNav />
+              <MobileNav />
+            </div>
           </div>
         </ProtectedRoute>
       </Suspense>

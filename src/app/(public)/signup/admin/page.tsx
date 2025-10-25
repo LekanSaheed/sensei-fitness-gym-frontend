@@ -1,39 +1,26 @@
 "use client";
-
 import Button from "@/components/button";
 import Input from "@/components/input";
 import Spinner from "@/components/Spinner";
 import { DEFAULT_ERROR_MESSAGE } from "@/constants";
-import { DASHBOARD, SIGNUP } from "@/constants/routes";
-import useDebounceValue from "@/hooks/useDebounce";
+import { ADMIN_DASHBOARD } from "@/constants/routes";
 import { useFetchUserAndLogin } from "@/hooks/useLogin";
-import { actions } from "@/redux";
 import {
-  useCheckUsernameQuery,
-  useCreateAccountMutation,
-  useGetSessionQuery,
+  useCreateAdminAccountMutation,
+  useGetInvitationQuery,
 } from "@/redux/api-slices/auth.slice";
 import { ErrorResponse } from "@/types";
 import { isFetchBaseQueryError } from "@/utils";
 import { useFormik } from "formik";
-import { CloseCircle, TickCircle } from "iconsax-react";
-import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import React from "react";
 import toast from "react-hot-toast";
-import { useDispatch } from "react-redux";
 import * as yup from "yup";
 
-const Page = () => {
+const AdminSignupPage = () => {
   const searchParams = useSearchParams();
 
   const id = searchParams.get("token") || "";
-
-  const [create, createStatus] = useCreateAccountMutation();
-
-  const { fetchUserAndLogin, loading } = useFetchUserAndLogin();
-
-  const router = useRouter();
 
   const validationSchema = yup.object({
     firstname: yup
@@ -46,11 +33,7 @@ const Page = () => {
       .min(2)
       .max(30)
       .required("Your last name is required"),
-    username: yup
-      .string()
-      .min(3)
-      .max(20)
-      .required("Your user name is required"),
+
     password: yup
       .string()
       .min(8)
@@ -68,14 +51,33 @@ const Page = () => {
   const initV = {
     firstname: "",
     lastname: "",
-    username: "",
     password: "",
     confirmPassword: "",
   };
 
+  const router = useRouter();
+
+  const { handleSubmit, values, touched, errors, handleBlur, handleChange } =
+    useFormik({
+      initialValues: initV,
+      validationSchema,
+      onSubmit(values, formikHelpers) {
+        createAccount(values);
+      },
+    });
+
+  const { isLoading, isFetching, isError, refetch, data, error } =
+    useGetInvitationQuery(id);
+
+  const email = data?.data?.email;
+
+  const [create, createStatus] = useCreateAdminAccountMutation();
+
+  const { fetchUserAndLogin, loading } = useFetchUserAndLogin();
+
   const createAccount = async (data: typeof initV) => {
     const { confirmPassword, ...payload } = data;
-    const res = await create({ ...payload, session_id: id });
+    const res = await create({ ...payload, invitation_id: id });
 
     if ("error" in res && isFetchBaseQueryError(res.error)) {
       const errorData = res.error.data as ErrorResponse;
@@ -88,42 +90,13 @@ const Page = () => {
         const token = response?.data?.token;
 
         fetchUserAndLogin(token!, () => {
-          router.push(DASHBOARD);
+          router.push(ADMIN_DASHBOARD);
         });
       } else {
         toast.error(response?.error || DEFAULT_ERROR_MESSAGE);
       }
     }
   };
-
-  const { handleSubmit, values, touched, errors, handleBlur, handleChange } =
-    useFormik({
-      initialValues: initV,
-      validationSchema,
-      onSubmit(values, formikHelpers) {
-        createAccount(values);
-      },
-    });
-
-  const { isLoading, isFetching, isError, refetch, data } =
-    useGetSessionQuery(id);
-
-  const email = data?.data?.email;
-
-  const debouncedUsername = useDebounceValue(values.username, 500);
-
-  const checkUsernameQuery = useCheckUsernameQuery(debouncedUsername, {
-    skip: !debouncedUsername,
-  });
-
-  const usernameCheckLoading =
-    checkUsernameQuery.isLoading || checkUsernameQuery.isFetching;
-
-  const usernameCheckError = checkUsernameQuery.isError;
-
-  const usernameIsAvailable = checkUsernameQuery?.data?.data?.isAvailable;
-
-  const disabled = usernameCheckError || !usernameIsAvailable;
 
   if (isLoading || isFetching)
     return (
@@ -137,12 +110,10 @@ const Page = () => {
       <div className="h-[180px] text-center flex  items-center justify-center">
         <div>
           <p className="text-[14px] mb-2 text-rose-600">
-            Invalid registration link, please get a valid registration link at
-            the signup page
+            {isFetchBaseQueryError(error)
+              ? (error?.data as ErrorResponse)?.error
+              : "This link is invalid"}
           </p>
-          <Link href={SIGNUP}>
-            <Button label="Get new link" variant="outlined" />
-          </Link>
         </div>
       </div>
     );
@@ -150,6 +121,7 @@ const Page = () => {
 
   return (
     <form
+      autoComplete="off"
       onSubmit={(e) => {
         e.preventDefault();
         handleSubmit();
@@ -173,53 +145,11 @@ const Page = () => {
         onBlur={handleBlur}
         name="lastname"
         placeholder="Last Name"
+        autoComplete="new-password"
       />
+
       <Input
-        label={"Username"}
-        error={
-          usernameCheckError
-            ? "Could not username availability, please retry"
-            : touched.username && !usernameIsAvailable
-            ? "Username is not available"
-            : (touched.username && errors.username) || ""
-        }
-        value={values.username}
-        onChange={handleChange}
-        onBlur={handleBlur}
-        name="username"
-        placeholder="username"
-        appendRight={
-          usernameIsAvailable ? (
-            <TickCircle
-              variant="Bold"
-              color="var(--color-emerald-500)"
-              size={22}
-              className="mr-3"
-            />
-          ) : !usernameIsAvailable &&
-            touched.username &&
-            !usernameCheckLoading ? (
-            <CloseCircle
-              color="var(--color-rose-500)"
-              className="mr-3"
-              variant="Bold"
-              size={22}
-            />
-          ) : (
-            ""
-          )
-        }
-        info={
-          usernameCheckLoading ? (
-            "Checking username availability..."
-          ) : usernameIsAvailable ? (
-            <span className="text-emerald-600">Username is available</span>
-          ) : (
-            ""
-          )
-        }
-      />
-      <Input
+        autoComplete="new-password"
         label={"Password"}
         value={values.password}
         onChange={handleChange}
@@ -245,11 +175,10 @@ const Page = () => {
         loading={loading || createStatus.isLoading}
         type="submit"
         label="Create Account"
-        disabled={disabled}
         fullWidth
       />
     </form>
   );
 };
 
-export default Page;
+export default AdminSignupPage;

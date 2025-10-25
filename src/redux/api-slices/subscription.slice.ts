@@ -1,4 +1,4 @@
-import { ResponseType } from "@/types";
+import { ICheckIn, PaginatedResponse, ResponseType } from "@/types";
 import { api } from "../api";
 
 export interface ISubscriptionPlan {
@@ -98,6 +98,10 @@ const subscriptionApi = api.injectEndpoints({
         query: () => "/subscriptions/check-ins/analytics",
         providesTags: ["has-checked-in"],
       }),
+      getRecentCheckIns: build.query<PaginatedResponse<ICheckIn[]>, null>({
+        query: () => `/subscriptions/check-ins?page=1&limit=${15}`,
+        providesTags: ["has-checked-in"],
+      }),
     };
   },
 });
@@ -110,4 +114,5 @@ export const {
   useCheckInMutation,
   useCheckIfCheckedInTodayQuery,
   useGetCheckInAnalyticsQuery,
+  useGetRecentCheckInsQuery,
 } = subscriptionApi;

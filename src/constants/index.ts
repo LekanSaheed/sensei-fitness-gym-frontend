@@ -38,9 +38,9 @@ export const DEFAULT_ERROR_MESSAGE =
 
 export const nav_links: NavLink[] = [
   { label: "Check-ins", path: CHECK_INS, icon: LocationTick },
-  { label: "Subscriptions", path: SUBSCRIPTIONS, icon: MoneySend },
+  // { label: "Subscriptions", path: SUBSCRIPTIONS, icon: MoneySend },
   { label: "Home", path: DASHBOARD, icon: Home3 },
-  { label: "Profile", path: PROFILE, icon: Profile },
+  // { label: "Profile", path: PROFILE, icon: Profile },
   { label: "Profile", path: PROFILE, icon: Profile },
 ];
 

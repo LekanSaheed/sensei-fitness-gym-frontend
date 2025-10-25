@@ -56,7 +56,7 @@ const SubscriptionCard = () => {
     );
 
   return (
-    <div className="bg-white rounded-[16px] overflow-hidden">
+    <div className="bg-white border border-default rounded-[16px] overflow-hidden">
       <div className="bg-default/20">
         <div className="p-4.5">
           <h1 className="text-[16px] font-semibold mb-3">
@@ -67,9 +67,10 @@ const SubscriptionCard = () => {
             <p className="text-[14px] tracking-tight text-gray-500 mb-1">
               {daysLeft} day{daysLeft > 1 ? "s" : ""} left
             </p>
-            <div className="bg-[#fff] rounded-full mb-2 overflow-hidden">
+            <div className="relative overflow-hidden rounded-fullh-[10px] flex items-center mb-2">
+              <div className="bg-default/40 absolute rounded-full inset-0 h-[5px] top-[1px]"></div>
               <div
-                className="bg-default h-[7px] rounded-full"
+                className="bg-default h-[7px] rounded-full relative z-[1]"
                 style={{ width: `${width}%` }}
               />
             </div>
@@ -86,7 +87,7 @@ const SubscriptionCard = () => {
                 key={id}
                 className="tracking-tight  flex justify-between text-[14px] mb-1.5"
               >
-                <span className="opacity-80">{check_in.label} </span>{" "}
+                <span className="">{check_in.label} </span>{" "}
                 <span className="font-semibold">{check_in.value}</span>
               </li>
             );

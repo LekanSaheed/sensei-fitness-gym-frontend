@@ -147,6 +147,7 @@ const adminApi = api.injectEndpoints({
         Partial<{ search: string }>
       >({
         query: (query) => `/admin/admins?${formatQuery(query)}`,
+        providesTags: ["admins"],
       }),
       getPermissions: build.query<
         ResponseType<{ name: Permission; description: string }[]>,
@@ -176,6 +177,17 @@ const adminApi = api.injectEndpoints({
           method: "post",
         }),
       }),
+      updateAdmin: build.mutation<
+        ResponseType,
+        { id: string; payload: { permissions: Permission[] } }
+      >({
+        query: ({ id, payload }) => ({
+          url: `/admin/update/${id}`,
+          method: "put",
+          body: payload,
+        }),
+        invalidatesTags: ["admin", "admins"],
+      }),
     };
   },
 });
@@ -199,4 +211,5 @@ export const {
   useInviteAdminMutation,
   useGetInvitationsQuery,
   useResendInviteNotificationMutation,
+  useUpdateAdminMutation,
 } = adminApi;

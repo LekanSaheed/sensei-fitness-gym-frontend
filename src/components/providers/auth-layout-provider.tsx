@@ -1,6 +1,11 @@
 "use client";
 
-import { COMPLETE_SIGNUP, LOGIN, SIGNUP } from "@/constants/routes";
+import {
+  ADMIN_SIGNUP,
+  COMPLETE_SIGNUP,
+  LOGIN,
+  SIGNUP,
+} from "@/constants/routes";
 import { usePathname } from "next/navigation";
 import React, { ReactNode } from "react";
 
@@ -20,6 +25,11 @@ const AuthLayoutProvider = ({ children }: { children: ReactNode }) => {
     [LOGIN]: {
       label: "Access your account",
       description: "Enter your username or email to access your account",
+    },
+    [ADMIN_SIGNUP]: {
+      label: "Register as admin",
+      description:
+        "Enter the following details to complete your registration as an administrator",
     },
   };
 

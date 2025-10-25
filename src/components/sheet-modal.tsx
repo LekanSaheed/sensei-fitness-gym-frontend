@@ -16,11 +16,13 @@ const SheetModal: FunctionComponent<{
   title: string;
   description: string;
   children: ReactNode;
-  trigger: ReactNode;
+  trigger?: ReactNode;
   footer?: ReactNode;
-}> = ({ children, description, title, trigger, footer }) => {
+  open?: boolean;
+  setOpen?: (bool: boolean) => void;
+}> = ({ children, description, title, trigger, footer, open, setOpen }) => {
   return (
-    <Sheet>
+    <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>{trigger}</SheetTrigger>
       <SheetContent>
         <SheetHeader>

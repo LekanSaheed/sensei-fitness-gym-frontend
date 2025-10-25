@@ -47,6 +47,7 @@ const PlansPage = () => {
           <Button
             size="sm"
             label="Create new plan"
+            permissions={["create_subscription_plan"]}
             color="black"
             onClick={() => setOpen(true)}
           />
@@ -188,6 +189,7 @@ const CreateNewPlan: FunctionComponent<{
           loading={createStatus.isLoading}
           alertTrigger={
             <Button
+              permissions={["create_subscription_plan"]}
               disabled={disabled}
               type="submit"
               fullWidth

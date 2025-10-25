@@ -161,6 +161,7 @@ const SubscriptionsPage = () => {
             label={"Activate member's subscription"}
             color="black"
             size="sm"
+            permissions={["activate_member_subscription"]}
             onClick={() => setOpen(true)}
           />
         }

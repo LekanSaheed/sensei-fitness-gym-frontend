@@ -194,7 +194,13 @@ const CheckInsPage = () => {
         columns={columns}
         customNode={
           <>
-            <Button onClick={() => setOpen(true)}>Check a member in</Button>
+            <MainButton
+              onClick={() => setOpen(true)}
+              label="Check a member in"
+              size="sm"
+              color="black"
+              permissions={["check_member_in"]}
+            />
           </>
         }
       />

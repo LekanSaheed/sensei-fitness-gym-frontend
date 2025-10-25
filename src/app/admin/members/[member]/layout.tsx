@@ -19,6 +19,7 @@ const MemberLayout = ({
   return (
     <div>
       <TabLinks
+        includeQuery
         links={[
           { label: "Profile", path: currentPath },
           { label: "Subscriptions", path: `${currentPath}/subscriptions` },
