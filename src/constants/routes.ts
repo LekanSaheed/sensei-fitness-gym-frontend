@@ -2,6 +2,10 @@ export const LOGIN = "/login";
 
 export const SIGNUP = "/signup";
 
+export const FORGOT_PASSWORD = "/forgot-pwd";
+
+export const RESET_PASSWORD = "/reset-pwd";
+
 export const COMPLETE_SIGNUP = "/signup/complete";
 
 export const ADMIN_SIGNUP = "/signup/admin";

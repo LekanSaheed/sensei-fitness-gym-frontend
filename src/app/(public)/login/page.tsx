@@ -2,8 +2,10 @@
 
 import Button from "@/components/button";
 import Input from "@/components/input";
+import { FORGOT_PASSWORD } from "@/constants/routes";
 import useLogin from "@/hooks/useLogin";
 import useStateReducer from "@/hooks/useStateReducer";
+import Link from "next/link";
 import React from "react";
 
 const LoginPage = () => {
@@ -37,6 +39,14 @@ const LoginPage = () => {
         toggle
         placeholder="Password"
       />
+      <div className="flex justify-end mb-4 -mt-2">
+        <Link
+          href={FORGOT_PASSWORD}
+          className="text-default text-[14px] font-semibold"
+        >
+          Forgot Password?
+        </Link>
+      </div>
       <Button label="Login" fullWidth loading={loading} />
     </form>
   );

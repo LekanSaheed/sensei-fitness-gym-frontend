@@ -8,7 +8,7 @@ import { Provider } from "react-redux";
 const ReduxProvider = ({ children }: { children: ReactNode }) => {
   return (
     <Provider store={store}>
-      <Toaster />
+      <Toaster containerStyle={{ zIndex: 10000000 }} />
       {children}
     </Provider>
   );

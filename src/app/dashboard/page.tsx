@@ -1,5 +1,6 @@
 "use client";
 
+import CheckInNotifier from "@/components/CheckInNotifier";
 import CheckInsHistory from "@/components/CheckInsHistory";
 import QuickActions from "@/components/QuickActions";
 import SubscriptionCard from "@/components/subscription-card";
@@ -9,6 +10,7 @@ const UserHomePage = () => {
   return (
     <div>
       <SubscriptionCard />
+      <CheckInNotifier />
       <QuickActions />
       <CheckInsHistory />
     </div>

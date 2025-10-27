@@ -10,6 +10,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
+import Cookies from "js-cookie";
 
 const useLogin = () => {
   const [login, loginStatus] = useLoginMutation();
@@ -75,9 +76,11 @@ export const useFetchUserAndLogin = () => {
   const { login: l, saveToken } = actions["auth"];
 
   const fetchUserAndLogin = async (
-    token: string,
+    arg_token?: string,
     callback?: (user: IUser) => void
   ) => {
+    const token = arg_token || Cookies.get("access_token") || "";
+
     setLoading(true);
 
     const userResponse = await fetchUser(token);

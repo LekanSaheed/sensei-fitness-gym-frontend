@@ -45,7 +45,7 @@ const Header = () => {
   }
 
   return (
-    <header className="sticky top-0 px-4  pt-4">
+    <header className="sticky top-0 px-4  pt-4 z-[2]">
       <div className="bg-white rounded-full px-3 h-[70px] flex items-center border border-gray-200">
         <div className="flex justify-between items-center flex-1">
           <AnimatePresence>
