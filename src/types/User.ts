@@ -1,6 +1,7 @@
 import { Permission } from "@/hooks/usePermissions";
 
 interface IUser {
+  _id: string;
   firstname: string;
   lastname: string;
   username: string;
@@ -12,7 +13,7 @@ interface IUser {
   registrationFeePaid: boolean;
   disabled: boolean;
   permissions?: Permission[];
-  _id: string;
+  hasActiveSub: boolean;
 }
 
 export default IUser;

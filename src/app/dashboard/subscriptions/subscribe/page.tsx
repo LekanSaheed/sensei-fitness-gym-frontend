@@ -18,6 +18,8 @@ import useUser from "@/hooks/useUser";
 import SectionLoader from "@/components/SectionLoader";
 import Link from "next/link";
 import { LOGIN, TERMS } from "@/constants/routes";
+import DialogModal from "@/components/dialog-modal";
+import Alert from "@/components/alert";
 
 const RenewSubPage = () => {
   const { isLoading, isFetching, isError, data, refetch } =
@@ -61,6 +63,8 @@ const RenewSubPage = () => {
   );
 
   const [view, setView] = useState<"main" | "undertaking">("main");
+
+  const [activeSubReminder, setActiveSubReminder] = useState(false);
   return (
     <LayoutGroup>
       <div>
@@ -144,6 +148,13 @@ const RenewSubPage = () => {
           />
         </div>
       </div>
+      <Alert
+        title="Sure to proceed?"
+        description="You have an active subscription, proceeding will cancel your current active subscription and subscribe you to the new one regardless of the number of days you have left."
+        open={activeSubReminder}
+        onContinueClick={() => setView("undertaking")}
+        setOpen={(bool) => setActiveSubReminder(bool)}
+      />
       <Modal
         isBack={view !== "main"}
         onBack={() => setView("main")}
@@ -207,7 +218,13 @@ const RenewSubPage = () => {
               fullRadius
               size="lg"
               fullWidth
-              onClick={() => setView("undertaking")}
+              onClick={() => {
+                if (user?.hasActiveSub) {
+                  return setActiveSubReminder(true);
+                }
+
+                setView("undertaking");
+              }}
             />
           </>
         )}

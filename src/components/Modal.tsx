@@ -123,7 +123,7 @@ const Modal: FunctionComponent<Partial<ModalProps>> = ({
           layoutRoot
           className={`fixed inset-0 ${
             bottomSheet ? "sm:p-4" : "p-4"
-          } z-[11000] flex items-center  justify-center overflow-y-auto ${wrapperClass}`}
+          } z-[49] flex items-center  justify-center overflow-y-auto ${wrapperClass}`}
         >
           <motion.div
             initial={{ opacity: 0 }}

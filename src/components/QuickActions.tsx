@@ -8,12 +8,10 @@ import { Icon, LocationTick, RefreshCircle } from "iconsax-react";
 import Link from "next/link";
 import React from "react";
 import Heading from "./Heading";
-import { useGetActiveSubscriptionQuery } from "@/redux/api-slices/subscription.slice";
+import useUser from "@/hooks/useUser";
 
 const QuickActions = () => {
-  const getActiveSubQuery = useGetActiveSubscriptionQuery(null);
-
-  const activeSub = getActiveSubQuery?.data?.data || null;
+  const user = useUser();
 
   const actions: {
     label: string;
@@ -25,7 +23,7 @@ const QuickActions = () => {
       label: "Check In Now",
       path: NEW_CHECK_IN,
       icon: LocationTick,
-      disabled: !activeSub,
+      disabled: !user?.hasActiveSub,
     },
     {
       label: "View Plans",
