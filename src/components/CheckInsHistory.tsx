@@ -78,11 +78,11 @@ export const CheckInHistory = ({ checkIn }: { checkIn: ICheckIn }) => {
       <div className="size-[40px] mr-2 rounded-full shrink-0 bg-gray-600/10 flex justify-center items-center">
         {React.createElement(
           checkIn?.checkInType === "admin" ? SecurityUser : FaPersonWalking,
-          { size: 20, color: "var(--color-gray-600)", variant: "Bold" }
+          { size: 20, color: "var(--color-gray-500)", variant: "Bold" }
         )}
       </div>
       <div>
-        <h1 className="font-semibold tracking-tight font-jaksarta">
+        <h1 className="font-semibold tracking-tight text-[14px]">
           {checkIn?.checkInType === "admin"
             ? `You were checked in by ${checkIn?.checkedInBy?.firstname || ""},`
             : "You checked in"}{" "}
