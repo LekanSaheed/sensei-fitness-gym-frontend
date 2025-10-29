@@ -4,6 +4,7 @@ import "./globals.css";
 
 import ReduxProvider from "../components/providers/redux-provider";
 import LandingPageWrapper from "@/components/landing-page/wrapper";
+import { Suspense } from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -39,7 +40,9 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${jakarta.variable} font-geist-sans antialiased`}
       >
         <ReduxProvider>
-          <>{children}</>
+          <Suspense>
+            <>{children}</>
+          </Suspense>
         </ReduxProvider>
       </body>
     </html>
