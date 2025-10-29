@@ -39,13 +39,12 @@ const LoginPage = () => {
         toggle
         placeholder="Password"
       />
-      <div className="flex justify-end mb-4 -mt-2">
-        <Link
-          href={FORGOT_PASSWORD}
-          className="text-default text-[14px] font-semibold"
-        >
-          Forgot Password?
-        </Link>
+      <div className="mb-5  flex justify-end">
+        <p className="text-[14px] ">
+          <Link href={FORGOT_PASSWORD} className="text-default  font-semibold">
+            Forgot Password?{" "}
+          </Link>
+        </p>
       </div>
       <Button label="Login" fullWidth loading={loading} />
     </form>

@@ -16,6 +16,8 @@ import { useRouter } from "next/navigation";
 import Modal from "@/components/Modal";
 import useUser from "@/hooks/useUser";
 import SectionLoader from "@/components/SectionLoader";
+import Link from "next/link";
+import { LOGIN, TERMS } from "@/constants/routes";
 
 const RenewSubPage = () => {
   const { isLoading, isFetching, isError, data, refetch } =
@@ -249,8 +251,10 @@ const UnderTaking: FunctionComponent<{
   };
 
   const user = useUser();
+
+  const [agreed, setAgreed] = useState(false);
   return (
-    <div className="text-[14px]">
+    <div className="text-[14px] font-jakarta tracking-tight">
       <p>
         {" "}
         I, <span className="font-semibold">{user?.fullname}</span>, agree to the
@@ -267,13 +271,29 @@ const UnderTaking: FunctionComponent<{
         <br /> I release SEN-SEI FITNESS of any liability relating to injury or
         death during my period of exercising. <br />
         <br />
-        I, {user?.fullname}, agree to the terms. <br /> Signature:{" "}
-        {user?.fullname}
+        Signature: {user?.fullname}
+        <br />
+        <label className="inline-flex items-center text-left text-[12px]  mt-3">
+          <input
+            checked={agreed}
+            onChange={(e) => setAgreed(e.target.checked)}
+            type="checkbox"
+            className="mr-2"
+          />
+          <span>
+            I also agree to the{" "}
+            <Link href={TERMS} className="text-default underline">
+              terms and conditions
+            </Link>{" "}
+            of the company.
+          </span>
+        </label>{" "}
       </p>
       <Button
         label="Agree & Proceed to payment"
         color="black"
         fullRadius
+        disabled={!agreed}
         size="lg"
         fullWidth
         onClick={subscribeToPlan}
