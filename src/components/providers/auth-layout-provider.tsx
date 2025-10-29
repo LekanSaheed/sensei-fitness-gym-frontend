@@ -69,6 +69,8 @@ const AuthLayoutProvider = ({ children }: { children: ReactNode }) => {
             blurDataURL="/logo.png"
             className="object-contain"
             fill
+            priority
+            quality={100}
           />
         </div>
       </div>
