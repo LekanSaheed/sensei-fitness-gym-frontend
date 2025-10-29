@@ -16,6 +16,7 @@ import {
 import { Button } from "./ui/button";
 import { FaPersonWalking } from "react-icons/fa6";
 import { ICheckIn } from "@/types";
+import { SecurityUser } from "iconsax-react";
 
 const CheckInsHistory = () => {
   const { data, isLoading, isFetching, isError, refetch } =
@@ -73,18 +74,28 @@ const CheckInsHistory = () => {
 
 export const CheckInHistory = ({ checkIn }: { checkIn: ICheckIn }) => {
   return (
-    <li className=" border-t  py-3 px-5">
-      <h1 className="  font-medium">
-        {checkIn?.checkInType === "admin"
-          ? `You were checked in by ${checkIn?.checkedInBy?.firstname || ""},`
-          : "You checked in"}{" "}
-        {moment(checkIn.createdAt).fromNow()} at{" "}
-        {moment(checkIn.createdAt).format("hh:mm a")}
-      </h1>
-      <p className="text-[12px] text-gray-400">
-        {moment(checkIn?.createdAt).format("llll")} -{" "}
-        <span className="capitalize">{checkIn?.checkInType}</span>
-      </p>
+    <li className=" border-t flex items-center py-3 px-5">
+      <div className="size-[40px] mr-2 rounded-full shrink-0 bg-gray-600/10 flex justify-center items-center">
+        {React.createElement(
+          checkIn?.checkInType === "admin" ? SecurityUser : FaPersonWalking,
+          { size: 20, color: "var(--color-gray-600)", variant: "Bold" }
+        )}
+      </div>
+      <div>
+        <h1 className="  font-medium">
+          {checkIn?.checkInType === "admin"
+            ? `You were checked in by ${checkIn?.checkedInBy?.firstname || ""},`
+            : "You checked in"}{" "}
+          {moment(checkIn.createdAt).fromNow()} at{" "}
+          {moment(checkIn.createdAt).format("hh:mm a")}
+        </h1>
+        <p className="text-[12px] text-gray-400">
+          {moment(checkIn?.createdAt).format("llll")} -{" "}
+          <span className="capitalize text-gray-600">
+            {checkIn?.checkInType}
+          </span>
+        </p>
+      </div>
     </li>
   );
 };

@@ -28,10 +28,10 @@ const QuickActions = () => {
       disabled: !activeSub,
     },
     {
-      label: "Renew",
+      label: "View Plans",
       path: RENEW_SUBSCRIPTION,
       icon: RefreshCircle,
-      disabled: !!activeSub,
+      // disabled: !!activeSub,
     },
     { label: "View My Plans", path: SUBSCRIPTIONS, icon: RefreshCircle },
   ];
