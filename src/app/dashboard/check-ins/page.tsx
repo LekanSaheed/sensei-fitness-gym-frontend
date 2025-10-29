@@ -43,7 +43,7 @@ const CheckIns = () => {
         <>
           {" "}
           {checkIns.length > 0 ? (
-            <div className="bg-white pb-4 rounded-[10px]">
+            <div className="bg-white pb-4 rounded-[10px] dark:bg-card ">
               <ul className="">
                 {checkIns.map((checkIn, id) => {
                   return <CheckInHistory checkIn={checkIn} key={id} />;

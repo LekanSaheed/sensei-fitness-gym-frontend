@@ -306,7 +306,7 @@ const ActivateMemberSubModal = ({
         <Empty className="border border-gray-400">
           <EmptyHeader>
             <EmptyMedia variant={"icon"}>
-              <User color="#222" />
+              <User color="var(--color-secondary-foreground)" />
             </EmptyMedia>
             <EmptyTitle>
               {noMember ? "No Member" : "Search for a member"}

@@ -63,7 +63,10 @@ const SectionCard: FunctionComponent<SectionCardProps> = ({
                 <span className="whitespaces-nowrap">
                   {dropdown?.selected?.label}
                 </span>
-                <ArrowDown2 size={10} color="#222" />
+                <ArrowDown2
+                  size={10}
+                  color="var(--color-secondary-foreground)"
+                />
               </div>
               {open && (
                 <ul className="absolute bg-white w-[120px] right-0 shadow-xl rounded-[10px] border border-gray-300 p-1">

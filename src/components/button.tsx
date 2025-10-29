@@ -70,7 +70,7 @@ const Button: FunctionComponent<ButtonProps> = ({
     }`,
     black: `${
       variantIsContained
-        ? "bg-black disabled:!opacity-70"
+        ? "bg-black disabled:!opacity-70 dark:!bg-primary dark:text-primary-foreground "
         : variantIsGhost
         ? "!text-black bg-none disabled:!text-gray-400"
         : "!text-black !border  !border-black disabled:bg-gray-400 disabled:!border-inactive disabled:!text-inactive"

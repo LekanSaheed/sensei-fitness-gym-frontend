@@ -55,7 +55,7 @@ const CheckIn = () => {
       <SectionLoader loading={loading} error={isError} refetch={refetch} />
 
       {canCheckIn && (
-        <div className="sm:max-w-[400px] mx-auto bg-white p-6 rounded-[10px]">
+        <div className="sm:max-w-[400px] mx-auto bg-white p-6 rounded-[10px] dark:bg-card">
           <div className="text-center mb-4">
             <h1 className="font-black text-[23px]">Check In</h1>
             <p className="text-center  text-gray-500">
@@ -84,12 +84,12 @@ const CheckIn = () => {
 
       {isCheckedIn && !loading && !isError && (
         <div className="sm:max-w-[400px] mx-auto">
-          <div className="bg-white p-6 rounded-[10px]">
+          <div className="bg-white p-6 rounded-[10px] dark:bg-card dark:text-card-foreground">
             <TickCircle size={80} color="green" className="mx-auto mb-4" />
             <h1 className="text-center text-[25px] mb-2 font-bold">
               You have checked in
             </h1>
-            <p className="text-[14px] text-center text-gray-500">
+            <p className="text-[14px] text-center text-gray-500 dark:text-gray-400">
               {"You’re"} checked in for today! Have a productive and enjoyable
               workout session. Remember to stay hydrated and show respect to
               fellow members.

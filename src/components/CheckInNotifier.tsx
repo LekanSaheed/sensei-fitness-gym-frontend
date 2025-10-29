@@ -16,13 +16,13 @@ const CheckInNotifier = () => {
   if (loading || isError) return <></>;
 
   return (
-    <div className="mt-4 bg-white flex items-center gap-2 p-4 rounded-[10px] border border-gray-300/50">
+    <div className="mt-4 bg-white flex items-center gap-2 p-4 rounded-[10px] border border-gray-300/50 dark:bg-secondary dark:border-sidebar">
       {React.createElement(hasCheckedIn ? Star : StarSlash, {
         size: 24,
         color: "var(--color-default)",
         variant: "Bulk",
       })}
-      <p className="font-semibold text-gray-900">
+      <p className="font-semibold text-gray-900 dark:text-secondary-foreground">
         {user?.firstname},{" "}
         {hasCheckedIn
           ? "you've checked in for today"

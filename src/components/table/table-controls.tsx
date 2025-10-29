@@ -257,7 +257,7 @@ export const PageSize: FunctionComponent<{ totalRecords: number }> = ({
           of {totalRecords}
         </p>
         <motion.div className="ml-2" animate={{ rotate: show ? 180 : 0 }}>
-          <ArrowDown2 size={18} color="#222" />
+          <ArrowDown2 size={18} color="var(--color-secondary-foreground)" />
         </motion.div>
       </motion.div>
       {show && (

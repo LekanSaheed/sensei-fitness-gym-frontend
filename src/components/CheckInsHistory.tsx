@@ -28,7 +28,7 @@ const CheckInsHistory = () => {
 
   const noCheckIn = checkIns.length < 1;
   return (
-    <div className="bg-white rounded-[10px]">
+    <div className="bg-white rounded-[10px] dark:bg-card">
       <header className="p-5 pb-3 flex justify-between items-center">
         <Heading className="!mb-0">Check-in History</Heading>
         <Link className="text-[12px] text-default" href={CHECK_INS}>
@@ -74,8 +74,8 @@ const CheckInsHistory = () => {
 
 export const CheckInHistory = ({ checkIn }: { checkIn: ICheckIn }) => {
   return (
-    <li className=" border-t flex items-center py-3 px-5">
-      <div className="size-[40px] mr-2 rounded-full shrink-0 bg-gray-600/10 flex justify-center items-center">
+    <li className=" border-t flex items-center py-3 px-5 dark:text-card-foreground">
+      <div className="size-[40px] mr-2 rounded-full shrink-0 bg-gray-600/10 dark:bg-secondary flex justify-center items-center">
         {React.createElement(
           checkIn?.checkInType === "admin" ? SecurityUser : FaPersonWalking,
           { size: 20, color: "var(--color-gray-500)", variant: "Bold" }

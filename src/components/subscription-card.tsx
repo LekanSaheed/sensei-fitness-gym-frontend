@@ -47,7 +47,7 @@ const SubscriptionCard = () => {
 
   if (!getActiveSubQueryLoading && !getActiveSubQuery.isError && !activeSub)
     return (
-      <div className="bg-white rounded-[16px] overflow-hidden">
+      <div className="bg-white rounded-[16px] overflow-hidden dark:bg-secondary">
         <div className="p-5 flex flex-col justify-center items-center">
           <EmptyMedia variant={"icon"}>
             <MoneyRemove size={22} color="var(--color-default)" />
@@ -61,7 +61,7 @@ const SubscriptionCard = () => {
     );
 
   return (
-    <div className="bg-white border border-default rounded-[16px] overflow-hidden">
+    <div className="bg-white border border-default rounded-[16px] overflow-hidden dark:bg-card dark:text-card-foreground">
       <div className="bg-default/20">
         <div className="p-4.5">
           <h1 className="text-[16px] font-semibold mb-3">
@@ -69,7 +69,7 @@ const SubscriptionCard = () => {
           </h1>
 
           <div>
-            <p className="text-[14px] tracking-tight text-gray-500 mb-1">
+            <p className="text-[14px] tracking-tight text-gray-500 mb-1 dark:text-secondary-foreground">
               {daysLeft} day{daysLeft > 1 ? "s" : ""} left
             </p>
             <div className="relative overflow-hidden rounded-fullh-[10px] flex items-center mb-2">

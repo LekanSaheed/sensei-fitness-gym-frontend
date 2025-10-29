@@ -76,15 +76,15 @@ const Modal: FunctionComponent<Partial<ModalProps>> = ({
               onClick={() => {
                 if (!backDisabled && onBack) onBack();
               }}
-              className={`cursor-pointer top-[20px] left-[10px] absolute z-[5]  inline-flex items-center text-black disabled:!text-gray-300`}
+              className={`cursor-pointer top-[20px] left-[10px] absolute z-[5]  inline-flex items-center text-black disabled:!text-gray-300 dark:text-secondary-foreground`}
             >
-              <ArrowLeft2 size={18} color="#222" />{" "}
+              <ArrowLeft2 size={18} color="var(--color-secondary-foreground)" />{" "}
               <span className="text-[12px] ml-[5px]">Back</span>
             </motion.button>
           )}
           {title && (
             <h3
-              className={`${titleClassName} font-bold text-black tracking-[-0.4px] text-[18px]  ${
+              className={`${titleClassName} font-bold dark:text-popover-foreground tracking-[-0.4px] text-[18px]  ${
                 leftTitlePosition ? "text-left" : "text-center"
               }`}
             >
@@ -100,7 +100,7 @@ const Modal: FunctionComponent<Partial<ModalProps>> = ({
               closeModal();
               onCloseBtnClick && onCloseBtnClick();
             }}
-            className={`h-[23px] bg-gray-200 active:scale-[0.9] active:opacity-50 transition
+            className={`h-[23px] bg-gray-200 dark:bg-secondary active:scale-[0.9] active:opacity-50 transition
              flex items-center justify-center cursor-pointer text-[14px] w-[23px]
                  rounded-full z-[1000]  right-[20px] top-[20px] absolute ${closeBtnClass}`}
           >
@@ -129,7 +129,7 @@ const Modal: FunctionComponent<Partial<ModalProps>> = ({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className=" bg-black/55 fixed inset-0"
+            className=" bg-black/55 fixed inset-0 dark:bg-black/80"
           />
           {open && (
             <motion.div
@@ -144,7 +144,7 @@ const Modal: FunctionComponent<Partial<ModalProps>> = ({
               style={{
                 boxShadow: "0px 32px 20px -22px rgba(62, 62, 62, 0.10)",
               }}
-              className={`max-w-[412px] p-[18px]  rounded-[20px] border border-gray-border-stroke h-auto w-full bg-white   ${
+              className={`max-w-[412px] p-[18px]  rounded-[20px] border border-gray-border-stroke h-auto w-full bg-white dark:bg-card   ${
                 bottomSheet
                   ? "max-sm:!rounded-br-none max-sm:!rounded-bl-none max-sm:!max-w-[unset] max-sm:!bottom-0 absolute sm:relative"
                   : "relative"

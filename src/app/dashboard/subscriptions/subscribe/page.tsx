@@ -77,7 +77,7 @@ const RenewSubPage = () => {
             <motion.div
               layout
               key={id}
-              className={`bg-white p-5 border border-gray-300 rounded-[15px] overflow-hidden mb-3 ${
+              className={`bg-white p-5 border border-gray-300 rounded-[15px] overflow-hidden mb-3 dark:bg-card dark:text-card-foreground dark:border-border ${
                 isSelected ? "!border-default" : ""
               }`}
               onClick={() => {
@@ -88,7 +88,7 @@ const RenewSubPage = () => {
               <motion.div layout>
                 <div className="tracking-tight">
                   <h1 className="font-bold text-[18px] mb-1"> {plan?.name}</h1>
-                  <p className="font-medium text-[14px] text-gray-500">
+                  <p className="font-medium text-[14px] text-gray-500 dark:text-gray-400">
                     {" "}
                     {plan?.description}
                   </p>
@@ -118,14 +118,14 @@ const RenewSubPage = () => {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 100 }}
                     transition={{ type: "tween" }}
-                    className="mt-2 bg-gray-50 border border-gray-200 rounded-[8px] p-3"
+                    className="mt-2 bg-gray-50 border border-gray-200 rounded-[8px] p-3 dark:bg-muted dark:text-muted-foreground dark:border-sidebar-border"
                   >
                     <label className="text-[14px]  inline-flex items-center">
                       <input
                         checked={includeTrainer}
                         onChange={(e) => setIncludeTrainer(e.target.checked)}
                         type="checkbox"
-                        className="size-[20px] mr-2"
+                        className="size-[20px] mr-2 "
                       />
                       <span>
                         Trainer add-on (
@@ -165,10 +165,10 @@ const RenewSubPage = () => {
       >
         {view === "main" && (
           <>
-            <div className="flex gap-2 border border-gray-300 p-4 rounded-[14px] mb-2">
+            <div className="flex gap-2 border border-gray-300 p-4 rounded-[14px] mb-2 dark:border-border dark:bg-muted">
               <div className="flex-1">
                 <h2 className="font-bold">{RawSelectedPlan?.name}</h2>
-                <p className="text-[13px] text-gray-500">
+                <p className="text-[13px] text-gray-500 dark:text-muted-foreground">
                   {RawSelectedPlan?.description}
                 </p>
                 {includeTrainer && (
@@ -178,7 +178,7 @@ const RenewSubPage = () => {
                 )}
               </div>
               <div className="size-[70px] rounded-[16px] shrink-0 bg-black text-center p-0.5 text-white">
-                <p className="border border-white border-b-0 rounded-t-[14px] pt-2 mb-1 text-[18px] font-bold">
+                <p className="border border-white border-b-0 rounded-t-[14px] pt-2 mb-1 text-[18px] font-bold dark:border-muted-foreground ">
                   {RawSelectedPlan?.durationInDays}
                 </p>
                 <p className="uppercase text-[10px] font-light">
@@ -186,7 +186,7 @@ const RenewSubPage = () => {
                 </p>
               </div>
             </div>
-            <div className="p-4 rounded-[14px] border border-gray-300 mb-4">
+            <div className="p-4 rounded-[14px] border border-gray-300 mb-4 dark:border-border dark:bg-muted">
               <h2 className="text-[14px] mb-3 font-semibold">
                 Payment Summary
               </h2>
@@ -271,14 +271,19 @@ const UnderTaking: FunctionComponent<{
 
   const [agreed, setAgreed] = useState(false);
   return (
-    <div className="text-[14px] font-jakarta tracking-tight">
+    <div className="text-[14px] font-jakarta tracking-tight dark:text-primary">
       <p>
         {" "}
-        I, <span className="font-semibold">{user?.fullname}</span>, agree to the
-        terms below
+        I,{" "}
+        <span className="font-semibold dark:text-foreground">
+          {user?.fullname}
+        </span>
+        , agree to the terms below
       </p>
       <br />
-      <h2 className="font-bold text-[16px] mb-2">Undertaking</h2>
+      <h2 className="font-bold text-[16px] mb-2 dark:text-foreground">
+        Undertaking
+      </h2>
       <p className="text-justify mb-4 leading-[180%]">
         {" "}
         By subscribing to be a member in SEN-SEI FITNESS, I am fully aware of my
@@ -290,7 +295,7 @@ const UnderTaking: FunctionComponent<{
         <br />
         Signature: {user?.fullname}
         <br />
-        <label className="inline-flex items-center text-left text-[12px]  mt-3">
+        <label className="inline-flex items-center text-left text-[12px]  mt-3 dark:text-foreground">
           <input
             checked={agreed}
             onChange={(e) => setAgreed(e.target.checked)}

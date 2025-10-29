@@ -46,9 +46,9 @@ const ProfilePage = () => {
 
   return (
     <div>
-      <div className="flex bg-white p-4 rounded-[10px] mb-4">
+      <div className="flex bg-white p-4 rounded-[10px] mb-4 dark:bg-card">
         <Avatar className="size-[70px] mr-3">
-          <AvatarFallback className=" border border-gray-400 !bg-white text-[20px]">
+          <AvatarFallback className=" border border-gray-400 !bg-white text-[20px] dark:!bg-accent dark:border-border">
             {getInitials(memberName)}
           </AvatarFallback>
         </Avatar>
@@ -60,15 +60,19 @@ const ProfilePage = () => {
           <p className="text-[12px] text-default">@{user?.username}</p>
         </div>
       </div>
-      <ul className="bg-white p-2 mb-4">
+      <ul className="bg-white p-2 mb-4 dark:bg-card">
         {actions.map((action, id) => {
           return (
             <li
               onClick={() => handleStateChange({ [action.id]: true })}
               key={id}
-              className="flex cursor-pointer justify-between items-center px-2 py-4 border-b last:border-b-0"
+              className="flex cursor-pointer justify-between items-center px-2 py-4 border-b last:border-b-0 dark:border-b-sidebar-border"
             >
-              {action.label} <ArrowRight2 size={16} color="#222" />
+              {action.label}{" "}
+              <ArrowRight2
+                size={16}
+                color="var(--color-secondary-foreground)"
+              />
             </li>
           );
         })}

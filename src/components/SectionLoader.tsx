@@ -26,20 +26,22 @@ const SectionLoader = ({
 
   if (error) {
     return (
-      <Empty className="border border-gray-400">
-        <EmptyHeader>
-          <EmptyMedia variant={"icon"}>
-            <CloudCross color="#222" />
-          </EmptyMedia>
-          <EmptyTitle>Fetch Error</EmptyTitle>
-          <EmptyDescription>
-            An error occured while making the request, please try again
-          </EmptyDescription>
-        </EmptyHeader>
-        <EmptyContent>
-          <Button onClick={refetch}>Retry</Button>
-        </EmptyContent>
-      </Empty>
+      <div className="p-4">
+        <Empty className="border border-gray-400">
+          <EmptyHeader>
+            <EmptyMedia variant={"icon"}>
+              <CloudCross color="var(--color-foreground)" />
+            </EmptyMedia>
+            <EmptyTitle>Fetch Error</EmptyTitle>
+            <EmptyDescription>
+              An error occured while making the request, please try again
+            </EmptyDescription>
+          </EmptyHeader>
+          <EmptyContent>
+            <Button onClick={refetch}>Retry</Button>
+          </EmptyContent>
+        </Empty>
+      </div>
     );
   }
   return (

@@ -1,7 +1,7 @@
 import useUser from "@/hooks/useUser";
 import React from "react";
 import { useIsSubPath } from "./mobile-nav";
-import { ArrowLeft2 } from "iconsax-react";
+import { ArrowLeft2, Moon, Sun, Sun1 } from "iconsax-react";
 import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { NEW_CHECK_IN, RENEW_SUBSCRIPTION } from "@/constants/routes";
@@ -9,6 +9,7 @@ import moment from "moment";
 import { label } from "framer-motion/client";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import { collocateMemberName, getInitials } from "@/utils";
+import { useColorScheme } from "@/hooks/useColorScheme";
 
 const Header = () => {
   const user = useUser();
@@ -44,16 +45,18 @@ const Header = () => {
     }
   }
 
+  const { scheme, toggleScheme } = useColorScheme();
+
   return (
-    <header className="sticky top-0 px-4  pt-4 z-[2]">
-      <div className="bg-white rounded-full px-3 h-[70px] flex items-center border border-gray-200">
+    <header className="sticky top-0 px-4  pt-4 z-[2] ">
+      <div className="bg-white rounded-full px-3 h-[70px] flex items-center border border-gray-200 dark:bg-secondary dark:border-border">
         <div className="flex justify-between items-center flex-1">
           <AnimatePresence>
             {isSubPath ? (
               <>
                 <div>
                   <div
-                    className="flex items-center border rounded-full bg-white border-default/50  justify-center size-[40px]"
+                    className="flex items-center border rounded-full bg-white dark:bg-muted border-default/50  justify-center size-[40px]"
                     onClick={() => router.back()}
                   >
                     {" "}
@@ -72,7 +75,7 @@ const Header = () => {
               </>
             ) : (
               <div className="flex items-center">
-                <Avatar className="size-11 border border-gray-400 mr-2">
+                <Avatar className="size-11 border border-gray-400 mr-2 dark:border-border">
                   <AvatarFallback>
                     {getInitials(collocateMemberName(user!))}
                   </AvatarFallback>
@@ -86,7 +89,15 @@ const Header = () => {
               </div>
             )}
           </AnimatePresence>
-          <div className="size-[40px]"></div>
+          <div
+            className="size-[40px] flex items-center justify-center shrink-0"
+            onClick={toggleScheme}
+          >
+            {React.createElement(scheme === "dark" ? Sun1 : Moon, {
+              size: 22,
+              color: "var(--color-secondary-foreground)",
+            })}
+          </div>
         </div>
       </div>
     </header>

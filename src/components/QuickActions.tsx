@@ -50,7 +50,7 @@ const QuickActions = () => {
                 }
               }}
               href={action.path}
-              className="inline-flex  flex-col bg-white p-3 rounded-[15px] aria-[disabled=true]:!bg-gray-700/10 items-center w-full max-w-[120px]"
+              className="inline-flex  flex-col bg-white p-3 rounded-[15px] aria-[disabled=true]:!bg-gray-700/10 items-center w-full max-w-[120px] dark:bg-card"
             >
               <div
                 className={` mb-2 size-[50px] border rounded-full inline-flex items-center justify-center ${

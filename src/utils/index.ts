@@ -52,3 +52,5 @@ export const collocateMemberName = (member: IUser) =>
 export const pageSizeOptions = [24, 40, 50, 100, 500];
 
 export const defaultPageSize = pageSizeOptions[0];
+
+export const isWindow = typeof window !== "undefined";

@@ -26,7 +26,7 @@ const MobileNav = () => {
           initial={{ opacity: 0, y: "100%" }}
           animate={{ opacity: 1, y: "0" }}
           exit={{ opacity: 0, y: "100%" }}
-          className="fixed left-0 right-0 bg-white bottom-0 border-t border-t-gray-300"
+          className="fixed left-0 right-0 bg-white bottom-0 border-t border-t-gray-300 dark:bg-secondary dark:border-border"
         >
           <div className="flex justify-evenly p-3">
             {nav_links.map((link, id) => {
@@ -38,7 +38,9 @@ const MobileNav = () => {
                   className={`inline-flex items-center text-center flex-col  ${
                     isHome
                       ? `size-[55px] shrink-0 inline-flex items-center justify-center border border-default shsadow-[0px_7px_10px_2px_rgb(0,0,0,0.4)] rounded-full -mt-[30px] ${
-                          isActive ? "bg-default !text-white " : "bg-white"
+                          isActive
+                            ? "bg-default !text-white "
+                            : "bg-white dark:bg-card"
                         }`
                       : " w-[20%]"
                   }`}
