@@ -7,6 +7,8 @@ import moment from "moment";
 import Link from "next/link";
 import React from "react";
 import Button from "./button";
+import { EmptyMedia } from "./ui/empty";
+import { MoneyRemove } from "iconsax-react";
 
 const SubscriptionCard = () => {
   const getActiveSubQuery = useGetActiveSubscriptionQuery(null);
@@ -47,9 +49,12 @@ const SubscriptionCard = () => {
     return (
       <div className="bg-white rounded-[16px] overflow-hidden">
         <div className="p-5 flex flex-col justify-center items-center">
+          <EmptyMedia variant={"icon"}>
+            <MoneyRemove size={22} color="var(--color-default)" />
+          </EmptyMedia>
           <p className="mb-3"> You have no active subscription</p>
           <Link href={RENEW_SUBSCRIPTION}>
-            <Button label="View plans" />
+            <Button label="View subscription plans" />
           </Link>
         </div>
       </div>
@@ -68,7 +73,7 @@ const SubscriptionCard = () => {
               {daysLeft} day{daysLeft > 1 ? "s" : ""} left
             </p>
             <div className="relative overflow-hidden rounded-fullh-[10px] flex items-center mb-2">
-              <div className="bg-default/40 absolute rounded-full inset-0 h-[5px] top-[1px]"></div>
+              <div className="bg-white absolute rounded-full inset-0 h-[5px] top-[1px]"></div>
               <div
                 className="bg-default h-[7px] rounded-full relative z-[1]"
                 style={{ width: `${width}%` }}

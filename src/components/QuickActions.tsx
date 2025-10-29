@@ -15,18 +15,33 @@ const QuickActions = () => {
 
   const activeSub = getActiveSubQuery?.data?.data || null;
 
-  const actions: { label: string; path: string; icon: Icon }[] = [
-    { label: "Check In Now", path: NEW_CHECK_IN, icon: LocationTick },
-    { label: "Renew", path: RENEW_SUBSCRIPTION, icon: RefreshCircle },
+  const actions: {
+    label: string;
+    path: string;
+    icon: Icon;
+    disabled?: boolean;
+  }[] = [
+    {
+      label: "Check In Now",
+      path: NEW_CHECK_IN,
+      icon: LocationTick,
+      disabled: !activeSub,
+    },
+    {
+      label: "Renew",
+      path: RENEW_SUBSCRIPTION,
+      icon: RefreshCircle,
+      disabled: !!activeSub,
+    },
     { label: "View My Plans", path: SUBSCRIPTIONS, icon: RefreshCircle },
   ];
 
-  const disabled = !activeSub;
   return (
     <div className="my-4">
       <Heading>Quick actions</Heading>
       <div className="flex justify-evenly gap-4">
         {actions.map((action, id) => {
+          const disabled = action?.disabled;
           return (
             <Link
               aria-disabled={disabled}

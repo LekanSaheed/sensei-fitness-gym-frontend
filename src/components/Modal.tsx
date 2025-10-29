@@ -78,7 +78,7 @@ const Modal: FunctionComponent<Partial<ModalProps>> = ({
               }}
               className={`cursor-pointer top-[20px] left-[10px] absolute z-[5]  inline-flex items-center text-black disabled:!text-gray-300`}
             >
-              <ArrowLeft2 size={18} />{" "}
+              <ArrowLeft2 size={18} color="#222" />{" "}
               <span className="text-[12px] ml-[5px]">Back</span>
             </motion.button>
           )}

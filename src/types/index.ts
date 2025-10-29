@@ -26,6 +26,7 @@ export interface PaginationInfo {
   pageSize: number;
   totalPages: number;
   totalItems: number;
+  hasNext: boolean;
 }
 
 export type PaginatedResponse<T = unknown> = ResponseType<{

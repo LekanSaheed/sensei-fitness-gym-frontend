@@ -1,5 +1,11 @@
-import { ICheckIn, PaginatedResponse, ResponseType } from "@/types";
+import {
+  ICheckIn,
+  PaginatedResponse,
+  PaginationQuery,
+  ResponseType,
+} from "@/types";
 import { api } from "../api";
+import { formatQuery } from "@/utils";
 
 export interface ISubscriptionPlan {
   name: string;
@@ -73,7 +79,6 @@ const subscriptionApi = api.injectEndpoints({
         string
       >({
         query: (ref) => `/subscriptions/activate?ref=${ref}`,
-        keepUnusedDataFor: 0,
       }),
       checkIn: build.mutation<ResponseType, null>({
         query: () => ({
@@ -88,7 +93,7 @@ const subscriptionApi = api.injectEndpoints({
         null
       >({
         query: () => "/subscriptions/check-ins/is-checked-in-today",
-        keepUnusedDataFor: 0,
+
         providesTags: ["has-checked-in"],
       }),
       getCheckInAnalytics: build.query<
@@ -101,6 +106,27 @@ const subscriptionApi = api.injectEndpoints({
       getRecentCheckIns: build.query<PaginatedResponse<ICheckIn[]>, null>({
         query: () => `/subscriptions/check-ins?page=1&limit=${15}`,
         providesTags: ["has-checked-in"],
+      }),
+      getCheckInHistory: build.infiniteQuery<
+        PaginatedResponse<ICheckIn[]>,
+        Omit<PaginationQuery, "page">,
+        { page: number }
+      >({
+        query: ({ pageParam, queryArg }) =>
+          `/subscriptions/check-ins?${formatQuery(queryArg)}&${formatQuery(
+            pageParam
+          )}`,
+        infiniteQueryOptions: {
+          initialPageParam: {
+            page: 1,
+          },
+          getNextPageParam(lastPage, allPages, lastPageParam, allPageParams) {
+            if (!lastPage?.data?.paginationInfo?.hasNext) return undefined;
+            return {
+              page: lastPageParam?.page + 1,
+            };
+          },
+        },
       }),
     };
   },
@@ -115,4 +141,5 @@ export const {
   useCheckIfCheckedInTodayQuery,
   useGetCheckInAnalyticsQuery,
   useGetRecentCheckInsQuery,
+  useGetCheckInHistoryInfiniteQuery,
 } = subscriptionApi;

@@ -5,7 +5,7 @@ import {
   useSubscribeMutation,
 } from "@/redux/api-slices/subscription.slice";
 import FormatNumber from "@/utils/format-number";
-import React, { useState } from "react";
+import React, { FunctionComponent, useState } from "react";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import Button from "@/components/button";
 import { isFetchBaseQueryError } from "@/utils";
@@ -15,10 +15,13 @@ import { DEFAULT_ERROR_MESSAGE } from "@/constants";
 import { useRouter } from "next/navigation";
 import Modal from "@/components/Modal";
 import useUser from "@/hooks/useUser";
+import SectionLoader from "@/components/SectionLoader";
 
 const RenewSubPage = () => {
   const { isLoading, isFetching, isError, data, refetch } =
     useGetPlansQuery(null);
+
+  const loading = isLoading || isFetching;
 
   const plans = data?.data?.plans || [];
 
@@ -29,30 +32,6 @@ const RenewSubPage = () => {
   const [includeTrainer, setIncludeTrainer] = useState(false);
 
   const [openModal, setOpenModal] = useState(false);
-
-  const [subscribe, subscribeStatus] = useSubscribeMutation();
-
-  const router = useRouter();
-
-  const subscribeToPlan = async () => {
-    const res = await subscribe({ includeTrainer, plan: selectedPlan });
-
-    if ("error" in res && isFetchBaseQueryError(res.error)) {
-      const errorData = res.error.data as ErrorResponse;
-
-      toast.error(errorData?.error || DEFAULT_ERROR_MESSAGE);
-    } else {
-      const response = res?.data;
-
-      if (response?.success) {
-        const url = response?.data?.authorization_url;
-
-        router.push(url!);
-      } else {
-        toast.error(response?.error || DEFAULT_ERROR_MESSAGE);
-      }
-    }
-  };
 
   const RawSelectedPlan = plans.find((p) => p?._id === selectedPlan);
 
@@ -78,9 +57,12 @@ const RenewSubPage = () => {
     (acc, curr) => acc + curr?.amount,
     0
   );
+
+  const [view, setView] = useState<"main" | "undertaking">("main");
   return (
     <LayoutGroup>
       <div>
+        <SectionLoader loading={loading} error={isError} refetch={refetch} />
         {plans.map((plan, id) => {
           const hasTrainerFee = plan?.trainerFee > 0;
 
@@ -160,64 +142,144 @@ const RenewSubPage = () => {
           />
         </div>
       </div>
-      <Modal title="Confirm Details" open={openModal} setOpen={setOpenModal}>
-        <div className="flex gap-2 border border-gray-300 p-4 rounded-[14px] mb-2">
-          <div className="flex-1">
-            <h2 className="font-bold">{RawSelectedPlan?.name}</h2>
-            <p className="text-[13px] text-gray-500">
-              {RawSelectedPlan?.description}
-            </p>
-            {includeTrainer && (
-              <p className="text-[12px] border border-default text-default px-2 py-1 w-fit rounded-[10px] mt-1">
-                Trainer included
-              </p>
-            )}
-          </div>
-          <div className="size-[70px] rounded-[16px] shrink-0 bg-black text-center p-0.5 text-white">
-            <p className="border border-white border-b-0 rounded-t-[14px] pt-2 mb-1 text-[18px] font-bold">
-              {RawSelectedPlan?.durationInDays}
-            </p>
-            <p className="uppercase text-[10px] font-light">
-              Day{(RawSelectedPlan?.durationInDays || 0) > 1 ? "s" : ""}
-            </p>
-          </div>
-        </div>
-        <div className="p-4 rounded-[14px] border border-gray-300 mb-4">
-          <h2 className="text-[14px] mb-3 font-semibold">Payment Summary</h2>
-          <ul>
-            {feesThatApply.map((fee) => {
-              return (
-                <li
-                  key={fee.label}
-                  className="flex justify-between text-[14px] mb-2 "
-                >
-                  <span className="text-[#949494]">{fee?.label}</span>
+      <Modal
+        isBack={view !== "main"}
+        onBack={() => setView("main")}
+        onClose={() => setView("main")}
+        title="Confirm Details"
+        open={openModal}
+        setOpen={setOpenModal}
+      >
+        {view === "main" && (
+          <>
+            <div className="flex gap-2 border border-gray-300 p-4 rounded-[14px] mb-2">
+              <div className="flex-1">
+                <h2 className="font-bold">{RawSelectedPlan?.name}</h2>
+                <p className="text-[13px] text-gray-500">
+                  {RawSelectedPlan?.description}
+                </p>
+                {includeTrainer && (
+                  <p className="text-[12px] border border-default text-default px-2 py-1 w-fit rounded-[10px] mt-1">
+                    Trainer included
+                  </p>
+                )}
+              </div>
+              <div className="size-[70px] rounded-[16px] shrink-0 bg-black text-center p-0.5 text-white">
+                <p className="border border-white border-b-0 rounded-t-[14px] pt-2 mb-1 text-[18px] font-bold">
+                  {RawSelectedPlan?.durationInDays}
+                </p>
+                <p className="uppercase text-[10px] font-light">
+                  Day{(RawSelectedPlan?.durationInDays || 0) > 1 ? "s" : ""}
+                </p>
+              </div>
+            </div>
+            <div className="p-4 rounded-[14px] border border-gray-300 mb-4">
+              <h2 className="text-[14px] mb-3 font-semibold">
+                Payment Summary
+              </h2>
+              <ul>
+                {feesThatApply.map((fee) => {
+                  return (
+                    <li
+                      key={fee.label}
+                      className="flex justify-between text-[14px] mb-2 "
+                    >
+                      <span className="text-[#949494]">{fee?.label}</span>
+                      <span className="font-semibold">
+                        {FormatNumber.ngnAmount(fee?.amount)}
+                      </span>
+                    </li>
+                  );
+                })}
+                <li className="flex justify-between text-[14px]  border-t pt-2 border-t-gray-300">
+                  <span className="text-[#949494]">Total</span>
                   <span className="font-semibold">
-                    {FormatNumber.ngnAmount(fee?.amount)}
+                    {FormatNumber.ngnAmount(totalAmount)}
                   </span>
                 </li>
-              );
-            })}
-            <li className="flex justify-between text-[14px]  border-t pt-2 border-t-gray-300">
-              <span className="text-[#949494]">Total</span>
-              <span className="font-semibold">
-                {FormatNumber.ngnAmount(totalAmount)}
-              </span>
-            </li>
-          </ul>
-        </div>
-        <Button
-          label="Proceed to payment"
-          color="black"
-          fullRadius
-          size="lg"
-          fullWidth
-          onClick={subscribeToPlan}
-          loading={subscribeStatus.isLoading}
-        />
+              </ul>
+            </div>
+            <Button
+              label="Proceed"
+              color="black"
+              fullRadius
+              size="lg"
+              fullWidth
+              onClick={() => setView("undertaking")}
+            />
+          </>
+        )}
+        {view === "undertaking" && (
+          <UnderTaking
+            includeTrainer={includeTrainer}
+            selectedPlan={selectedPlan}
+          />
+        )}
       </Modal>
     </LayoutGroup>
   );
 };
 
+const UnderTaking: FunctionComponent<{
+  includeTrainer: boolean;
+  selectedPlan: string;
+}> = ({ includeTrainer, selectedPlan }) => {
+  const [subscribe, subscribeStatus] = useSubscribeMutation();
+
+  const router = useRouter();
+
+  const subscribeToPlan = async () => {
+    const res = await subscribe({ includeTrainer, plan: selectedPlan });
+
+    if ("error" in res && isFetchBaseQueryError(res.error)) {
+      const errorData = res.error.data as ErrorResponse;
+
+      toast.error(errorData?.error || DEFAULT_ERROR_MESSAGE);
+    } else {
+      const response = res?.data;
+
+      if (response?.success) {
+        const url = response?.data?.authorization_url;
+
+        router.push(url!);
+      } else {
+        toast.error(response?.error || DEFAULT_ERROR_MESSAGE);
+      }
+    }
+  };
+
+  const user = useUser();
+  return (
+    <div className="text-[14px]">
+      <p>
+        {" "}
+        I, <span className="font-semibold">{user?.fullname}</span>, agree to the
+        terms below
+      </p>
+      <br />
+      <h2 className="font-bold text-[16px] mb-2">Undertaking</h2>
+      <p className="text-justify mb-4 leading-[180%]">
+        {" "}
+        By subscribing to be a member in SEN-SEI FITNESS, I am fully aware of my
+        health status and I hereby agree that my health status permits me to
+        exercise.
+        <br />
+        <br /> I release SEN-SEI FITNESS of any liability relating to injury or
+        death during my period of exercising. <br />
+        <br />
+        I, {user?.fullname}, agree to the terms. <br /> Signature:{" "}
+        {user?.fullname}
+      </p>
+      <Button
+        label="Agree & Proceed to payment"
+        color="black"
+        fullRadius
+        size="lg"
+        fullWidth
+        onClick={subscribeToPlan}
+        loading={subscribeStatus.isLoading}
+      />
+    </div>
+  );
+};
 export default RenewSubPage;
