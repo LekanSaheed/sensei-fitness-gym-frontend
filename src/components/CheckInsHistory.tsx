@@ -82,7 +82,7 @@ export const CheckInHistory = ({ checkIn }: { checkIn: ICheckIn }) => {
         )}
       </div>
       <div>
-        <h1 className="  font-medium">
+        <h1 className="font-semibold tracking-tight font-jaksarta">
           {checkIn?.checkInType === "admin"
             ? `You were checked in by ${checkIn?.checkedInBy?.firstname || ""},`
             : "You checked in"}{" "}
