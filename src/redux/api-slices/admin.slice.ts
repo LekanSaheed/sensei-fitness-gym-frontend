@@ -21,6 +21,7 @@ export type UserWithSub = IUser & {
     | "includesTrainer"
     | "planNameSnapshot"
     | "paymentMode"
+    | "planDurationInDaysSnapshot"
   > | null;
 };
 
@@ -41,8 +42,12 @@ const adminApi = api.injectEndpoints({
         query: (query) => `/admin/members?${formatQuery(query)}`,
         providesTags: ["members"],
       }),
-      getMemberById: build.query<ResponseType<IUser>, string>({
-        query: (id) => `/admin/members/${id}`,
+      getMemberById: build.query<
+        ResponseType<UserWithSub>,
+        { id: string; includeSub?: boolean }
+      >({
+        query: ({ id, includeSub }) =>
+          `/admin/members/${id}?includeSub=${includeSub || false}`,
         providesTags: ["member"],
       }),
       getCheckIns: build.query<

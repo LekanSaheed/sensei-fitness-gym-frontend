@@ -14,3 +14,13 @@ const usePaginate = (totalRecords: number) => {
   return { totalRecords, totalPages, page, pageSize };
 };
 export default usePaginate;
+
+export const usePaginationProps = () => {
+  const searchParams = useSearchParams();
+
+  const page = searchParams.get("page") || "1";
+
+  const limit = searchParams.get("pageSize") || String(defaultPageSize);
+
+  return { page, limit };
+};
