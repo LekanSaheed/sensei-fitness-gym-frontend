@@ -41,7 +41,7 @@ const CheckInCalendar = () => {
           classNames={{
             month_grid: "w-full",
             months: "w-full",
-            weeks: `${defaultClassNames.weeks} !h-[280px]`,
+            weeks: `${defaultClassNames.weeks}`,
             today: "",
             day: `${defaultClassNames.day} text-[12px]`,
             chevron: `${defaultClassNames.chevron} !fill-default-secondary`,
@@ -63,7 +63,7 @@ const CheckInCalendar = () => {
 
               console.log({ checkInType, day: props.day.date, days });
               return (
-                <td {...props}>
+                <td {...props} className={`${props.className} pb-[13px]`}>
                   <button
                     className={`${
                       defaultClassNames?.day_button
