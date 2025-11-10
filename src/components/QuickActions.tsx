@@ -4,7 +4,7 @@ import {
   RENEW_SUBSCRIPTION,
   SUBSCRIPTIONS,
 } from "@/constants/routes";
-import { Icon, LocationTick, RefreshCircle } from "iconsax-react";
+import { HeartTick, Icon, LocationTick, RefreshCircle } from "iconsax-react";
 import Link from "next/link";
 import React from "react";
 import Heading from "./Heading";
@@ -28,7 +28,7 @@ const QuickActions = () => {
     {
       label: "View Plans",
       path: RENEW_SUBSCRIPTION,
-      icon: RefreshCircle,
+      icon: HeartTick,
       // disabled: !!activeSub,
     },
     { label: "View My Plans", path: SUBSCRIPTIONS, icon: RefreshCircle },
