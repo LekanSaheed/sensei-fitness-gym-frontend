@@ -43,7 +43,7 @@ export default function DashboardAreaChart() {
 
   const loading = isLoading || isFetching;
 
-  const selected = filters.find((f) => f.value === preset) || filters[2];
+  const selected = filters.find((f) => f.value === preset) || filters[1];
 
   const formattedData: DataPoint[] = stats.map((stat) => ({
     time: loading
