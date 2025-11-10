@@ -22,5 +22,7 @@ export const usePaginationProps = () => {
 
   const limit = searchParams.get("pageSize") || String(defaultPageSize);
 
-  return { page, limit };
+  const preset = searchParams.get("preset") || "";
+
+  return { page, limit, preset };
 };

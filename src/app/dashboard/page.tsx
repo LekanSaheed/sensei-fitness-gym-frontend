@@ -1,5 +1,6 @@
 "use client";
 
+import CheckInCalendar from "@/components/CheckInCalendar";
 import CheckInNotifier from "@/components/CheckInNotifier";
 import CheckInsHistory from "@/components/CheckInsHistory";
 import QuickActions from "@/components/QuickActions";
@@ -12,7 +13,8 @@ const UserHomePage = () => {
       <SubscriptionCard />
       <CheckInNotifier />
       <QuickActions />
-      <CheckInsHistory />
+      <CheckInCalendar />
+      {/* <CheckInsHistory /> */}
     </div>
   );
 };

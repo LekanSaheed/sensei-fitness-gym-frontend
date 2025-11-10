@@ -54,13 +54,13 @@ const SectionCard: FunctionComponent<SectionCardProps> = ({
           )}
         </CardTitle>
         {dropdown?.options?.length > 1 && (
-          <CardAction>
+          <div className="absolute top-6 right-6">
             <div className="relative">
               <div
                 className="text-[10px] flex gap-1 items-center border-b border-black/80 justify-between cursor-pointer"
                 onClick={() => setOpen(!open)}
               >
-                <span className="whitespaces-nowrap">
+                <span className="whitespaces-nowrap bg-white">
                   {dropdown?.selected?.label}
                 </span>
                 <ArrowDown2
@@ -69,7 +69,7 @@ const SectionCard: FunctionComponent<SectionCardProps> = ({
                 />
               </div>
               {open && (
-                <ul className="absolute bg-white w-[120px] right-0 shadow-xl rounded-[10px] border border-gray-300 p-1">
+                <ul className="absolute bg-white w-[120px] right-0 shadow-xl rounded-[10px] border border-gray-300 p-1 z-[100]">
                   {dropdown?.options?.map((option) => {
                     const isSelected =
                       option?.value === dropdown?.selected?.value;
@@ -94,7 +94,7 @@ const SectionCard: FunctionComponent<SectionCardProps> = ({
                 </ul>
               )}
             </div>
-          </CardAction>
+          </div>
         )}
       </CardHeader>
 

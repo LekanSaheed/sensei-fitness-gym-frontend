@@ -193,6 +193,18 @@ const adminApi = api.injectEndpoints({
         }),
         invalidatesTags: ["admin", "admins"],
       }),
+      getRevenueChartData: build.query<
+        ResponseType<{
+          data: { label: string; total: number }[];
+          totalRevenue: number;
+        }>,
+        { preset: string }
+      >({
+        query: ({ preset }) => ({
+          url: `/admin/dashboard/revenue-chart?preset=${preset}`,
+          method: "get",
+        }),
+      }),
     };
   },
 });
@@ -217,4 +229,5 @@ export const {
   useGetInvitationsQuery,
   useResendInviteNotificationMutation,
   useUpdateAdminMutation,
+  useGetRevenueChartDataQuery,
 } = adminApi;

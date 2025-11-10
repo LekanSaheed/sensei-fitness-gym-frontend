@@ -8,7 +8,7 @@ const AdminDashboardWrapper = ({ children }: { children: ReactNode }) => {
     <div>
       <SideNav />
       <AdminMobileNav />
-      <div className="md:ml-[220px]">
+      <div className="md:ml-[220px] bg-gray-50/80 ">
         <Header />
         <div className="p-4">{children}</div>
       </div>

@@ -127,6 +127,15 @@ const subscriptionApi = api.injectEndpoints({
             };
           },
         },
+        providesTags: ["has-checked-in"],
+      }),
+      getCheckInsForMonth: build.query<
+        ResponseType<{ day: string; type: ICheckIn["checkInType"] }[]>,
+        { month: number; year: number }
+      >({
+        query: ({ month, year }) =>
+          `/subscriptions/check-ins/month?month=${month}&year=${year}`,
+        providesTags: ["has-checked-in"],
       }),
     };
   },
@@ -142,4 +151,5 @@ export const {
   useGetCheckInAnalyticsQuery,
   useGetRecentCheckInsQuery,
   useGetCheckInHistoryInfiniteQuery,
+  useGetCheckInsForMonthQuery,
 } = subscriptionApi;

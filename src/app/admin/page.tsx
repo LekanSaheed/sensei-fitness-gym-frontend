@@ -1,5 +1,6 @@
 "use client";
 
+import DashboardAreaChart from "@/components/DashboardAreaChart";
 import SectionCard, { SectionCardProps } from "@/components/SectionCard";
 import { DropdownOption } from "@/components/select-input";
 import {
@@ -107,6 +108,11 @@ const AdminHomePage = () => {
         {cards.map((card, id) => {
           return <SectionCard {...card} key={id} />;
         })}
+      </div>
+      <div className="lg:flex gap-4">
+        <div className="lg:basis-[70%] ">
+          <DashboardAreaChart />
+        </div>
       </div>
     </div>
   );

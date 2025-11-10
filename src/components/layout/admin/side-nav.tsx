@@ -20,7 +20,7 @@ const SideNav = () => {
 
   console.log(menus, "MENUES");
   return (
-    <aside className="max-md:hidden w-[220px] fixed left-0 bottom-0 top-0 p-4 border-r bg-gray-50/80 border-r-gray-300">
+    <aside className="max-md:hidden w-[220px] fixed left-0 bottom-0 top-0 p-4 border-r bg-white border-r-gray-300">
       <div className="relative h-[60px] w-[160px] mb-[10px]">
         <Image src={"/logo.png"} alt="logo" fill className="object-contain" />
       </div>

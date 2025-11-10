@@ -96,7 +96,7 @@ const Table = <
         {beforeTable}
         <motion.div
           layout="position"
-          className="border overflow-auto relative border-gray-300 rounded-[8px] min-h-[400px] max-h-[80vh]"
+          className="border bg-white overflow-auto relative border-gray-300 rounded-[8px] min-h-[400px] max-h-[80vh]"
         >
           {(loading || noRecords || error) && (
             <div className="absolute pointer-events-none inset-0 flex items-center justify-center">
