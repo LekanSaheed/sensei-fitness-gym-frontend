@@ -17,9 +17,9 @@ const ScanPage = () => {
       <QRCode
         value={url}
         logoImage={logo?.src}
-        logoHeight={80}
+        logoHeight={50}
         removeQrCodeBehindLogo
-        logoWidth={80}
+        logoWidth={50}
         logoPaddingStyle="square"
         size={250}
         qrStyle="dots"
