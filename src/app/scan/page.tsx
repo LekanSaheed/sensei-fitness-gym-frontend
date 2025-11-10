@@ -8,7 +8,7 @@ import logo from "../../../public/square_logo.jpg";
 const ScanPage = () => {
   console.log(logo.src);
   const url = isWindow
-    ? `${window.location.origin}/dashboard/check-in/new`
+    ? `${window.location.origin}/dashboard/check-ins/new`
     : "";
   return (
     <div className="fixed inset-0 flex items-center justify-center text-center flex-col">
