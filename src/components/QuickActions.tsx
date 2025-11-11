@@ -42,7 +42,7 @@ const QuickActions = () => {
           const disabled = action?.disabled;
           return (
             <Link
-              scroll={false}
+              scroll={true}
               aria-disabled={disabled}
               key={id}
               onClick={(e) => {
