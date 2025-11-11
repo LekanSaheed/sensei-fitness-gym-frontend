@@ -47,6 +47,7 @@ export interface ISubscription {
   trainerFeeSnapshot?: number;
   includesTrainer: boolean;
   totalAmount: number;
+  _id: string;
 }
 
 const subscriptionApi = api.injectEndpoints({
@@ -137,6 +138,26 @@ const subscriptionApi = api.injectEndpoints({
           `/subscriptions/check-ins/month?month=${month}&year=${year}`,
         providesTags: ["has-checked-in"],
       }),
+      getSubscriptionsHistory: build.infiniteQuery<
+        PaginatedResponse<ISubscription[]>,
+        Omit<PaginationQuery, "page">,
+        { page: number }
+      >({
+        query: ({ pageParam, queryArg }) =>
+          `/subscriptions/?${formatQuery(queryArg)}&${formatQuery(pageParam)}`,
+        infiniteQueryOptions: {
+          initialPageParam: {
+            page: 1,
+          },
+          getNextPageParam(lastPage, allPages, lastPageParam, allPageParams) {
+            if (!lastPage?.data?.paginationInfo?.hasNext) return undefined;
+            return {
+              page: lastPageParam?.page + 1,
+            };
+          },
+        },
+        providesTags: ["subscriptions"],
+      }),
     };
   },
 });
@@ -152,4 +173,5 @@ export const {
   useGetRecentCheckInsQuery,
   useGetCheckInHistoryInfiniteQuery,
   useGetCheckInsForMonthQuery,
+  useGetSubscriptionsHistoryInfiniteQuery,
 } = subscriptionApi;

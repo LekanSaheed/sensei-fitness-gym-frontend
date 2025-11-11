@@ -22,7 +22,7 @@ import {
   isFetchBaseQueryError,
 } from "@/utils";
 import { useFormik } from "formik";
-import { ArrowRight2 } from "iconsax-react";
+import { ArrowRight2, LogoutCurve } from "iconsax-react";
 import { useRouter } from "next/navigation";
 import React, { FunctionComponent } from "react";
 import toast from "react-hot-toast";
@@ -37,6 +37,7 @@ const ProfilePage = () => {
   const { handleStateChange, state } = useStateReducer({
     profileUpdateModal: false,
     passwordUpdateModal: false,
+    logoutModal: false,
   });
 
   const actions: { label: string; id: keyof typeof state }[] = [
@@ -77,7 +78,13 @@ const ProfilePage = () => {
           );
         })}
       </ul>
-      <Button size="lg" label="Logout" fullWidth color="black" />
+      <Button
+        onClick={() => handleStateChange({ logoutModal: true })}
+        size="lg"
+        label="Logout"
+        fullWidth
+        color="black"
+      />
       <UpdateProfileDetails
         open={state.profileUpdateModal}
         setOpen={(bool) => handleStateChange({ profileUpdateModal: bool })}
@@ -86,7 +93,55 @@ const ProfilePage = () => {
         open={state.passwordUpdateModal}
         setOpen={(bool) => handleStateChange({ passwordUpdateModal: bool })}
       />
+      <LogoutModal
+        open={state.logoutModal}
+        setOpen={(bool) => handleStateChange({ logoutModal: bool })}
+      />
     </div>
+  );
+};
+
+const LogoutModal: FunctionComponent<{
+  open: boolean;
+  setOpen: (bool: boolean) => void;
+}> = ({ open, setOpen }) => {
+  const { logout } = actions["auth"];
+
+  const dispatch = useDispatch();
+  return (
+    <Modal open={open} setOpen={setOpen}>
+      <div className="pt-7">
+        <div className="flex items-center justify-center size-[60px] rounded-full mx-auto mb-4 bg-rose-500/10 ">
+          <LogoutCurve color="var(--color-rose-600)" size={30} />
+        </div>
+        <div className="text-center">
+          <h1 className="font-bold text-[20px]">Logout?</h1>
+          <p className="text-[14px] text-muted-foreground">
+            Are you sure you want to logout of your account? You will be
+            required to sign in again to access your account.
+          </p>
+        </div>
+        <div className="flex gap-4 mt-7">
+          <Button
+            label="No, cancel"
+            fullRadius
+            color="black"
+            fullWidth
+            onClick={() => setOpen(false)}
+          />
+          <Button
+            label="Yes, logout"
+            fullRadius
+            className="!bg-rose-500"
+            fullWidth
+            onClick={() => {
+              dispatch(logout(null));
+              setOpen(false);
+            }}
+          />
+        </div>
+      </div>
+    </Modal>
   );
 };
 

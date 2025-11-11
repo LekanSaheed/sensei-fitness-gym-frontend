@@ -6,6 +6,7 @@ import SectionLoader from "./SectionLoader";
 import { SecurityUser } from "iconsax-react";
 import { FaPersonWalking } from "react-icons/fa6";
 import moment from "moment";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 
 const CheckInCalendar = () => {
   const defaultClassNames = getDefaultClassNames();
@@ -55,42 +56,62 @@ const CheckInCalendar = () => {
           // }}
           components={{
             Day: (props) => {
-              const checkInType = days.find(
+              const rawDay = days.find(
                 (d) =>
                   moment(d?.day).format("DD/MM/YYYY") ===
                   moment(props.day.date).format("DD/MM/YYYY")
-              )?.type;
+              );
 
-              console.log({ checkInType, day: props.day.date, days });
+              const checkInType = rawDay?.type;
+
               return (
                 <td {...props} className={`${props.className} pb-[13px]`}>
-                  <button
-                    className={`${
-                      defaultClassNames?.day_button
-                    } relative !mx-auto ${
-                      props.modifiers.checkedIn
-                        ? "!bg-default/10 !text-default !border !border-default !rounded-[10px]"
-                        : ""
-                    }`}
-                  >
-                    {props?.modifiers?.checkedIn && (
-                      <span className="absolute bg-default-tertiary dark:bg-default text-white size-[25px] rounded-full inline-flex items-center justify-center -top-[10px] -right-[10px] border border-default">
-                        {React.createElement(
-                          checkInType === "admin"
-                            ? SecurityUser
-                            : checkInType === "self"
-                            ? FaPersonWalking
-                            : "span",
-                          {
-                            size: 16,
-                            color: "var(--color-white)",
-                            variant: "Bold",
-                          }
+                  <Popover>
+                    <PopoverTrigger
+                      asChild
+                      disabled={!props.modifiers.checkedIn}
+                    >
+                      <button
+                        className={`${
+                          defaultClassNames?.day_button
+                        } relative !mx-auto ${
+                          props.modifiers.checkedIn
+                            ? "!bg-default/10 !text-default !border !border-default !rounded-[10px]"
+                            : ""
+                        }`}
+                      >
+                        {props?.modifiers?.checkedIn && (
+                          <span className="absolute bg-default-tertiary dark:bg-default text-white size-[25px] rounded-full inline-flex items-center justify-center -top-[10px] -right-[10px] border border-default">
+                            {React.createElement(
+                              checkInType === "admin"
+                                ? SecurityUser
+                                : checkInType === "self"
+                                ? FaPersonWalking
+                                : "span",
+                              {
+                                size: 16,
+                                color: "var(--color-white)",
+                                variant: "Bold",
+                              }
+                            )}
+                          </span>
                         )}
-                      </span>
-                    )}
-                    {props.day.date.getDate()}
-                  </button>
+                        {props.day.date.getDate()}
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent>
+                      {props.modifiers.checkedIn && (
+                        <div className="text-[14px]">
+                          {checkInType === "admin"
+                            ? "Checked in by Admin"
+                            : checkInType === "self"
+                            ? "Self Check-In"
+                            : ""}{" "}
+                          on {moment(rawDay?.day).format("llll")}
+                        </div>
+                      )}
+                    </PopoverContent>
+                  </Popover>
                 </td>
               );
             },

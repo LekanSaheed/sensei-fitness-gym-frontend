@@ -26,5 +26,6 @@ export const api = createApi({
     "admin-invites",
     "admins",
     "admin",
+    "subscriptions",
   ],
 });
