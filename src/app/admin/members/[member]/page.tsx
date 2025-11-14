@@ -162,7 +162,7 @@ const Member = () => {
                   </span>
                 </h1>
                 {subscription?.includesTrainer && (
-                  <p className="text-default border-default inline-block text-[12px] px-2 py-0.5 font-normal mb-2 border rounded-[4px]">
+                  <p className="text-default-secondary border-default-secondary inline-block text-[12px] px-2 py-0.5 font-normal mb-2 border rounded-[4px]">
                     Includes Trainer
                   </p>
                 )}
@@ -179,11 +179,11 @@ const Member = () => {
               </div>
             ) : (
               <div className="font-light text-[13px] py-3">
-                User has not subscribed to any plan yet
+                {memberDetails?.firstname} has not subscribed to any plan yet
               </div>
             )}
           </div>
-          <div className="py-4">
+          <div className="py-4 text-[13px]">
             <h1 className="text-[12px] text-gray-800 font-bold">
               Last Check-In
             </h1>
@@ -199,7 +199,9 @@ const Member = () => {
               </div>
             )}
             {!lastCheckIn && !checkInLoading && !getCheckIn.isError && (
-              <div>This member has no check ins</div>
+              <div className="mt-2">
+                {memberDetails?.firstname} has never checked in
+              </div>
             )}
           </div>
         </div>

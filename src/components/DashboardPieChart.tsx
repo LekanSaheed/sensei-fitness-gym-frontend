@@ -88,12 +88,12 @@ const DashboardPieChart = () => {
       <div className="mt-4">
         <h2 className="text-lg font-semibold mb-2">Members Overview</h2>
         {chart.map((entry, index) => (
-          <div key={entry.name} className="flex items-center mb-1">
+          <div key={entry.name} className="flex items-center mb-3">
             <div
-              className="w-4 h-4 mr-2"
+              className="w-[20px] rounded-[6px] h-4 mr-2"
               style={{ backgroundColor: COLORS[index % COLORS.length] }}
             ></div>
-            <span className="text-sm">
+            <span className="text-[13px]">
               {entry.name}: {entry.value}
             </span>
           </div>
