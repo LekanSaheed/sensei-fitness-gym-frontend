@@ -106,7 +106,9 @@ const TableControls: FunctionComponent<{
                     <SelectInput
                       options={filter?.options}
                       placeholder={filter?.title}
-                      triggerClassName={filter?.classNames?.trigger}
+                      triggerClassName={`rounded-full ${
+                        filter?.classNames?.trigger || ""
+                      }`}
                       selected={
                         selected ||
                         (filter?.doNotDefaultFirstElement
@@ -177,14 +179,14 @@ const SearchInput: FunctionComponent<InputHTMLAttributes<HTMLInputElement>> = ({
   return (
     <motion.div
       layout
-      className="flex relative flex-1 overflow-hidden items-center  border border-gray-300 rounded-[10px]"
+      className="flex relative flex-1 overflow-hidden items-center  border border-gray-300 rounded-full"
     >
       <motion.div layout="position" className="w-full">
         <input
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder={props?.placeholder || "Search"}
-          className="w-full placeholder:text-[14px] text-[14px] outline-none border-r border-r-gray-300/50 h-[30px] px-2 bg-transparent"
+          className="w-full placeholder:text-[12px] text-[12px] outline-none border-r border-r-gray-300/50 h-[30px] px-3 bg-transparent"
         />
       </motion.div>
 

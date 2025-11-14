@@ -81,7 +81,7 @@ export default function DashboardAreaChart() {
         style={{
           width: "100%",
 
-          maxHeight: "70vh",
+          maxHeight: "55vh",
           aspectRatio: 1.618,
         }}
         responsive

@@ -130,8 +130,8 @@ const Table = <
               <tr className=" ">
                 {useSerial && (
                   <th
-                    className="font-semibold  border-b
-                   border-b-gray-300 whitespace-nowrap bg-gray-100 px-3 py-2 text-start text-[13px]  tracking-n-1"
+                    className="font-semibold  
+                    whitespace-nowrap bg-[#f5faf4] px-3 py-4 text-start text-[12px]  tracking-n-1"
                   >
                     S/N
                   </th>
@@ -140,8 +140,8 @@ const Table = <
                   return (
                     <th
                       key={id}
-                      className="font-semibold bg-gray-100  border-b border-b-gray-300
-                       whitespace-nowrap px-3 py-2 text-start text-[13px]  tracking-n-1"
+                      className="font-semibold bg-[#f5faf4]  
+                       whitespace-nowrap px-3 py-4 text-start text-[12px]  tracking-n-1"
                     >
                       {column?.label}
                     </th>
@@ -167,7 +167,7 @@ const Table = <
                       key={id}
                     >
                       {useSerial && (
-                        <td className="px-3 py-2 text-[13px] tracking-n-1 border-b border-b-gray-300 ">
+                        <td className="px-3 py-4 text-[13px] tracking-n-1 border border-gray-200 ">
                           {getSerial(id)}
                         </td>
                       )}
@@ -189,11 +189,11 @@ const Table = <
                         return (
                           <td
                             key={id}
-                            className={`px-3 py-2 text-[13px] tracking-n-1 border-b ${
+                            className={`px-3 py-4 text-[12px] tracking-n-1 border  ${
                               bold || ["date", "currency"].includes(fieldType!)
                                 ? "font-semibold"
                                 : ""
-                            } border-b-gray-300 ${
+                            } border-gray-200 ${
                               !wrap ? "whitespace-nowrap" : ""
                             }`}
                           >

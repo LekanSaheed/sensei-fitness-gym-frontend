@@ -13,16 +13,20 @@ import PaymentLog from "@/types/PaymentLog";
 import { Permission } from "@/hooks/usePermissions";
 
 export type UserWithSub = IUser & {
-  latestSubscription: Pick<
-    ISubscription,
-    | "status"
-    | "startDate"
-    | "endDate"
-    | "includesTrainer"
-    | "planNameSnapshot"
-    | "paymentMode"
-    | "planDurationInDaysSnapshot"
-  > | null;
+  latestSubscription:
+    | (Pick<
+        ISubscription,
+        | "status"
+        | "startDate"
+        | "endDate"
+        | "includesTrainer"
+        | "planNameSnapshot"
+        | "paymentMode"
+        | "planDurationInDaysSnapshot"
+      > & {
+        activatedBy: string | { firstname: string; lastname: string } | null;
+      })
+    | null;
 };
 
 export interface AdminInvitation {
@@ -205,6 +209,35 @@ const adminApi = api.injectEndpoints({
           method: "get",
         }),
       }),
+      getRevenuePageAnalytics: build.query<
+        ResponseType<{
+          todayRevenue: number;
+          weekRevenue: number;
+          monthRevenue: number;
+          yearRevenue: number;
+        }>,
+        null
+      >({
+        query: () => "/admin/payments/revenue-analytics",
+      }),
+      waiveRegistrationFee: build.mutation<ResponseType, { userId: string }>({
+        query: (payload) => ({
+          url: "/admin/members/waive-registration-fee",
+          method: "post",
+          body: payload,
+        }),
+        invalidatesTags: ["member", "members"],
+      }),
+      getMembersPieChartData: build.query<
+        ResponseType<{
+          newMembers: number;
+          activeMembers: number;
+          inactiveMembers: number;
+        }>,
+        null
+      >({
+        query: () => "/admin/dashboard/members-pie-chart",
+      }),
     };
   },
 });
@@ -230,4 +263,7 @@ export const {
   useResendInviteNotificationMutation,
   useUpdateAdminMutation,
   useGetRevenueChartDataQuery,
+  useGetRevenuePageAnalyticsQuery,
+  useWaiveRegistrationFeeMutation,
+  useGetMembersPieChartDataQuery,
 } = adminApi;

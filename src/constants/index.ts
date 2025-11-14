@@ -1,10 +1,15 @@
 import {
+  Document,
+  DocumentText,
+  HeartCircle,
+  HeartTick,
   Home3,
   Icon,
   LocationTick,
   MoneySend,
   People,
   Profile,
+  ReceiptEdit,
   SecurityUser,
   Setting2,
 } from "iconsax-react";
@@ -46,6 +51,7 @@ export const nav_links: NavLink[] = [
 
 export interface IMenu {
   links: NavLink[];
+  label?: string;
 }
 
 export const routesAndTheirPermissions: Record<string, Permission[]> = {
@@ -71,6 +77,8 @@ export const admin_side_bar: IMenu[] = [
   },
 
   {
+    label: "Daily Operations",
+
     links: [
       {
         label: "Check-ins",
@@ -79,34 +87,40 @@ export const admin_side_bar: IMenu[] = [
         permissions: routesAndTheirPermissions[USER_CHECK_INS],
       },
       {
-        label: "Members Subscriptions",
+        label: "Subscriptions",
         path: USERS_SUBSCRIPTIONS,
-        icon: MoneySend,
+        icon: HeartCircle,
         permissions: routesAndTheirPermissions[USERS_SUBSCRIPTIONS],
       },
+    ],
+  },
+  {
+    label: "In-house",
+    links: [
       {
         label: "Subscription Plans",
         path: MANAGE_PLANS,
-        icon: MoneySend,
+        icon: ReceiptEdit,
         permissions: routesAndTheirPermissions[MANAGE_PLANS],
       },
       {
         label: "Payment Logs",
         path: PAYMENT_LOGS,
-        icon: Setting2,
+        icon: DocumentText,
         permissions: routesAndTheirPermissions[PAYMENT_LOGS],
       },
     ],
   },
   {
+    label: "Control",
     links: [
-      { label: "Settings", path: ADMIN_SETTINGS, icon: Setting2 },
       {
         label: "Access Control",
         path: ACCESS_CONTROL,
         icon: SecurityUser,
         permissions: routesAndTheirPermissions[ACCESS_CONTROL],
       },
+      { label: "Settings", path: ADMIN_SETTINGS, icon: Setting2 },
     ],
   },
 ];

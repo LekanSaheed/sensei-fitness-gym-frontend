@@ -1,5 +1,10 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono, Plus_Jakarta_Sans } from "next/font/google";
+import {
+  Gabarito,
+  Geist,
+  Geist_Mono,
+  Plus_Jakarta_Sans,
+} from "next/font/google";
 import "./globals.css";
 
 import ReduxProvider from "../components/providers/redux-provider";
@@ -19,6 +24,14 @@ const geistMono = Geist_Mono({
 const jakarta = Plus_Jakarta_Sans({
   variable: "--font-jakarta",
 });
+
+const gabarito = Gabarito({
+  display: "swap",
+  preload: true,
+  weight: "variable",
+  subsets: ["latin", "latin-ext"],
+  variable: "--font-gabarito",
+});
 export const metadata: Metadata = {
   title: "Sensei Fitness",
   description: "Promoting Wellness",
@@ -37,7 +50,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${jakarta.variable} font-geist-sans antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${jakarta.variable} ${gabarito.variable} font-geist-sans antialiased`}
       >
         <ReduxProvider>
           <Suspense>

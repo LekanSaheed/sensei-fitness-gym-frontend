@@ -14,6 +14,7 @@ interface IUser {
   disabled: boolean;
   permissions?: Permission[];
   hasActiveSub: boolean;
+  registrationFeeWaivedBy: Pick<IUser, "firstname" | "lastname"> | null;
 }
 
 export default IUser;

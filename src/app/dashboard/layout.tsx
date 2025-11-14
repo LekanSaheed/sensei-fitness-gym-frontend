@@ -17,7 +17,7 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
       <Suspense>
         <ProtectedRoute>
           {/* <ColorSchemeProvider> */}
-          <div className="bg-[#f2f2f2] dark:bg-background dark:text-foreground">
+          <div className="bg-[#f2f2f2] dark:bg-background font-gabarito dark:text-foreground">
             <div className="  sm:max-w-[800px] mx-auto">
               <Header />
               <div className="p-4 min-h-screen">

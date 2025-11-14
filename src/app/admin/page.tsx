@@ -1,6 +1,7 @@
 "use client";
 
 import DashboardAreaChart from "@/components/DashboardAreaChart";
+import DashboardPieChart from "@/components/DashboardPieChart";
 import SectionCard, { SectionCardProps } from "@/components/SectionCard";
 import { DropdownOption } from "@/components/select-input";
 import {
@@ -19,7 +20,9 @@ const AdminHomePage = () => {
 
   const checkInRange = searchParams.get("checkInRange");
 
-  const revenueQuery = useGetDashboardRevenueAnalyticsQuery(revenueRange || "");
+  const revenueQuery = useGetDashboardRevenueAnalyticsQuery(
+    revenueRange || "thisMonth"
+  );
 
   const reevnueData = revenueQuery?.data?.data;
 
@@ -112,6 +115,9 @@ const AdminHomePage = () => {
       <div className="lg:flex gap-4">
         <div className="lg:basis-[70%] ">
           <DashboardAreaChart />
+        </div>
+        <div className="lg:basis-[30%] mt-4 lg:mt-0">
+          <DashboardPieChart />
         </div>
       </div>
     </div>

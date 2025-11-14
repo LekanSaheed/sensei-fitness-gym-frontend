@@ -15,6 +15,7 @@ const permissions_string = [
   "view_access_control",
   "invite_admin",
   "update_admin",
+  "waive_registration_fee",
 ] as const;
 
 export type Permission = (typeof permissions_string)[number];

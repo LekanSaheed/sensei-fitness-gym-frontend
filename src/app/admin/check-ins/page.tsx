@@ -71,7 +71,7 @@ const CheckInsPage = () => {
       limit: searchParams.get("pageSize") || String(defaultPageSize),
       page: searchParams.get("page") || String(1),
       search: searchParams.get("searchQuery") || "",
-      timeFilter: timeFilter || "",
+      timeFilter: timeFilter || "today",
       checkInType: searchParams.get("checkInType") || "",
       startDate: startDate || "",
       endDate: endDate || "",
@@ -178,8 +178,8 @@ const CheckInsPage = () => {
             title: "Time filter",
 
             options: [
-              { label: "All", value: null },
               { label: "Today", value: "today" },
+              { label: "All", value: "all" },
               { label: "Yesterday", value: "yesterday" },
               { label: "This Week", value: "thisWeek" },
               { label: "This Month", value: "thisMonth" },

@@ -3,7 +3,10 @@
 import SectionCard from "@/components/SectionCard";
 import { DropdownOption } from "@/components/select-input";
 import Table, { ColumnProps } from "@/components/table";
-import { useGetPaymentsLogsQuery } from "@/redux/api-slices/admin.slice";
+import {
+  useGetPaymentsLogsQuery,
+  useGetRevenuePageAnalyticsQuery,
+} from "@/redux/api-slices/admin.slice";
 import { PaymentLogStatus } from "@/types/PaymentLog";
 import { defaultPageSize, onlyFieldsWithValue } from "@/utils";
 import FormatNumber from "@/utils/format-number";
@@ -39,19 +42,26 @@ const PaymentsPage = () => {
 
   const paginationInfo = pageProps?.paginationInfo;
 
+  const getRevenueAnalytics = useGetRevenuePageAnalyticsQuery(null);
+
+  const revenueData = getRevenueAnalytics?.data?.data;
+
+  const revenueLoading =
+    getRevenueAnalytics?.isLoading || getRevenueAnalytics?.isFetching;
+
   const cards: { description: string; value: number | undefined }[] = [
-    { description: "Revenue Today", value: 2000 },
+    { description: "Revenue Today", value: revenueData?.todayRevenue },
     {
       description: "Revenue This Week",
-      value: 2000,
+      value: revenueData?.weekRevenue,
     },
     {
       description: "Revenue This Month",
-      value: 200,
+      value: revenueData?.monthRevenue,
     },
     {
       description: "Revenue This Year",
-      value: 2000,
+      value: revenueData?.yearRevenue,
     },
   ];
 
@@ -71,7 +81,14 @@ const PaymentsPage = () => {
     <div>
       <div className="mb-4 *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-2 gap-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs sm:grid-cols-2 lg:grid-cols-4">
         {cards.map((card, id) => {
-          return <SectionCard {...card} key={id} />;
+          return (
+            <SectionCard
+              loading={revenueLoading}
+              {...card}
+              value={FormatNumber.ngnAmount(card?.value || 0)}
+              key={id}
+            />
+          );
         })}
       </div>
       <Table

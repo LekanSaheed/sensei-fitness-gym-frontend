@@ -52,6 +52,7 @@ const UsersPage = () => {
   const router = useRouter();
 
   const rows = (pageProps?.data || [])?.map((r, id) => {
+    const subscriptionActivatedBy = r?.latestSubscription?.activatedBy;
     return {
       id,
       ...r,
@@ -73,9 +74,21 @@ const UsersPage = () => {
       currentPlanStartDate: r?.latestSubscription?.startDate,
       currentPlanEndDate: r?.latestSubscription?.endDate,
       paymentMode: (
-        <span className="capitalize">
-          {r?.latestSubscription?.paymentMode || "N/A"}
-        </span>
+        <div>
+          <p className="capitalize">
+            {r?.latestSubscription?.paymentMode || "N/A"}
+          </p>
+          {typeof subscriptionActivatedBy === "object" && (
+            <p className="text-[12px]  mt-1">
+              Activated by:
+              <span className="text-default">
+                {" "}
+                {subscriptionActivatedBy?.firstname || ""}{" "}
+                {subscriptionActivatedBy?.lastname || ""}
+              </span>
+            </p>
+          )}
+        </div>
       ),
     };
   });

@@ -45,7 +45,7 @@ const useLogin = () => {
             return router.push(ADMIN_DASHBOARD);
           }
 
-          if (return_url) {
+          if (return_url && !return_url.startsWith("/admin")) {
             return router.push(return_url);
           }
 
@@ -89,9 +89,7 @@ export const useFetchUserAndLogin = () => {
 
     if (!userResponse?.success) {
       return toast.error(
-        userResponse?.message ||
-          userResponse?.error ||
-          ">>Could not get profile<<"
+        userResponse?.message || userResponse?.error || "Could not get profile"
       );
     }
     const user: IUser = userResponse?.data;
