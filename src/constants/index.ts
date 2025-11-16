@@ -65,21 +65,19 @@ export const routesAndTheirPermissions: Record<string, Permission[]> = {
 
 export const admin_side_bar: IMenu[] = [
   {
-    links: [
-      { label: "Dashboard", path: ADMIN_DASHBOARD, icon: Home3 },
-      {
-        label: "Members",
-        path: MEMBERS,
-        icon: People,
-        permissions: routesAndTheirPermissions[MEMBERS],
-      },
-    ],
+    links: [{ label: "Dashboard", path: ADMIN_DASHBOARD, icon: Home3 }],
   },
 
   {
     label: "Daily Operations",
 
     links: [
+      {
+        label: "Members",
+        path: MEMBERS,
+        icon: People,
+        permissions: routesAndTheirPermissions[MEMBERS],
+      },
       {
         label: "Check-ins",
         path: USER_CHECK_INS,

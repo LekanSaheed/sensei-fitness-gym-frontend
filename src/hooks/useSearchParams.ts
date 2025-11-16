@@ -27,8 +27,8 @@ export const useUpdateSearchParams = () => {
     [searchParams]
   );
 
-  return (name: string, value: string) => {
+  return (name: string, value: string, scroll?: boolean) => {
     const queryString = createQueryString(name, value);
-    router.replace(pathname + `?${queryString}`);
+    router.replace(pathname + `?${queryString}`, { scroll: scroll || false });
   };
 };

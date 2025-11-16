@@ -47,6 +47,8 @@ export interface ISubscription {
   trainerFeeSnapshot?: number;
   includesTrainer: boolean;
   totalAmount: number;
+  signature: string;
+  createdAt: string;
   _id: string;
 }
 

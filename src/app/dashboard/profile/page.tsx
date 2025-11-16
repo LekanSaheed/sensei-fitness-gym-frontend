@@ -1,7 +1,10 @@
 "use client";
 import Button from "@/components/button";
+import DialogModal from "@/components/dialog-modal";
+import UndertakingDocument from "@/components/documents/undertaking-document";
 import Input from "@/components/input";
 import Modal from "@/components/Modal";
+import SectionLoader from "@/components/SectionLoader";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { DEFAULT_ERROR_MESSAGE } from "@/constants";
 import useDebounceValue from "@/hooks/useDebounce";
@@ -10,6 +13,7 @@ import useStateReducer from "@/hooks/useStateReducer";
 import useUser from "@/hooks/useUser";
 import { actions } from "@/redux";
 import { useCheckUsernameQuery } from "@/redux/api-slices/auth.slice";
+import { useGetSubscriptionsHistoryInfiniteQuery } from "@/redux/api-slices/subscription.slice";
 import {
   useUpdatePasswordMutation,
   useUpdateProfileMutation,
@@ -21,10 +25,12 @@ import {
   getInitials,
   isFetchBaseQueryError,
 } from "@/utils";
+import { PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
 import { useFormik } from "formik";
 import { ArrowRight2, LogoutCurve } from "iconsax-react";
+import moment from "moment";
 import { useRouter } from "next/navigation";
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import * as yup from "yup";
@@ -38,11 +44,13 @@ const ProfilePage = () => {
     profileUpdateModal: false,
     passwordUpdateModal: false,
     logoutModal: false,
+    undertakingDocsModal: false,
   });
 
   const actions: { label: string; id: keyof typeof state }[] = [
     { label: "Update profile details", id: "profileUpdateModal" },
     { label: "Change password", id: "passwordUpdateModal" },
+    { label: "My Undertaking Documents", id: "undertakingDocsModal" },
   ];
 
   return (
@@ -97,7 +105,109 @@ const ProfilePage = () => {
         open={state.logoutModal}
         setOpen={(bool) => handleStateChange({ logoutModal: bool })}
       />
+      <UndertakingDocsModal
+        open={state.undertakingDocsModal}
+        setOpen={(bool) => handleStateChange({ undertakingDocsModal: bool })}
+      />
     </div>
+  );
+};
+
+const UndertakingDocsModal: FunctionComponent<{
+  open: boolean;
+  setOpen: (bool: boolean) => void;
+}> = ({ open, setOpen }) => {
+  const {
+    fetchNextPage,
+    hasNextPage,
+    isError,
+    isLoading,
+    isFetching,
+    isFetchingNextPage,
+    refetch,
+    data,
+  } = useGetSubscriptionsHistoryInfiniteQuery({ limit: 24 });
+
+  const subscriptions =
+    data?.pages?.flatMap((p) => p?.data?.data || []).flat() || [];
+
+  const loading = (isLoading || isFetching) && !isFetchingNextPage;
+
+  const [selected, setSelected] = useState("");
+
+  const selectedDocument = subscriptions.find((s) => s?._id === selected);
+
+  const member = useUser();
+  return (
+    <Modal open={open} setOpen={setOpen} title="Undertaking Documents">
+      <SectionLoader loading={loading} error={isError} refetch={refetch} />
+      <div className="max-h-[600px] overflow-y-auto">
+        {subscriptions.map((subscription) => {
+          return (
+            <div
+              onClick={() => setSelected(subscription?._id)}
+              key={subscription._id}
+              className="mb-5 p-4 border  rounded-lg dark:bg-card"
+            >
+              <h1 className="text-[12px] font-semibold">
+                {subscription?.planNameSnapshot}
+              </h1>
+              <p className="text-[10px] ">
+                {moment(subscription?.startDate).format("llll")} -{" "}
+                {moment(subscription?.endDate).format("llll")}
+              </p>
+            </div>
+          );
+        })}
+        {hasNextPage && (
+          <div className="flex justify-center mt-4">
+            <Button
+              label="Load More"
+              loading={isFetchingNextPage}
+              onClick={fetchNextPage}
+              variant="outlined"
+              color="black"
+            />
+          </div>
+        )}
+        <DialogModal
+          open={!!selectedDocument}
+          setOpen={() => setSelected("")}
+          title={`Undertaking Document`}
+        >
+          <PDFViewer
+            style={{ width: "100%", height: "60vh", marginBottom: "20px" }}
+          >
+            <UndertakingDocument
+              duration={selectedDocument?.planDurationInDaysSnapshot || 0}
+              planName={selectedDocument?.planNameSnapshot || ""}
+              signature={
+                selectedDocument?.signature || collocateMemberName(member)
+              }
+              date={selectedDocument?.createdAt || ""}
+            />
+          </PDFViewer>
+          <PDFDownloadLink
+            style={{ marginTop: "10px" }}
+            document={
+              <UndertakingDocument
+                duration={selectedDocument?.planDurationInDaysSnapshot || 0}
+                planName={selectedDocument?.planNameSnapshot || ""}
+                signature={
+                  selectedDocument?.signature || collocateMemberName(member)
+                }
+                date={selectedDocument?.createdAt || ""}
+              />
+            }
+            fileName={`Sensei_fitness_undertaking_${moment(
+              selectedDocument?.createdAt
+            ).format("DD/MM/YYYY")}.pdf`}
+          >
+            <Button label="Download Document" fullWidth color="black" />
+          </PDFDownloadLink>
+        </DialogModal>
+      </div>
+    </Modal>
   );
 };
 

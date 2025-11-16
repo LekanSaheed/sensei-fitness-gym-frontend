@@ -49,7 +49,11 @@ export default function DashboardAreaChart() {
     time: loading
       ? "..."
       : moment(stat.label).format(
-          preset === "thisYear" || preset === "lastYear" ? "MMM" : "DD MMM"
+          preset === "thisYear" || preset === "lastYear"
+            ? "MMM"
+            : preset.toLowerCase().includes("week")
+            ? "ddd DD"
+            : "DD MMM"
         ),
     amt: stat.total,
   }));
@@ -122,6 +126,9 @@ export default function DashboardAreaChart() {
             fill: "#EEEEEE",
             strokeDasharray: "5 5",
           }}
+          wrapperClassName="rounded-[10px]"
+          labelStyle={{ fontSize: "12px" }}
+          contentStyle={{ fontSize: "14px" }}
           labelFormatter={(label, payload) => {
             return `Date: ${label}`;
           }}
