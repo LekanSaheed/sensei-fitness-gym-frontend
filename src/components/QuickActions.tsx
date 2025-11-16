@@ -31,7 +31,7 @@ const QuickActions = () => {
       icon: HeartTick,
       // disabled: !!activeSub,
     },
-    { label: "View My Plans", path: SUBSCRIPTIONS, icon: RefreshCircle },
+    { label: "Plan History", path: SUBSCRIPTIONS, icon: RefreshCircle },
   ];
 
   return (

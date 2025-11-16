@@ -274,10 +274,11 @@ const validationSchema = yup.object({
     .required("Confirm Password is required"),
 });
 
-const UpdatePasswordModal: FunctionComponent<{
-  open: boolean;
-  setOpen: (bool: boolean) => void;
-}> = ({ open, setOpen }) => {
+export const UpdatePassword = ({
+  setOpen,
+}: {
+  setOpen?: (bool: boolean) => void;
+}) => {
   const initialValues = {
     currentPassword: "",
     newPassword: "",
@@ -307,7 +308,9 @@ const UpdatePasswordModal: FunctionComponent<{
         toast.success(
           "Password successfully update, please login with your new password"
         );
-        setOpen(false);
+        if (setOpen) {
+          setOpen(false);
+        }
 
         dispatch(logout(null));
 
@@ -331,56 +334,63 @@ const UpdatePasswordModal: FunctionComponent<{
       updatePassword(values);
     },
   });
-
+  return (
+    <form onSubmit={handleSubmit}>
+      <Input
+        required
+        label={"Current Password"}
+        type="password"
+        name="currentPassword"
+        autoComplete="new-password webauthn"
+        placeholder="Enter your current password"
+        value={state.currentPassword}
+        onChange={handleChange}
+        onBlur={handleBlur}
+        toggle
+        error={(touched.currentPassword && errors.currentPassword) || ""}
+      />
+      <Input
+        required
+        value={state["newPassword"]}
+        onChange={handleChange}
+        name="newPassword"
+        onBlur={handleBlur}
+        label={"New Password"}
+        autoComplete="new-password webauthn"
+        placeholder="Enter your new password"
+        type="password"
+        toggle
+        error={(touched.newPassword && errors.newPassword) || ""}
+      />
+      <Input
+        value={state["confirmPassword"]}
+        required
+        label={"Confirm New Password"}
+        autoComplete="new-password webauthn"
+        placeholder="Confirm your new password"
+        type="password"
+        name="confirmPassword"
+        onBlur={handleBlur}
+        onChange={handleChange}
+        toggle
+        error={(touched.confirmPassword && errors.confirmPassword) || ""}
+      />
+      <Button
+        loading={updateStatus.isLoading}
+        fullWidth
+        label="Change Password"
+        color="black"
+      />
+    </form>
+  );
+};
+const UpdatePasswordModal: FunctionComponent<{
+  open: boolean;
+  setOpen: (bool: boolean) => void;
+}> = ({ open, setOpen }) => {
   return (
     <Modal open={open} setOpen={setOpen} title="Change Password">
-      <form onSubmit={handleSubmit}>
-        <Input
-          required
-          label={"Current Password"}
-          type="password"
-          name="currentPassword"
-          autoComplete="new-password webauthn"
-          placeholder="Enter your current password"
-          value={state.currentPassword}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          toggle
-          error={(touched.currentPassword && errors.currentPassword) || ""}
-        />
-        <Input
-          required
-          value={state["newPassword"]}
-          onChange={handleChange}
-          name="newPassword"
-          onBlur={handleBlur}
-          label={"New Password"}
-          autoComplete="new-password webauthn"
-          placeholder="Enter your new password"
-          type="password"
-          toggle
-          error={(touched.newPassword && errors.newPassword) || ""}
-        />
-        <Input
-          value={state["confirmPassword"]}
-          required
-          label={"Confirm New Password"}
-          autoComplete="new-password webauthn"
-          placeholder="Confirm your new password"
-          type="password"
-          name="confirmPassword"
-          onBlur={handleBlur}
-          onChange={handleChange}
-          toggle
-          error={(touched.confirmPassword && errors.confirmPassword) || ""}
-        />
-        <Button
-          loading={updateStatus.isLoading}
-          fullWidth
-          label="Change Password"
-          color="black"
-        />
-      </form>
+      <UpdatePassword setOpen={setOpen} />
     </Modal>
   );
 };
@@ -389,10 +399,13 @@ type FieldsToEdit = Pick<IUser, "firstname" | "lastname" | "username">;
 
 type Field = keyof FieldsToEdit;
 
-const UpdateProfileDetails: FunctionComponent<{
-  open: boolean;
-  setOpen: (bool: boolean) => void;
-}> = ({ open, setOpen }) => {
+export const UpdateProfile = ({
+  includeUsername,
+  setOpen,
+}: {
+  includeUsername?: boolean;
+  setOpen?: (bool: boolean) => void;
+}) => {
   const user = useUser();
 
   const { state, handleStateChange } = useStateReducer<FieldsToEdit>(
@@ -449,7 +462,9 @@ const UpdateProfileDetails: FunctionComponent<{
 
         fetchUserAndLogin();
 
-        setOpen(false);
+        if (setOpen) {
+          setOpen(false);
+        }
       } else {
         toast.error(response?.error || DEFAULT_ERROR_MESSAGE);
       }
@@ -457,27 +472,27 @@ const UpdateProfileDetails: FunctionComponent<{
   };
 
   return (
-    <Modal title="Update Profile Details" open={open} setOpen={setOpen}>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          updateProfile();
-        }}
-      >
-        <Input
-          required
-          value={getField("firstname")}
-          onChange={(e) => handleStateChange({ firstname: e.target.value })}
-          label={"First Name"}
-          placeholder="First Name"
-        />
-        <Input
-          required
-          value={getField("lastname")}
-          onChange={(e) => handleStateChange({ lastname: e.target.value })}
-          label={"Last Name"}
-          placeholder="Last Name"
-        />
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        updateProfile();
+      }}
+    >
+      <Input
+        required
+        value={getField("firstname")}
+        onChange={(e) => handleStateChange({ firstname: e.target.value })}
+        label={"First Name"}
+        placeholder="First Name"
+      />
+      <Input
+        required
+        value={getField("lastname")}
+        onChange={(e) => handleStateChange({ lastname: e.target.value })}
+        label={"Last Name"}
+        placeholder="Last Name"
+      />
+      {includeUsername && (
         <Input
           required
           value={getField("username")}
@@ -505,14 +520,25 @@ const UpdateProfileDetails: FunctionComponent<{
           }
           placeholder="@username"
         />
-        <Button
-          disabled={disabled}
-          label="Update Details"
-          fullWidth
-          color="black"
-          loading={updateStatus.isLoading}
-        />
-      </form>
+      )}
+      <Button
+        disabled={disabled}
+        label="Update Details"
+        fullWidth
+        color="black"
+        loading={updateStatus.isLoading}
+      />
+    </form>
+  );
+};
+
+const UpdateProfileDetails: FunctionComponent<{
+  open: boolean;
+  setOpen: (bool: boolean) => void;
+}> = ({ open, setOpen }) => {
+  return (
+    <Modal title="Update Profile Details" open={open} setOpen={setOpen}>
+      <UpdateProfile includeUsername />
     </Modal>
   );
 };

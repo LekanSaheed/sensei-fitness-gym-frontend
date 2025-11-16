@@ -4,7 +4,11 @@ import { useIsSubPath } from "./mobile-nav";
 import { ArrowLeft2, Moon, Sun, Sun1 } from "iconsax-react";
 import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { NEW_CHECK_IN, RENEW_SUBSCRIPTION } from "@/constants/routes";
+import {
+  NEW_CHECK_IN,
+  RENEW_SUBSCRIPTION,
+  SUBSCRIPTIONS,
+} from "@/constants/routes";
 import moment from "moment";
 import { label } from "framer-motion/client";
 import { Avatar, AvatarFallback } from "../ui/avatar";
@@ -26,6 +30,9 @@ const Header = () => {
     },
     [NEW_CHECK_IN]: {
       label: "Check In",
+    },
+    [SUBSCRIPTIONS]: {
+      label: "My Subscriptions",
     },
   };
 

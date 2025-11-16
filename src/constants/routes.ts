@@ -6,7 +6,7 @@ export const TERMS = "/terms";
 
 export const FORGOT_PASSWORD = "/forgot-pwd";
 
-export const RESET_PASSWORD = "/reset-pwd";
+export const RESET_PASSWORD = `${FORGOT_PASSWORD}/reset`;
 
 export const COMPLETE_SIGNUP = "/signup/complete";
 
@@ -39,5 +39,7 @@ export const USERS_SUBSCRIPTIONS = `${ADMIN_DASHBOARD}/subscriptions`;
 export const MANAGE_PLANS = `${ADMIN_DASHBOARD}/plans`;
 
 export const ADMIN_SETTINGS = `${ADMIN_DASHBOARD}/settings`;
+
+export const ADMIN_SECURITY_SETTINGS = `${ADMIN_SETTINGS}/security`;
 
 export const PAYMENT_LOGS = `${ADMIN_DASHBOARD}/payments`;

@@ -68,6 +68,26 @@ const authSlice = api.injectEndpoints({
           method: "post",
         }),
       }),
+      forgotPassword: build.mutation<ResponseType, { email: string }>({
+        query: (payload) => ({
+          url: "/auth/forgot-pwd",
+          body: payload,
+          method: "post",
+        }),
+      }),
+      getResetToken: build.query<ResponseType<{ email: string }>, string>({
+        query: (id) => `/auth/get-reset-session?id=${id}`,
+      }),
+      resetPassword: build.mutation<
+        ResponseType,
+        { password: string; token: string }
+      >({
+        query: (payload) => ({
+          url: "/auth/reset-pwd",
+          method: "post",
+          body: payload,
+        }),
+      }),
     };
   },
 });
@@ -80,4 +100,7 @@ export const {
   useLoginMutation,
   useGetInvitationQuery,
   useCreateAdminAccountMutation,
+  useForgotPasswordMutation,
+  useResetPasswordMutation,
+  useGetResetTokenQuery,
 } = authSlice;

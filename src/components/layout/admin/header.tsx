@@ -11,6 +11,8 @@ import {
 import {
   ACCESS_CONTROL,
   ADMIN_DASHBOARD,
+  ADMIN_SECURITY_SETTINGS,
+  ADMIN_SETTINGS,
   MANAGE_PLANS,
   MEMBERS,
   PAYMENT_LOGS,
@@ -37,7 +39,7 @@ const Header = () => {
 
   const namePrefix = memberName?.split(" ")[0];
 
-  const pathLabels: Record<string, { label: string }> = {
+  const pathLabels: Record<string, { label: string; isSub?: boolean }> = {
     [ADMIN_DASHBOARD]: {
       label: "Home",
     },
@@ -71,13 +73,20 @@ const Header = () => {
     [ACCESS_CONTROL]: {
       label: "Access Control",
     },
+    [ADMIN_SETTINGS]: {
+      label: "Profile Settings",
+      isSub: true,
+    },
+    [ADMIN_SECURITY_SETTINGS]: {
+      label: "Security Settings",
+    },
   };
 
   const pathlabel = pathLabels[pathname] || { label: "Route" };
 
   return (
     <header className="h-[70px] flex items-center px-4 ">
-      {isSubPath && (
+      {(isSubPath || pathlabel?.isSub) && (
         <ArrowLeft
           size={30}
           onClick={() => router.back()}

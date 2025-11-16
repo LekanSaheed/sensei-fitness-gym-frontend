@@ -3,7 +3,9 @@
 import {
   ADMIN_SIGNUP,
   COMPLETE_SIGNUP,
+  FORGOT_PASSWORD,
   LOGIN,
+  RESET_PASSWORD,
   SIGNUP,
 } from "@/constants/routes";
 import Image from "next/image";
@@ -22,6 +24,14 @@ const AuthLayoutProvider = ({ children }: { children: ReactNode }) => {
     [COMPLETE_SIGNUP]: {
       label: "Register",
       description: "Complete your registration",
+    },
+    [FORGOT_PASSWORD]: {
+      label: "Reset Password",
+      description: "Enter your email address to continue",
+    },
+    [RESET_PASSWORD]: {
+      label: "Set New Password",
+      description: "Enter and confirm your new password",
     },
     [LOGIN]: {
       label: (
@@ -55,11 +65,16 @@ const AuthLayoutProvider = ({ children }: { children: ReactNode }) => {
       path: LOGIN,
       pathLabel: "Login",
     },
+    [FORGOT_PASSWORD]: {
+      label: "Take me back to",
+      path: LOGIN,
+      pathLabel: "Login",
+    },
   };
 
   const alt = alts[pathname] || null;
   return (
-    <div className="p-5 pt-7 font-jakarta">
+    <div className="p-5 pt-7  font-gabarito">
       <div>
         <div className="relative w-[190px] h-[50px] max-sm:mb-[100px]">
           <Image
