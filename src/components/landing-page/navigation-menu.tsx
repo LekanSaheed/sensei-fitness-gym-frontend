@@ -7,6 +7,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import Button from "../button";
 import { createPortal } from "react-dom";
+import { isWindow } from "@/utils";
 
 const NavigationMenu = () => {
   const { navigation } = useSelector((state: RootState) => state["app"]);
@@ -21,7 +22,7 @@ const NavigationMenu = () => {
         </div>
       )}
     </AnimatePresence>,
-    document.body
+    isWindow ? document.body : ((<></>) as unknown as Element)
   );
 };
 
