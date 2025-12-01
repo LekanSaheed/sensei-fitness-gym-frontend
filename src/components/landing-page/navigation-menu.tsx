@@ -12,6 +12,8 @@ import { isWindow } from "@/utils";
 const NavigationMenu = () => {
   const { navigation } = useSelector((state: RootState) => state["app"]);
 
+  if (!isWindow) return;
+
   return createPortal(
     <AnimatePresence>
       {navigation && (
@@ -22,7 +24,7 @@ const NavigationMenu = () => {
         </div>
       )}
     </AnimatePresence>,
-    isWindow ? document.body : ((<></>) as unknown as Element)
+    document.body
   );
 };
 
