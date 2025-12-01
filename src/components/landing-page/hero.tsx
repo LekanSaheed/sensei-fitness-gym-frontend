@@ -7,7 +7,7 @@ const HeroSection = () => {
   return (
     <div className="py-[40px] px-4">
       <div className="mb-[40px]">
-        <h1 className="uppercase font-league tracking-wide text-[50px] font-bold">
+        <h1 className="uppercase font-league  text-[50px] font-bold">
           <span className=""> transform your body</span> <br />
           <span className="text-default">elevate your lifestyle.</span>
         </h1>
