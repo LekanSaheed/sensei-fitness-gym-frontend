@@ -76,7 +76,10 @@ const AuthLayoutProvider = ({ children }: { children: ReactNode }) => {
   return (
     <div className="p-5 pt-7  font-gabarito">
       <div>
-        <div className="relative w-[190px] h-[50px] max-sm:mb-[100px]">
+        <Link
+          href={"/"}
+          className="inline-block relative w-[190px] h-[50px] max-sm:mb-[100px]"
+        >
           <Image
             src={"/logo.png"}
             alt="logo"
@@ -87,7 +90,7 @@ const AuthLayoutProvider = ({ children }: { children: ReactNode }) => {
             priority
             quality={100}
           />
-        </div>
+        </Link>
       </div>
       <div className="flex justify-center items-center sm:pt-[100px]">
         <div className="w-full sm:w-[400px] sm:border sm:rounded-[8px] sm:p-[30px] border-gray-300">

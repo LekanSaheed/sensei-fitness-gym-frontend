@@ -4,11 +4,11 @@ import Footer from "./footer";
 
 const LandingPageWrapper = ({ children }: { children: ReactNode }) => {
   return (
-    <>
+    <div className="bg-[#000] text-white">
       <Header />
-      <div className="p-4">{children}</div>
+      <div className=" min-h-[50vh]">{children}</div>
       <Footer />
-    </>
+    </div>
   );
 };
 
