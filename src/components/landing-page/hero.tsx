@@ -15,11 +15,11 @@ const HeroSection = () => {
       }}
     >
       <div className="mb-[40px] text-center">
-        <h1 className="uppercase font-league  text-[50px] font-bold">
+        <h1 className="uppercase font-league leading-[130%] text-[45px] font-bold">
           <span className=""> transform your body</span> <br />
           <span className="text-default">elevate your lifestyle.</span>
         </h1>
-        <p className="font-light text-muted-foreground bg-[#000]/60 inline-block p-1 ">
+        <p className="font-light text-[14px] text-muted-foreground bg-[#000]/60 inline-block p-1 ">
           Gym training is a structured and disciplined approach to physical
           exercise that focuses on strength, endurance and overall fitness
           improvement.
