@@ -20,7 +20,7 @@ const NavigationMenu = () => {
       {navigation && (
         <div className="fixed pt-[100px] px-4 inset-0 bg-[#000]/50 backdrop-blur-2xl">
           <nav>
-            <ul className="flex flex-col items-center justify-center gap-8">
+            <ul className="flex flex-col items-center pt-[50px] justify-center gap-8">
               {landing_page_nav_links.map((link, id) => {
                 return (
                   <li key={id} className="mb-4">
