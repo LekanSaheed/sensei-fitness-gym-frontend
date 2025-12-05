@@ -8,6 +8,7 @@ import { useSelector } from "react-redux";
 import Button from "../button";
 import { createPortal } from "react-dom";
 import { isWindow } from "@/utils";
+import { landing_page_nav_links } from "@/constants";
 
 const NavigationMenu = () => {
   const { navigation } = useSelector((state: RootState) => state["app"]);
@@ -18,9 +19,40 @@ const NavigationMenu = () => {
     <AnimatePresence>
       {navigation && (
         <div className="fixed pt-[100px] px-4 inset-0 bg-[#000]/50 backdrop-blur-2xl">
-          <Link href={LOGIN}>
-            <Button label="Login" />
-          </Link>
+          <nav>
+            <ul className="flex flex-col items-center justify-center gap-8">
+              {landing_page_nav_links.map((link, id) => {
+                return (
+                  <li key={id} className="mb-4">
+                    <Link
+                      href={link.path}
+                      className="text-[20px] !font-league tracking-tight text-white  uppercase"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </nav>
+          <div className="flex gap-4 mt-10 justify-center">
+            <Link href={LOGIN}>
+              <Button
+                label="Login"
+                variant="outlined"
+                size="lg"
+                className="font-league text-[20px] !rounded-none uppercase"
+              />
+            </Link>
+            <Link href={LOGIN}>
+              <Button
+                label="Register"
+                font="regular"
+                size="lg"
+                className="font-league text-[20px] !rounded-none uppercase"
+              />
+            </Link>
+          </div>
         </div>
       )}
     </AnimatePresence>,

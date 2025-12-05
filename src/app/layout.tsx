@@ -3,6 +3,7 @@ import {
   Gabarito,
   Geist,
   Geist_Mono,
+  League_Gothic,
   Plus_Jakarta_Sans,
 } from "next/font/google";
 import "./globals.css";
@@ -42,6 +43,14 @@ export const viewport: Viewport = {
   maximumScale: 1,
   width: "device-width",
 };
+
+const leagueGothic = League_Gothic({
+  variable: "--font-league",
+  weight: ["400"],
+  display: "swap",
+  preload: true,
+});
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -50,7 +59,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${jakarta.variable} ${gabarito.variable} font-geist-sans antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${jakarta.variable} ${gabarito.variable} ${leagueGothic.variable} font-geist-sans antialiased`}
       >
         <ReduxProvider>
           <Suspense>
