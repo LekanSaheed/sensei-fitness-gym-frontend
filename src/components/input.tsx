@@ -21,6 +21,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   inputClassName: string;
   info: ReactNode;
   innerRef: RefObject<HTMLInputElement | null>;
+  dark: boolean;
 }
 
 const Input: FunctionComponent<
@@ -43,7 +44,7 @@ const Input: FunctionComponent<
   info,
   value,
   innerRef,
-
+  dark,
   ...props
 }) => {
   const [show, setShow] = useState(false);
@@ -109,9 +110,9 @@ const Input: FunctionComponent<
             className="shrink-0 h-[38px]  w-[47px] flex items-center justify-center cursor-pointer border-l border-l-gray-400"
           >
             {show ? (
-              <EyeSlash color="black" size={22} />
+              <EyeSlash color={dark ? "white" : "black"} size={22} />
             ) : (
-              <Eye color="black" size={22} />
+              <Eye color={dark ? "white" : "black"} size={22} />
             )}
           </div>
         )}

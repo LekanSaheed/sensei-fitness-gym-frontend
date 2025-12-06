@@ -51,9 +51,9 @@ const Page = () => {
         placeholder="Email address"
       />
       <Button
+        brandedFont
         label="Proceed"
         fullWidth
-        color="black"
         loading={resetStatus.isLoading}
       />
     </form>

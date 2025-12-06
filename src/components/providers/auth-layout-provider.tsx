@@ -12,6 +12,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { ReactNode } from "react";
+import gymFac from "../../../public/gym-fac.jpg";
 
 const AuthLayoutProvider = ({ children }: { children: ReactNode }) => {
   const pathname = usePathname();
@@ -74,34 +75,39 @@ const AuthLayoutProvider = ({ children }: { children: ReactNode }) => {
 
   const alt = alts[pathname] || null;
   return (
-    <div className="p-5 pt-7  font-gabarito">
-      <div>
+    <div
+      style={{
+        backgroundImage: `url(${gymFac?.src})`,
+      }}
+      className="sm:p-5 pt-7 text-white font-gabarito bg-cover bg-center bg-no-repeat min-h-screen "
+    >
+      <div className="max-sm:px-5">
         <Link
           href={"/"}
-          className="inline-block relative w-[190px] h-[50px] max-sm:mb-[100px]"
+          className="inline-block relative w-[190px] h-[60px] max-sm:mb-[100px]"
         >
           <Image
-            src={"/logo.png"}
+            src={"/logo-white.png"}
             alt="logo"
             placeholder="blur"
-            blurDataURL="/logo.png"
-            className="object-contain"
+            blurDataURL="/logo-white.png"
+            className="object-contain object-left"
             fill
             priority
             quality={100}
           />
         </Link>
       </div>
-      <div className="flex justify-center items-center sm:pt-[100px]">
-        <div className="w-full sm:w-[400px] sm:border sm:rounded-[8px] sm:p-[30px] border-gray-300">
+      <div className="flex justify-center items-center sm:pt-[80px]">
+        <div className="w-full  sm:w-[400px] sm:border sm:p-[30px] border-muted-foreground/30 backdrop-blur-[2px] p-5  sm:bg-[#000]/80 ">
           <div className="mb-5">
             <div className="flex items-center gap-2">
               {/* <div className="bg-black size-[8px]  rotate-45" /> */}
-              <h1 className="font-black text-[26px] tracking-tight mb-1">
+              <h1 className=" font-league uppercase text-[26px] tracking-tight mb-1">
                 {pathProp?.label}
               </h1>
             </div>
-            <p className="text-[14px] tracking-tight text-gray-500">
+            <p className="text-[14px] tracking-tight  max-sm:bg-[#000]/5  text-muted-foreground">
               {" "}
               {pathProp?.description}
             </p>
@@ -109,7 +115,7 @@ const AuthLayoutProvider = ({ children }: { children: ReactNode }) => {
 
           <div className="relative">{children}</div>
           {alt && (
-            <div className="mt-5 text-center text-[14px] text-gray-500">
+            <div className="mt-5  max-sm:bg-[#000]/5 backdrop-blur-3xl text-center text-[14px] text-muted">
               {alt?.label}{" "}
               <Link className="text-default font-semibold" href={alt.path}>
                 {alt?.pathLabel}

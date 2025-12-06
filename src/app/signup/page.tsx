@@ -60,7 +60,12 @@ const Page = () => {
           placeholder="address@domain.com"
           onChange={(e) => setEmail(e.target.value)}
         />
-        <Button label="Continue" fullWidth loading={createStatus.isLoading} />
+        <Button
+          brandedFont
+          label="Continue"
+          fullWidth
+          loading={createStatus.isLoading}
+        />
       </form>
     </div>
   );

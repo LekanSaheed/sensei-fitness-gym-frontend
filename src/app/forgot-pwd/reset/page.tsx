@@ -112,6 +112,7 @@ const ResetPwd = () => {
           placeholder="Enter your new password"
           type="password"
           toggle
+          dark
           error={(touched.newPassword && errors.newPassword) || ""}
         />
         <Input
@@ -125,11 +126,13 @@ const ResetPwd = () => {
           onBlur={handleBlur}
           onChange={handleChange}
           toggle
+          dark
           error={(touched.confirmPassword && errors.confirmPassword) || ""}
         />
         <Button
           label="Set password"
           fullWidth
+          brandedFont
           color="black"
           loading={resetStatus.isLoading}
         />

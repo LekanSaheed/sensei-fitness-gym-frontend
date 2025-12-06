@@ -33,6 +33,7 @@ export interface ButtonProps {
   iconClass?: string;
   iconSize?: number;
   permissions?: Permission[];
+  brandedFont?: boolean;
 }
 const Button: FunctionComponent<ButtonProps> = ({
   label,
@@ -56,6 +57,7 @@ const Button: FunctionComponent<ButtonProps> = ({
   iconClass,
   iconSize,
   permissions = [],
+  brandedFont = false,
 }) => {
   const variantIsContained = variant === "contained";
   const variantIsGhost = variant === "ghost";
@@ -120,7 +122,11 @@ const Button: FunctionComponent<ButtonProps> = ({
         fullRadius ? "rounded-full" : ""
       }  ${
         halfFull && "!px-[90px] rounded-full !py-[15px] !text-[14px]"
-      } ${className}`}
+      } ${className} ${
+        brandedFont
+          ? "!font-league !text-[20px] uppercase rounded-none !font-normal"
+          : ""
+      }`}
     >
       <LayoutGroup>
         <motion.div

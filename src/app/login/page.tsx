@@ -38,6 +38,7 @@ const LoginPage = () => {
         label={"Password"}
         toggle
         placeholder="Password"
+        dark
       />
       <div className="mb-5  flex justify-end">
         <p className="text-[14px] ">
@@ -46,7 +47,13 @@ const LoginPage = () => {
           </Link>
         </p>
       </div>
-      <Button label="Login" fullWidth loading={loading} />
+      <Button
+        label="Login"
+        fullWidth
+        loading={loading}
+        font="regular"
+        brandedFont
+      />
     </form>
   );
 };

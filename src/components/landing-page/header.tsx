@@ -3,6 +3,10 @@ import React from "react";
 import HamdburgerMenu from "./hamburger-menu";
 
 import NavigationMenu from "./navigation-menu";
+import { landing_page_nav_links } from "@/constants";
+import Link from "next/link";
+import Button from "../button";
+import { LOGIN, SIGNUP } from "@/constants/routes";
 
 const Header = () => {
   return (
@@ -20,8 +24,26 @@ const Header = () => {
             className="object-contain"
           />
         </div>
-        <div>
+        <DesktopNavigation />
+        <div className="lg:hidden">
           <HamdburgerMenu />
+        </div>
+        <div className="hidden lg:flex">
+          <Link href={LOGIN}>
+            <Button
+              label="Login"
+              className="font-league uppercase text-[20px] rounded-none"
+              font="regular"
+              variant="outlined"
+            />
+          </Link>
+          <Link href={SIGNUP} className="">
+            <Button
+              label="Register"
+              className="font-league uppercase text-[20px] rounded-none"
+              font="regular"
+            />
+          </Link>
         </div>
       </div>
       <NavigationMenu />
@@ -29,4 +51,21 @@ const Header = () => {
   );
 };
 
+const DesktopNavigation = () => {
+  return (
+    <nav className="hidden lg:flex gap-8">
+      {landing_page_nav_links.map((link, id) => {
+        return (
+          <Link
+            className="font-league uppercase text-[20px] tracking-tight"
+            href={link.path}
+            key={id}
+          >
+            {link.label}
+          </Link>
+        );
+      })}
+    </nav>
+  );
+};
 export default Header;

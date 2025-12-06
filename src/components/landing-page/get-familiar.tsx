@@ -46,6 +46,11 @@ const GetFamiliar = () => {
                   <div className="relative border-[2px] border-default h-[300px] rounded-[10px] overflow-hidden w-full md:h-[300px] lg:h-[350px] xl:h-[400px] 2xl:h-[450px]">
                     <Image
                       alt="facility"
+                      quality={100}
+                      loading="eager"
+                      placeholder="blur"
+                      priority
+                      blurDataURL={`/facilities/${id + 1}.jpg`}
                       fill
                       className="object-cover"
                       src={`/facilities/${id + 1}.jpg`}
