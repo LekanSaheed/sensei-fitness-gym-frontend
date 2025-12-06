@@ -18,7 +18,7 @@ const NavigationMenu = () => {
   return createPortal(
     <AnimatePresence>
       {navigation && (
-        <div className="fixed pt-[100px] px-4 inset-0 bg-[#000]/50 backdrop-blur-2xl">
+        <div className="fixed pt-[100px] px-4 inset-0 bg-[#000]/50 backdrop-blur-2xl z-[2]">
           <nav>
             <ul className="flex flex-col items-center pt-[50px] justify-center gap-8">
               {landing_page_nav_links.map((link, id) => {

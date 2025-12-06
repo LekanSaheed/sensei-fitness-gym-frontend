@@ -3,10 +3,13 @@ import Button from "../button";
 import Link from "next/link";
 import { SIGNUP } from "@/constants/routes";
 import heroImage from "../../../public/hero-image.jpg";
+import moment from "moment";
 
 const HeroSection = () => {
+  const yearsOfExperience = moment().diff(moment("2017-01-01"), "years");
+
   const stats: { label: string; value: string }[] = [
-    { label: "Years of experience", value: "7+" },
+    { label: "Years of experience", value: `${yearsOfExperience}+` },
     { label: "Members", value: "1000+" },
     { label: "Satisfied Members", value: "800+" },
   ];
