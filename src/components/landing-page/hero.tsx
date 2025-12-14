@@ -10,13 +10,13 @@ const HeroSection = () => {
 
   const stats: { label: string; value: string }[] = [
     { label: "Years of experience", value: `${yearsOfExperience}+` },
-    { label: "Members", value: "1000+" },
-    { label: "Satisfied Members", value: "800+" },
+    { label: "Members", value: "5000+" },
+    { label: "Satisfied Members", value: "4000+" },
   ];
 
   return (
     <div
-      className="pt-[100px] px-4 pb-[120px] bg-top bg-no-repeat sm:bg-center"
+      className="pt-[100px] px-4 pb-[90px] sm:pb-[120px] bg-top bg-no-repeat sm:bg-center"
       style={{
         backgroundImage: `url(${heroImage.src})`,
         backgroundSize: "cover",
@@ -44,7 +44,7 @@ const HeroSection = () => {
           />
         </Link>
       </div>
-      <ul className="flex bg-[#000]/40 items-center justify-center mt-8 md:mt-10 lg:mt-12 xl:mt-16">
+      <ul className="flex bg-[#000]/40 items-center justify-center  mt-12 xl:mt-16">
         {stats.map((state, id) => {
           return (
             <li

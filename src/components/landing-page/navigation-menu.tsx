@@ -1,5 +1,5 @@
 "use client";
-import { LOGIN } from "@/constants/routes";
+import { LOGIN, SIGNUP } from "@/constants/routes";
 import { RootState } from "@/redux";
 import { AnimatePresence } from "framer-motion";
 import Link from "next/link";
@@ -44,7 +44,7 @@ const NavigationMenu = () => {
                 className="font-league text-[20px] !rounded-none uppercase"
               />
             </Link>
-            <Link href={LOGIN}>
+            <Link href={SIGNUP}>
               <Button
                 label="Register"
                 font="regular"

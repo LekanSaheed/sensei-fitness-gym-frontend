@@ -53,11 +53,7 @@ const PaymentConfirmationPage = () => {
           )}
           {status === "success" && (
             <Link href={DASHBOARD} className="mt-4">
-              <Button
-                label="Go to dashboard"
-                variant="outlined"
-                color="black"
-              />
+              <Button label="Go to dashboard" variant="outlined" />
             </Link>
           )}
         </div>

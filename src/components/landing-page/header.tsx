@@ -23,6 +23,18 @@ const Header = () => {
             fill
             className="object-contain"
           />
+          <div className="hidden">
+            <Image
+              quality={100}
+              priority
+              placeholder="blur"
+              blurDataURL="/logo.png"
+              src={"/logo.png"}
+              alt="logo"
+              fill
+              className="object-contain "
+            />
+          </div>
         </div>
         <DesktopNavigation />
         <div className="lg:hidden">

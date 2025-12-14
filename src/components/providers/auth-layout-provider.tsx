@@ -99,7 +99,7 @@ const AuthLayoutProvider = ({ children }: { children: ReactNode }) => {
         </Link>
       </div>
       <div className="flex justify-center items-center sm:pt-[80px]">
-        <div className="w-full  sm:w-[400px] sm:border sm:p-[30px] border-muted-foreground/30 backdrop-blur-[2px] p-5  sm:bg-[#000]/80 ">
+        <div className="w-full bg-[#000]/50 sm:w-[400px] sm:border sm:p-[30px] border-muted-foreground/30 backdrop-blur-[2px] p-5  sm:bg-[#000]/80 ">
           <div className="mb-5">
             <div className="flex items-center gap-2">
               {/* <div className="bg-black size-[8px]  rotate-45" /> */}
