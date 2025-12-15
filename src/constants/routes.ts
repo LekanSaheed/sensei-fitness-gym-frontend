@@ -8,6 +8,8 @@ export const PRIVAY_POLICY = "/privacy-policy";
 
 export const CONTACT_US = "/contact-us";
 
+export const ABOUT_US = "/about-us";
+
 export const FORGOT_PASSWORD = "/forgot-pwd";
 
 export const RESET_PASSWORD = `${FORGOT_PASSWORD}/reset`;
