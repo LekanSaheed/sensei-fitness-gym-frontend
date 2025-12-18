@@ -15,6 +15,7 @@ interface IUser {
   permissions?: Permission[];
   hasActiveSub: boolean;
   registrationFeeWaivedBy: Pick<IUser, "firstname" | "lastname"> | null;
+  phoneNumber: string;
 }
 
 export default IUser;

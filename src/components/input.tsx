@@ -63,7 +63,11 @@ const Input: FunctionComponent<
         className={`border flex items-center relative z-1 overflow-hidden 
       transition focus-within:border-default ${
         label ? "rounded-[5px]" : "rounded-[10px]"
-      } border-gray-400 aria-disabled:bg-gray-300  ${className}`}
+      } border-gray-400  ${className} ${
+          dark
+            ? "aria-disabled:!bg-gray-300/10 aria-disabled:!text-gray-400"
+            : "aria-disabled:bg-gray-300 "
+        }`}
       >
         {appendImage && (
           <div className="relative shrink-0 rounded-[5px] overflow-hidden h-[30px] w-[30px] ml-1.5">

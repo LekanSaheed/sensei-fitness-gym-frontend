@@ -1,9 +1,26 @@
 import type { ResponseType } from "@/types";
 import { api } from "../api";
 
+interface ICountry {
+  name: {
+    common: string;
+  };
+  flags: {
+    svg: string;
+    png: string;
+  };
+  idd: {
+    root: string;
+    suffixes: string[];
+  };
+}
+
 const authSlice = api.injectEndpoints({
   endpoints(build) {
     return {
+      getCountries: build.query<ICountry[], null>({
+        query: () => "https://restcountries.com/v3.1/all?fields=name,flags,idd",
+      }),
       login: build.mutation<
         ResponseType<string>,
         { username: string; password: string }
@@ -42,6 +59,7 @@ const authSlice = api.injectEndpoints({
           password: string;
           username: string;
           session_id: string;
+          phoneNumber: string;
         }
       >({
         query: (payload) => ({
@@ -103,4 +121,5 @@ export const {
   useForgotPasswordMutation,
   useResetPasswordMutation,
   useGetResetTokenQuery,
+  useGetCountriesQuery,
 } = authSlice;

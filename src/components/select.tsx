@@ -29,6 +29,9 @@ interface ISelectProps {
   error?: string;
   onBlur: FocusEventHandler<HTMLInputElement>;
   loading?: boolean;
+  removeDropdownIcon?: boolean;
+  remove_margin?: boolean;
+  containerClassName?: string;
 }
 const Select: FunctionComponent<Partial<ISelectProps>> = ({
   label,
@@ -38,6 +41,10 @@ const Select: FunctionComponent<Partial<ISelectProps>> = ({
   placeholder,
   error,
   loading,
+  removeDropdownIcon,
+  remove_margin,
+  containerClassName,
+
   ...props
 }) => {
   const [open, setOpen] = useState(false);
@@ -75,8 +82,13 @@ const Select: FunctionComponent<Partial<ISelectProps>> = ({
         label={label!}
         error={error}
         innerRef={ref}
+        remove_margin={remove_margin}
       >
-        <div className="pointer-events-auto relative flex items-center border border-gray-400 focus-within:border-default rounded-[5px]">
+        <div
+          className={`pointer-events-auto relative flex items-center border border-gray-400 focus-within:border-default rounded-[5px] ${
+            containerClassName || ""
+          }`}
+        >
           {!inputRef?.current?.value && (
             <div className="absolute   px-2 flex items-center text-[14px] inset-0 pointer-events-none">
               {selected?.img && (
@@ -96,18 +108,20 @@ const Select: FunctionComponent<Partial<ISelectProps>> = ({
             ref={inputRef}
             placeholder={!selected ? placeholder || "Select..." : ""}
             onFocus={() => setOpen(true)}
-            className="font-light  flex-1 bg-transparent rounded-tl-[8px] rounded-bl-[8px] text-[14px] h-[42px]  outline-none px-2
+            className="font-light  flex-1 bg-transparent rounded-tl-[8px] rounded-bl-[8px] text-[14px] h-[40px]  outline-none px-2
             placeholder:text-[14px] w-full  placeholder:text-gray-700"
             onChange={(e) => searchOptions(e.target.value)}
             onBlur={props?.onBlur}
           />
-          <div className="px-2">
-            <ArrowDown2
-              color="var(--color-gray-500)"
-              onClick={() => setOpen(!open)}
-              size={18}
-            />
-          </div>
+          {!removeDropdownIcon && (
+            <div className="px-2">
+              <ArrowDown2
+                color="var(--color-gray-500)"
+                onClick={() => setOpen(!open)}
+                size={18}
+              />
+            </div>
+          )}
         </div>
 
         {open && (
@@ -116,14 +130,14 @@ const Select: FunctionComponent<Partial<ISelectProps>> = ({
          overflow-y-auto absolute right-0 left-0 backdrop-blur-[200px]
           !z-[50] mt-2 rounded-[10px] border border-gray-300"
           >
-            {options_?.map((option) => {
+            {options_?.map((option, id) => {
               const isSelected = option?.value === selected?.value;
               return (
                 <li
                   className={`py-2 px-4 flex hover:bg-gray-100 items-center justify-between text-gray-900 text-[14px] cursor-pointer ${
                     isSelected && "!text-default !bg-default/5"
                   }`}
-                  key={`${option?.label}-${option?.value}`}
+                  key={`${option?.label}-${option?.value}-${id}`}
                   onClick={() => {
                     setOpen(false);
                     if (onSelect) {

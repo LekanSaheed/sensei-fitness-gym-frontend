@@ -2,6 +2,7 @@
 
 import Button from "@/components/button";
 import Input from "@/components/input";
+import Select, { SelectDropdownOption } from "@/components/select";
 import Spinner from "@/components/Spinner";
 import { DEFAULT_ERROR_MESSAGE } from "@/constants";
 import { DASHBOARD, SIGNUP } from "@/constants/routes";
@@ -11,6 +12,7 @@ import { actions } from "@/redux";
 import {
   useCheckUsernameQuery,
   useCreateAccountMutation,
+  useGetCountriesQuery,
   useGetSessionQuery,
 } from "@/redux/api-slices/auth.slice";
 import { ErrorResponse } from "@/types";
@@ -19,7 +21,7 @@ import { useFormik } from "formik";
 import { CloseCircle, TickCircle } from "iconsax-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import * as yup from "yup";
@@ -51,6 +53,7 @@ const Page = () => {
       .min(3)
       .max(20)
       .required("Your user name is required"),
+    phoneNumber: yup.string().max(15).required("Your phone number is required"),
     password: yup
       .string()
       .min(8)
@@ -71,11 +74,25 @@ const Page = () => {
     username: "",
     password: "",
     confirmPassword: "",
+    phoneNumber: "",
   };
 
+  const [countryCode, setCountryCode] = useState<SelectDropdownOption | null>(
+    null
+  );
+
   const createAccount = async (data: typeof initV) => {
-    const { confirmPassword, ...payload } = data;
-    const res = await create({ ...payload, session_id: id });
+    if (!countryCode) return toast.error("Please select a country code");
+
+    const { confirmPassword, phoneNumber, ...payload } = data;
+
+    const newPhone = `${countryCode?.value}${phoneNumber}`;
+
+    const res = await create({
+      ...payload,
+      session_id: id,
+      phoneNumber: newPhone,
+    });
 
     if ("error" in res && isFetchBaseQueryError(res.error)) {
       const errorData = res.error.data as ErrorResponse;
@@ -96,14 +113,21 @@ const Page = () => {
     }
   };
 
-  const { handleSubmit, values, touched, errors, handleBlur, handleChange } =
-    useFormik({
-      initialValues: initV,
-      validationSchema,
-      onSubmit(values, formikHelpers) {
-        createAccount(values);
-      },
-    });
+  const {
+    handleSubmit,
+    values,
+    touched,
+    errors,
+    handleBlur,
+    handleChange,
+    setFieldValue,
+  } = useFormik({
+    initialValues: initV,
+    validationSchema,
+    onSubmit(values, formikHelpers) {
+      createAccount(values);
+    },
+  });
 
   const { isLoading, isFetching, isError, refetch, data } =
     useGetSessionQuery(id);
@@ -124,6 +148,35 @@ const Page = () => {
   const usernameIsAvailable = checkUsernameQuery?.data?.data?.isAvailable;
 
   const disabled = usernameCheckError || !usernameIsAvailable;
+
+  const getCountriesQuery = useGetCountriesQuery(null);
+
+  const countries = getCountriesQuery.data || [];
+
+  const countryCodeOptions: SelectDropdownOption[] = countries.map(
+    (country) => {
+      const suffixes = country?.idd?.suffixes;
+
+      const countryCode = `${country?.idd?.root}${
+        suffixes?.length === 1 ? suffixes[0] : ""
+      }`;
+      return {
+        label: countryCode,
+        value: countryCode,
+        img: country?.flags?.png || country?.flags?.png,
+      };
+    }
+  );
+
+  useEffect(() => {
+    if (!countryCode && countryCodeOptions.length) {
+      const defaultCountry = countryCodeOptions.find((c) => c.value === "+234");
+
+      if (defaultCountry) {
+        setCountryCode(defaultCountry);
+      }
+    }
+  }, [countryCodeOptions, countryCode]);
 
   if (isLoading || isFetching)
     return (
@@ -155,7 +208,7 @@ const Page = () => {
         handleSubmit();
       }}
     >
-      <Input label={"Email"} defaultValue={email} disabled />
+      <Input dark label={"Email"} defaultValue={email} disabled />
       <Input
         label={"First Name"}
         error={(touched.firstname && errors.firstname) || ""}
@@ -174,6 +227,39 @@ const Page = () => {
         name="lastname"
         placeholder="Last Name"
       />
+      <div className="mb-4">
+        <div className="flex gap-2  items-end">
+          <div className="basis-[30%]">
+            <Select
+              containerClassName="!rounded-[8px]"
+              selected={countryCode!}
+              onSelect={(o) => setCountryCode(o)}
+              remove_margin
+              options={countryCodeOptions}
+              removeDropdownIcon
+              placeholder="code"
+              label="Phone Number"
+            />
+          </div>
+          <div className="flex-1 basis-[70%]">
+            <Input
+              remove_margin
+              value={values.phoneNumber}
+              inputMode="numeric"
+              type="number"
+              required
+              onChange={(e) => setFieldValue("phoneNumber", e.target.value)}
+              onBlur={handleBlur}
+              name="phoneNumber"
+            />
+          </div>
+        </div>
+        {touched.phoneNumber && errors.phoneNumber && (
+          <p className="text-[10px] mt-1 text-rose-500 tracking-n-2">
+            {errors.phoneNumber}
+          </p>
+        )}
+      </div>
       <Input
         label={"Username"}
         error={
@@ -229,6 +315,7 @@ const Page = () => {
         toggle
         placeholder="Password"
         error={(touched.password && errors.password) || ""}
+        dark
       />
       <Input
         label={"Confirm Password"}
@@ -239,6 +326,7 @@ const Page = () => {
         name="confirmPassword"
         toggle
         placeholder="Password"
+        dark
         error={(touched.confirmPassword && errors.confirmPassword) || ""}
       />
       <Button
