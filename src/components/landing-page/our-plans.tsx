@@ -4,6 +4,9 @@ import HeadingText from "./heading-text";
 import { useGetPlansQuery } from "@/redux/api-slices/subscription.slice";
 import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";
 import FormatNumber from "@/utils/format-number";
+import Button from "../button";
+import Link from "next/link";
+import { SIGNUP } from "@/constants/routes";
 
 const OurPlans = () => {
   const { isLoading, isFetching, data, isError, refetch } =
@@ -21,28 +24,39 @@ const OurPlans = () => {
             See our plans customized to your pocket and time
           </p>
         </div>
-        <Carousel opts={{ align: "center" }}>
-          <CarouselContent className="-ml-[30px]">
+
+        <div className="overflow-hidden">
+          <div className=" flex overflow-x-auto pb-4 snap-x gap-4 snap-mandatory">
             {plans.map((plan, id) => {
               return (
-                <CarouselItem
+                <div
                   key={id}
-                  className="basis-1/2 lg:basis-1/3  pl-[30px] bg-[#222] p-4"
+                  className="w-[80%] sm:w-[60%] md:w-[33.3%] shrink-0 snap-start  border border-default-tertiary  p-4"
                 >
-                  <div>{plan.name}</div>
-                  <p className="text-[20px] font-bold">
-                    {FormatNumber.ngnAmount(plan.price)}
-                  </p>
-                  <p className="font-light text-[12px]">
+                  <div className="mb-4">
                     {" "}
-                    {plan?.durationInDays} day
-                    {plan?.durationInDays > 1 ? "s" : ""} access
-                  </p>
-                </CarouselItem>
+                    <div className="font-bold">{plan.name}</div>
+                    <p className="font-light text-[12px]">
+                      {" "}
+                      {plan?.durationInDays} day
+                      {plan?.durationInDays > 1 ? "s" : ""} access
+                    </p>
+                    <p className="text-[25px] tracking-tight mt-2 font-bold">
+                      {FormatNumber.ngnAmount(plan.price)}
+                    </p>
+                  </div>
+
+                  <div className="">
+                    {" "}
+                    <Link href={SIGNUP}>
+                      <Button label="Get started" brandedFont />
+                    </Link>
+                  </div>
+                </div>
               );
             })}
-          </CarouselContent>
-        </Carousel>
+          </div>
+        </div>
       </div>
     </section>
   );

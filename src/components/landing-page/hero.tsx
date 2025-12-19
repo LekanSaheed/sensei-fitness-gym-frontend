@@ -2,7 +2,7 @@ import React from "react";
 import Button from "../button";
 import Link from "next/link";
 import { SIGNUP } from "@/constants/routes";
-import heroImage from "../../../public/hero-image.jpg";
+import heroImage from "../../../public/sensei-dark.jpg";
 import moment from "moment";
 
 const HeroSection = () => {
@@ -16,10 +16,10 @@ const HeroSection = () => {
 
   return (
     <div
-      className="pt-[100px] px-4 pb-[90px] sm:pb-[120px] bg-top bg-no-repeat sm:bg-center"
+      className="pt-[100px] px-4 pb-[90px] sm:pb-[120px] bg-top bg-no-repeat  sm:bg-centjer"
       style={{
         backgroundImage: `url(${heroImage.src})`,
-        backgroundSize: "cover",
+        backgroundSize: "contain",
       }}
     >
       <div className="mb-[40px] text-center">
@@ -27,7 +27,7 @@ const HeroSection = () => {
           <span className=""> transform your body</span> <br />
           <span className="text-default">elevate your lifestyle.</span>
         </h1>
-        <p className="font-light  sm:max-w-[480px] text-[14px] text-muted-foreground bg-[#000]/20 inline-block p-1 md:text-[14px] lg:max-w-[550px]">
+        <p className="font-light  sm:max-w-[480px] text-[14px] text-muted/80 bg-[#000]/20 inline-block p-1 md:text-[14px] lg:max-w-[550px]">
           Gym training is a structured and disciplined approach to physical
           exercise that focuses on strength, endurance and overall fitness
           improvement.
@@ -44,7 +44,7 @@ const HeroSection = () => {
           />
         </Link>
       </div>
-      <ul className="flex bg-[#000]/40 items-center justify-center  mt-12 xl:mt-16">
+      <ul className="flex bfg-[#000]/40 items-center justify-center  mt-12 xl:mt-16">
         {stats.map((state, id) => {
           return (
             <li
