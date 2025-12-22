@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import HeadingText from "./heading-text";
 import Button from "../button";
@@ -5,6 +6,8 @@ import Link from "next/link";
 import { ABOUT_US } from "@/constants/routes";
 import gymFac from "../../../public/gym-fac.jpg";
 import Image from "next/image";
+import { BlurIn } from "./motion/blur-in";
+import { motion } from "framer-motion";
 
 const AboutUs = () => {
   return (
@@ -28,7 +31,7 @@ const AboutUs = () => {
                 </p>
               </div>
 
-              <p className="text-[12px] text-justify sm:!text-left mb-4 text-muted/80 leading-[160%] lg:leading-[180%] sm:text-[10px] md:text-[12px] sm:mb-6">
+              <BlurIn className="text-[12px] text-justify sm:!text-left mb-4 text-muted/80 leading-[160%] lg:leading-[180%] sm:text-[10px] md:text-[12px] sm:mb-6">
                 Welcome to SEN-SEI FITNESS, where strength is built, goals are
                 crushed, and limits are redefined. We are more than just a
                 fitness center, we are a community committed to growth,
@@ -46,7 +49,7 @@ const AboutUs = () => {
                 we believe fitness is not just about the body — {"it’s"} about
                 building the mindset to take on anything life throws your way.
                 Come for the workout. Stay for the transformation.
-              </p>
+              </BlurIn>
               <div className="flex justify-center sm:justify-start">
                 <Link href={ABOUT_US} className="">
                   <Button
@@ -58,18 +61,51 @@ const AboutUs = () => {
                 </Link>
               </div>
             </div>
-            <div className="max-sm:hidden relative justify-self-center">
-              <div className="h-[300px] w-[200px] absolute border border-default -top-[20px] -left-[30px]" />
-              <div className="h-[300px] w-[200px] absolute border border-muted -bottom-[20px] -right-[30px]" />
-              <div className="relative h-[350px] w-[290px] mt-4">
+
+            <motion.div className="max-sm:hidden relative justify-self-center">
+              <motion.div
+                initial={{ x: 80, y: 80, filter: "blur(20px)" }}
+                whileInView={{
+                  x: 0,
+                  y: 0,
+                  filter: "none",
+                  transition: {
+                    duration: 0.8,
+                  },
+                }}
+                className="h-[300px] w-[200px] absolute border border-default -top-[20px] -left-[30px]"
+              />
+              <motion.div
+                initial={{ x: -80, y: -80, filter: "blur(120px)" }}
+                whileInView={{
+                  x: 0,
+                  y: 0,
+                  filter: "none",
+                  transition: {
+                    duration: 0.8,
+                  },
+                }}
+                className="h-[300px] w-[200px] absolute border border-muted -bottom-[20px] -right-[30px]"
+              />
+              <motion.div
+                initial={{ filter: "blur(20px)", opacity: 0 }}
+                whileInView={{
+                  filter: "none",
+                  opacity: 1,
+                  transition: {
+                    duration: 0.8,
+                  },
+                }}
+                className="relative h-[350px] w-[290px] mt-4"
+              >
                 <Image
                   src={"/sensei.jpg"}
                   fill
                   className="object-contain"
                   alt="sensei"
                 />
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
           </div>
         </div>
       </div>

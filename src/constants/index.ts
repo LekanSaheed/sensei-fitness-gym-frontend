@@ -125,6 +125,6 @@ export const admin_side_bar: IMenu[] = [
 
 export const landing_page_nav_links: { label: string; path: string }[] = [
   { label: "Home", path: "/" },
-  { label: "About Us", path: "/about-us" },
-  { label: "Contact", path: "/contact" },
+  { label: "About Us", path: "/about" },
+  { label: "Contact", path: "/#contact-us" },
 ];

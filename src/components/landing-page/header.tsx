@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import React from "react";
 import HamdburgerMenu from "./hamburger-menu";
@@ -7,6 +9,30 @@ import { landing_page_nav_links } from "@/constants";
 import Link from "next/link";
 import Button from "../button";
 import { LOGIN, SIGNUP } from "@/constants/routes";
+import { motion, stagger, Variant, Variants } from "framer-motion";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
+
+export const MotionLink = motion.create(Link);
+
+export const staggerContainerVariant: Variants = {
+  hidden: {
+    opacity: 0,
+  },
+  visible: {
+    opacity: 1,
+    transition: {
+      delayChildren: stagger(0.1, {}),
+    },
+  },
+};
+
+export const staggerChildrenVariant: Variants = {
+  hidden: { filter: "blur(20px)" },
+  visible: {
+    filter: "none",
+  },
+};
 
 const Header = () => {
   return (
@@ -40,7 +66,12 @@ const Header = () => {
         <div className="lg:hidden">
           <HamdburgerMenu />
         </div>
-        <div className="hidden lg:flex">
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={staggerContainerVariant}
+          className="hidden lg:flex"
+        >
           <Link href={LOGIN}>
             <Button
               label="Login"
@@ -56,7 +87,7 @@ const Header = () => {
               font="regular"
             />
           </Link>
-        </div>
+        </motion.div>
       </div>
       <NavigationMenu />
     </header>
@@ -64,20 +95,31 @@ const Header = () => {
 };
 
 const DesktopNavigation = () => {
+  const pathname = usePathname();
   return (
-    <nav className="hidden lg:flex gap-8">
+    <motion.nav
+      initial={"hidden"}
+      animate="visible"
+      variants={staggerContainerVariant}
+      className="hidden lg:flex gap-8"
+    >
       {landing_page_nav_links.map((link, id) => {
+        const isActive = link.path === pathname;
         return (
-          <Link
-            className="font-league uppercase text-[20px] tracking-tight"
+          <MotionLink
+            variants={staggerChildrenVariant}
+            className={cn(
+              "font-league uppercase text-[20px] tracking-tight",
+              isActive ? "text-default" : ""
+            )}
             href={link.path}
             key={id}
           >
             {link.label}
-          </Link>
+          </MotionLink>
         );
       })}
-    </nav>
+    </motion.nav>
   );
 };
 export default Header;

@@ -25,6 +25,7 @@ const SideNav = () => {
   const { logout } = actions["auth"];
 
   const dispatch = useDispatch();
+
   return (
     <aside className="max-md:hidden w-[200px] fixed left-0 bottom-0 top-0 p-4 border-r bg-[#f6f9f6] border-r-gray-300 flex flex-col">
       <div className="relative h-[60px] w-[160px] mb-[10px]">

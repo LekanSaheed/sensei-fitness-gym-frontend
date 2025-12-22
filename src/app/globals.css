@@ -77,6 +77,31 @@ body {
   color: #222;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+.scroll-con::-webkit-scrollbar {
+  width: 0.5em;
+  height: 0.2em;
+}
+
+.scroll-con::-webkit-scrollbar-track {
+  box-shadow: none;
+  padding: 3px;
+}
+.scroll-con::-webkit-scrollbar-thumb {
+  background-color: #ffffff40;
+  border-radius: 20px;
+  box-shadow: 0 0 10px rgba(0 0 0 / 17%);
+}
+
 :root {
   --radius: 0.625rem;
   --background: oklch(1 0 0);

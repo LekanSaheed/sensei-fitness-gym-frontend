@@ -1,9 +1,16 @@
+"use client";
+
 import React from "react";
 import Button from "../button";
 import Link from "next/link";
 import { SIGNUP } from "@/constants/routes";
 import heroImage from "../../../public/sensei-dark.jpg";
 import moment from "moment";
+import { WordsPullUp } from "./motion/word-pull-up";
+import { LettersPullUp } from "./motion/letters-pull-up";
+import { BlurIn } from "./motion/blur-in";
+import { motion } from "framer-motion";
+import { staggerContainerVariant } from "./header";
 
 const HeroSection = () => {
   const yearsOfExperience = moment().diff(moment("2017-01-01"), "years");
@@ -23,18 +30,26 @@ const HeroSection = () => {
       }}
     >
       <div className="mb-[40px] text-center">
-        <h1 className="uppercase font-league leading-[130%] tracking-tight text-[45px] sm:text-[50px] font-bold md:text-[60px] lg:text-[70px] xl:text-[80px] ">
-          <span className=""> transform your body</span> <br />
-          <span className="text-default">elevate your lifestyle.</span>
-        </h1>
-        <p className="font-light  sm:max-w-[480px] text-[14px] text-muted/80 bg-[#000]/20 inline-block p-1 md:text-[14px] lg:max-w-[550px]">
+        <div className="uppercase font-league leading-[130%] tracking-tight text-[45px] sm:text-[50px] font-bold md:text-[60px] lg:text-[70px] xl:text-[80px] ">
+          <WordsPullUp text="transform your body" />
+          <LettersPullUp
+            text="elevate your lifestyle"
+            className="text-default"
+          />
+          {/* <span className="text-default">elevate your lifestyle.</span> */}
+        </div>
+        <BlurIn className="font-light  sm:max-w-[480px] text-[14px] text-muted/80 bg-[#000]/20 inline-block p-1 md:text-[14px] lg:max-w-[550px]">
           Gym training is a structured and disciplined approach to physical
           exercise that focuses on strength, endurance and overall fitness
           improvement.
-        </p>
+        </BlurIn>
       </div>
 
-      <div className="flex justify-center">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="flex justify-center"
+      >
         <Link href={SIGNUP}>
           <Button
             label="JOIN US NOW"
@@ -43,11 +58,18 @@ const HeroSection = () => {
             size="lg"
           />
         </Link>
-      </div>
-      <ul className="flex bfg-[#000]/40 items-center justify-center  mt-12 xl:mt-16">
+      </motion.div>
+
+      <motion.ul
+        variants={staggerContainerVariant}
+        initial="hidden"
+        animate="visible"
+        className="flex bfg-[#000]/40 items-center justify-center  mt-12 xl:mt-16"
+      >
         {stats.map((state, id) => {
           return (
-            <li
+            <motion.li
+              variants={staggerContainerVariant}
               key={id}
               className=" p-4 border-r last:border-r-0 border-r-muted-foreground/30"
             >
@@ -57,10 +79,10 @@ const HeroSection = () => {
                   {state.label}
                 </p>
               </div>
-            </li>
+            </motion.li>
           );
         })}
-      </ul>
+      </motion.ul>
     </div>
   );
 };

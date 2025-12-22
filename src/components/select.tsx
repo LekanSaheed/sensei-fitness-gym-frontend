@@ -12,6 +12,7 @@ import { useDetectOutsideClick } from "@/hooks/useDetectOutsideClick";
 import Image from "next/image";
 import { FaCheck } from "react-icons/fa6";
 import InputProvider from "./providers/input-provider";
+import { MdClose } from "react-icons/md";
 
 export interface SelectDropdownOption {
   label: string;
@@ -23,8 +24,10 @@ export interface SelectDropdownOption {
 interface ISelectProps {
   label: string;
   options: SelectDropdownOption[];
-  selected: SelectDropdownOption;
-  onSelect: (option: SelectDropdownOption) => void;
+  selected?: SelectDropdownOption;
+  onSelect?: (option: SelectDropdownOption) => void;
+  multipleSelected?: SelectDropdownOption[];
+  onMultiSelect?: (options: SelectDropdownOption[]) => void;
   placeholder: string;
   error?: string;
   onBlur: FocusEventHandler<HTMLInputElement>;
@@ -32,6 +35,8 @@ interface ISelectProps {
   removeDropdownIcon?: boolean;
   remove_margin?: boolean;
   containerClassName?: string;
+  multi?: boolean;
+  info?: string;
 }
 const Select: FunctionComponent<Partial<ISelectProps>> = ({
   label,
@@ -44,7 +49,10 @@ const Select: FunctionComponent<Partial<ISelectProps>> = ({
   removeDropdownIcon,
   remove_margin,
   containerClassName,
-
+  multi,
+  onMultiSelect,
+  multipleSelected = [],
+  info,
   ...props
 }) => {
   const [open, setOpen] = useState(false);
@@ -85,43 +93,66 @@ const Select: FunctionComponent<Partial<ISelectProps>> = ({
         remove_margin={remove_margin}
       >
         <div
-          className={`pointer-events-auto relative flex items-center border border-gray-400 focus-within:border-default rounded-[5px] ${
+          className={`pointer-events-auto relative  border border-gray-400 focus-within:border-default rounded-[5px] ${
             containerClassName || ""
           }`}
         >
-          {!inputRef?.current?.value && (
-            <div className="absolute   px-2 flex items-center text-[14px] inset-0 pointer-events-none">
-              {selected?.img && (
-                <div className="mr-2 h-[22px] w-[22px] relative rounded-full border border-default/50 overflow-hidden">
-                  <Image
-                    className="object-contain"
-                    src={selected?.img}
-                    fill
-                    alt="IMAGE"
-                  />
-                </div>
-              )}
-              {selected?.label}
-            </div>
+          {multipleSelected.length > 0 && (
+            <ul className="flex flex-wrap gap-2 p-2">
+              {multipleSelected.map((ms, id) => {
+                return (
+                  <li
+                    key={id}
+                    onClick={() => {
+                      if (!!onMultiSelect) {
+                        onMultiSelect(
+                          multipleSelected?.filter((o) => o.value !== ms.value)
+                        );
+                      }
+                    }}
+                    className="bg-default/10 cursor-pointer inline-flex gap-1 items-center px-2 py-1 text-[12px] text-default rounded-full "
+                  >
+                    {ms.label} <MdClose />
+                  </li>
+                );
+              })}
+            </ul>
           )}
-          <input
-            ref={inputRef}
-            placeholder={!selected ? placeholder || "Select..." : ""}
-            onFocus={() => setOpen(true)}
-            className="font-light  flex-1 bg-transparent rounded-tl-[8px] rounded-bl-[8px] text-[14px] h-[40px]  outline-none px-2
+          <div className="flex items-center">
+            {!inputRef?.current?.value && (
+              <div className="absolute   px-2 flex items-center text-[14px] inset-0 pointer-events-none">
+                {selected?.img && (
+                  <div className="mr-2 h-[22px] w-[22px] relative rounded-full border border-default/50 overflow-hidden">
+                    <Image
+                      className="object-contain"
+                      src={selected?.img}
+                      fill
+                      alt="IMAGE"
+                    />
+                  </div>
+                )}
+                {selected?.label}
+              </div>
+            )}
+            <input
+              ref={inputRef}
+              placeholder={!selected ? placeholder || "Select..." : ""}
+              onFocus={() => setOpen(true)}
+              className="font-light  flex-1 bg-transparent rounded-tl-[8px] rounded-bl-[8px] text-[14px] h-[40px]  outline-none px-2
             placeholder:text-[14px] w-full  placeholder:text-gray-700"
-            onChange={(e) => searchOptions(e.target.value)}
-            onBlur={props?.onBlur}
-          />
-          {!removeDropdownIcon && (
-            <div className="px-2">
-              <ArrowDown2
-                color="var(--color-gray-500)"
-                onClick={() => setOpen(!open)}
-                size={18}
-              />
-            </div>
-          )}
+              onChange={(e) => searchOptions(e.target.value)}
+              onBlur={props?.onBlur}
+            />
+            {!removeDropdownIcon && (
+              <div className="px-2">
+                <ArrowDown2
+                  color="var(--color-gray-500)"
+                  onClick={() => setOpen(!open)}
+                  size={18}
+                />
+              </div>
+            )}
+          </div>
         </div>
 
         {open && (
@@ -132,17 +163,35 @@ const Select: FunctionComponent<Partial<ISelectProps>> = ({
           >
             {options_?.map((option, id) => {
               const isSelected = option?.value === selected?.value;
+
+              const multi_isSelected = multipleSelected?.some(
+                (o) => o.value === option.value
+              );
+
+              const mutlitple_selected_options = multi_isSelected
+                ? multipleSelected?.filter((o) => o.value !== option.value)
+                : [...Array.from(multipleSelected!), option];
+
               return (
                 <li
                   className={`py-2 px-4 flex hover:bg-gray-100 items-center justify-between text-gray-900 text-[14px] cursor-pointer ${
-                    isSelected && "!text-default !bg-default/5"
+                    isSelected ||
+                    (multi_isSelected && "!text-default !bg-default/5")
                   }`}
                   key={`${option?.label}-${option?.value}-${id}`}
                   onClick={() => {
                     setOpen(false);
-                    if (onSelect) {
-                      onSelect(option);
+                    if (!multi) {
+                      if (onSelect) {
+                        onSelect(option);
+                      }
                     }
+                    if (multi) {
+                      if (onMultiSelect) {
+                        onMultiSelect(mutlitple_selected_options!);
+                      }
+                    }
+
                     if (inputRef?.current) {
                       inputRef.current.value = "";
                     }
@@ -180,6 +229,9 @@ const Select: FunctionComponent<Partial<ISelectProps>> = ({
               </div>
             )}
           </ul>
+        )}
+        {!error && info && (
+          <p className="text-[10px] mt-1 text-gray-500 tracking-n-2">{info}</p>
         )}
       </InputProvider>
     </div>

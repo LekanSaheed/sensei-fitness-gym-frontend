@@ -118,7 +118,7 @@ const adminApi = api.injectEndpoints({
       }),
       createPlan: build.mutation<
         ResponseType,
-        EditablePlanFields & { isActive: boolean }
+        Partial<EditablePlanFields> & { isActive: boolean }
       >({
         query: (payload) => ({
           url: "/admin/subscriptions/create",

@@ -26,7 +26,24 @@ const OurPlans = () => {
         </div>
 
         <div className="overflow-hidden">
-          <div className=" flex overflow-x-auto pb-4 snap-x gap-4 snap-mandatory">
+          <div className="flex overflow-x-auto scroll-con pb-4 snap-x gap-4 snap-mandatory">
+            {(isLoading || isFetching) && (
+              <>
+                {[...Array(7)].map((_, id) => {
+                  return (
+                    <div
+                      className="sm:w-[60%] md:w-[33.3%] h-[200px] border animate-pulse border-default-tertiary/50 shrink-0 snap-start p-4"
+                      key={id}
+                    >
+                      <div className="bg-black/50 mb-2 h-[15px] w-[140px] rounded-[10px] animate-pulse" />
+                      <div className="bg-black/50 mb-4 h-[10px] w-[90%] rounded-[10px] animate-pulse" />
+                      <div className="bg-black/50 mb-5 h-[30px] w-[100px] rounded-[10px] animate-pulse" />
+                      <div className="bg-default/50 h-[35px] w-[100px] animate-pulse" />
+                    </div>
+                  );
+                })}
+              </>
+            )}
             {plans.map((plan, id) => {
               return (
                 <div
@@ -38,8 +55,7 @@ const OurPlans = () => {
                     <div className="font-bold">{plan.name}</div>
                     <p className="font-light text-[12px]">
                       {" "}
-                      {plan?.durationInDays} day
-                      {plan?.durationInDays > 1 ? "s" : ""} access
+                      {plan?.description}
                     </p>
                     <p className="text-[25px] tracking-tight mt-2 font-bold">
                       {FormatNumber.ngnAmount(plan.price)}

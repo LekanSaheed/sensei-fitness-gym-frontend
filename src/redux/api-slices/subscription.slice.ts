@@ -7,6 +7,21 @@ import {
 import { api } from "../api";
 import { formatQuery } from "@/utils";
 
+export enum PlanType {
+  Linear = "LINEAR",
+  SessionBased = "SESSION_BASED",
+}
+
+export enum WeekDay {
+  Monday = "Monday",
+  Tuesday = "Tuesday",
+  Wednesday = "Wednesday",
+  Thursday = "Thursday",
+  Friday = "Friday",
+  Saturday = "Saturday",
+  Sunday = "Sunday",
+}
+
 export interface ISubscriptionPlan {
   name: string;
   durationInDays: number;
@@ -14,11 +29,14 @@ export interface ISubscriptionPlan {
   trainerFee: number;
   description: string;
   isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
+  createdBy: string;
+  checkInsPerWeek?: number;
+  totalCheckIns?: number;
+  type: PlanType;
+  allowedDays: WeekDay[];
+  weekStart: WeekDay;
   _id: string;
 }
-
 export type PaymentMode = "gateway" | "admin";
 
 export type SubscriptionStatus = "active" | "expired" | "canceled";
@@ -49,6 +67,11 @@ export interface ISubscription {
   totalAmount: number;
   signature: string;
   createdAt: string;
+  checkInsPerWeek?: number;
+  totalCheckIns?: number;
+  planType: PlanType;
+  allowedDays: WeekDay[];
+  weekStart: WeekDay;
   _id: string;
 }
 
@@ -100,7 +123,7 @@ const subscriptionApi = api.injectEndpoints({
         providesTags: ["has-checked-in"],
       }),
       getCheckInAnalytics: build.query<
-        ResponseType<{ totalOnSub: number }>,
+        ResponseType<{ totalOnSub: number; currentSessionWeek: number }>,
         null
       >({
         query: () => "/subscriptions/check-ins/analytics",

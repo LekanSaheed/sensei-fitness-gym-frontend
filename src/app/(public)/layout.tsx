@@ -6,7 +6,7 @@ const PublicLayout = ({ children }: { children: ReactNode }) => {
   return (
     <LandingPageWrapper>
       <Suspense>
-        <div className={``}>{children}</div>
+        <div className={`bg-[#000] min-h-screen`}>{children}</div>
       </Suspense>
     </LandingPageWrapper>
   );

@@ -1,10 +1,10 @@
 "use client";
 import { LOGIN, SIGNUP } from "@/constants/routes";
-import { RootState } from "@/redux";
+import { actions, RootState } from "@/redux";
 import { AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import React from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Button from "../button";
 import { createPortal } from "react-dom";
 import { isWindow } from "@/utils";
@@ -12,6 +12,10 @@ import { landing_page_nav_links } from "@/constants";
 
 const NavigationMenu = () => {
   const { navigation } = useSelector((state: RootState) => state["app"]);
+
+  const { openNavigation } = actions["app"];
+
+  const dispatch = useDispatch();
 
   if (!isWindow) return;
 
@@ -25,6 +29,7 @@ const NavigationMenu = () => {
                 return (
                   <li key={id} className="mb-4">
                     <Link
+                      onClick={() => dispatch(openNavigation(false))}
                       href={link.path}
                       className="text-[20px] !font-league tracking-tight text-white  uppercase"
                     >
@@ -36,7 +41,7 @@ const NavigationMenu = () => {
             </ul>
           </nav>
           <div className="flex gap-4 mt-10 justify-center">
-            <Link href={LOGIN}>
+            <Link href={LOGIN} onClick={() => dispatch(openNavigation(false))}>
               <Button
                 label="Login"
                 variant="outlined"
@@ -44,7 +49,7 @@ const NavigationMenu = () => {
                 className="font-league text-[20px] !rounded-none uppercase"
               />
             </Link>
-            <Link href={SIGNUP}>
+            <Link href={SIGNUP} onClick={() => dispatch(openNavigation(false))}>
               <Button
                 label="Register"
                 font="regular"

@@ -1,4 +1,5 @@
 import AboutUs from "@/components/landing-page/about-us";
+import ContactUs from "@/components/landing-page/contact-us";
 import GetFamiliar from "@/components/landing-page/get-familiar";
 import HeroSection from "@/components/landing-page/hero";
 import OurPlans from "@/components/landing-page/our-plans";
@@ -15,6 +16,7 @@ const HomePage = () => {
       <VisionAndMission />
       <GetFamiliar />
       <OurPlans />
+      <ContactUs />
     </div>
   );
 };
