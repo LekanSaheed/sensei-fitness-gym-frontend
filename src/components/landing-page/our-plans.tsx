@@ -13,12 +13,23 @@ const OurPlans = () => {
     useGetPlansQuery(null);
 
   const plans = data?.data?.plans || [];
+
+  const days = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+  ];
+
   return (
     <section className="bg-default-black py-[20px] md:py-[30px] lg:py-[40px] xl:py-[50px] 2xl:py-[60px] px-4">
       <div className="container mx-auto max-w-7xl">
         <div className="mb-[40px] md:mb-[50px] lg:mb-[60px] xl:mb-[70px] 2xl:mb-[100px]">
           <HeadingText centered>
-            Our <span className="text-default">plans</span>
+            Our <span className="text-default"> plans</span>
           </HeadingText>
           <p className="text-[12px] text-center text-muted-foreground md:text-[14px] lg:text-[15px] xl:text-[16px] max-w-[350px] md:max-w-[400px] lg:max-w-[450px] mx-auto ">
             See our plans customized to your pocket and time
@@ -68,6 +79,27 @@ const OurPlans = () => {
                       <Button label="Get started" brandedFont />
                     </Link>
                   </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="mt-4">
+          <HeadingText centered>opening hours & schedules</HeadingText>
+
+          <div className="text-center">
+            {days.map((day, id) => {
+              return (
+                <div key={id} className="mb-2">
+                  <HeadingText className="text-default"> {day}</HeadingText>
+                  {id === 6 ? (
+                    <p>Closed</p>
+                  ) : (
+                    <p className="text-[12px]">
+                      Morning: 8am - 12pm, Evening: 4pm - 9pm
+                    </p>
+                  )}
                 </div>
               );
             })}
