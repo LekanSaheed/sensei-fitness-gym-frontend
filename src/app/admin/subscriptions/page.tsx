@@ -7,7 +7,7 @@ import Input from "@/components/input";
 import SectionLoader from "@/components/SectionLoader";
 import Select, { SelectDropdownOption } from "@/components/select";
 import Table, { ColumnProps } from "@/components/table";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 import {
   Empty,
@@ -338,6 +338,7 @@ const ActivateMemberSubModal = ({
                 >
                   <ItemMedia>
                     <Avatar className="size-10">
+                      <AvatarImage src={member?.profile_picture} />
                       <AvatarFallback>
                         {getInitials(collocateMemberName(member))}
                       </AvatarFallback>

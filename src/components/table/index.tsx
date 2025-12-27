@@ -19,11 +19,12 @@ import moment from "moment";
 import usePaginate from "@/hooks/usePaginate";
 import Spinner from "../Spinner";
 import FormatNumber from "@/utils/format-number";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 export interface ColumnProps {
   label: string;
   field: string;
-  fieldType?: "currency" | "default" | "date";
+  fieldType?: "currency" | "default" | "date" | "avatar";
   wrap?: boolean;
   hide?: boolean;
   bold?: boolean;
@@ -186,6 +187,11 @@ const Table = <
 
                         const bold = colDeets?.bold;
 
+                        const avatarProps = cellValue as unknown as {
+                          src: string;
+                          initials: string;
+                        };
+
                         return (
                           <td
                             key={id}
@@ -197,13 +203,24 @@ const Table = <
                               !wrap ? "whitespace-nowrap" : ""
                             }`}
                           >
-                            {fieldType === "currency"
-                              ? FormatNumber.ngnAmount(cellValue as number)
-                              : fieldType === "date"
-                              ? !!cellValue
-                                ? moment(cellValue)?.format("llll")
-                                : "N/A"
-                              : cellValue || "N/A"}
+                            {fieldType === "avatar" ? (
+                              <Avatar className="size-8">
+                                <AvatarImage src={avatarProps.src} />
+                                <AvatarFallback>
+                                  {avatarProps?.initials}
+                                </AvatarFallback>
+                              </Avatar>
+                            ) : fieldType === "currency" ? (
+                              FormatNumber.ngnAmount(cellValue as number)
+                            ) : fieldType === "date" ? (
+                              !!cellValue ? (
+                                moment(cellValue)?.format("llll")
+                              ) : (
+                                "N/A"
+                              )
+                            ) : (
+                              cellValue || "N/A"
+                            )}
                           </td>
                         );
                       })}

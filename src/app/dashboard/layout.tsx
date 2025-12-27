@@ -7,6 +7,7 @@ import {
   ColorSchemeProvider,
   useColorScheme,
 } from "@/components/providers/color-scheme-context";
+import UploadProfilePictureModal from "@/components/UploadProfilePictureModal";
 import ProtectedRoute from "@/guards/protected-routes";
 
 import React, { ReactNode, Suspense } from "react";
@@ -28,6 +29,7 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
             </div>
           </div>
           {/* </ColorSchemeProvider> */}
+          <UploadProfilePictureModal />
         </ProtectedRoute>
       </Suspense>
     </AuthProvider>

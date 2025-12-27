@@ -5,7 +5,7 @@ import Input from "@/components/input";
 import SectionCard from "@/components/SectionCard";
 import SectionLoader from "@/components/SectionLoader";
 import Table, { ColumnProps } from "@/components/table";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   Empty,
@@ -316,6 +316,7 @@ const CheckInUserModal = ({
                 >
                   <ItemMedia>
                     <Avatar className="size-10">
+                      <AvatarImage src={member?.profile_picture} />
                       <AvatarFallback>
                         {getInitials(collocateMemberName(member))}
                       </AvatarFallback>

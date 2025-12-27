@@ -7,12 +7,18 @@ import {
   useGetMembersAnalyticsQuery,
   useGetMembersQuery,
 } from "@/redux/api-slices/admin.slice";
-import { defaultPageSize, onlyFieldsWithValue } from "@/utils";
+import {
+  collocateMemberName,
+  defaultPageSize,
+  getInitials,
+  onlyFieldsWithValue,
+} from "@/utils";
 import { useRouter, useSearchParams } from "next/navigation";
 import React from "react";
 
 const UsersPage = () => {
   const columns: ColumnProps[] = [
+    { label: "", field: "avatarProps", fieldType: "avatar" },
     { label: "Member Name", field: "member" },
     { label: "Email Address", field: "email" },
     { label: "Username", field: "username" },
@@ -56,6 +62,10 @@ const UsersPage = () => {
     return {
       id,
       ...r,
+      avatarProps: {
+        initials: getInitials(collocateMemberName(r)),
+        src: r?.profile_picture,
+      },
       member: `${r?.firstname} ${r?.lastname}`,
       paidRegFee: r?.registrationFeePaid ? "Yes" : "No",
       currentPlan: r?.latestSubscription?.planNameSnapshot,

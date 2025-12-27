@@ -3,7 +3,7 @@
 import Alert from "@/components/alert";
 import Button from "@/components/button";
 import SectionLoader from "@/components/SectionLoader";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   useGetCheckInsQuery,
   useGetMemberByIdQuery,
@@ -76,6 +76,7 @@ const Member = () => {
         <div className="">
           <div className="border-b  flex items-center gap-2 py-4">
             <Avatar className="size-20 text-[25px]">
+              <AvatarImage src={memberDetails?.profile_picture} />
               <AvatarFallback>
                 {getInitials(collocateMemberName(memberDetails))}
               </AvatarFallback>

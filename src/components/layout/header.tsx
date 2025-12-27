@@ -11,7 +11,7 @@ import {
 } from "@/constants/routes";
 import moment from "moment";
 import { label } from "framer-motion/client";
-import { Avatar, AvatarFallback } from "../ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { collocateMemberName, getInitials } from "@/utils";
 import { useColorScheme } from "@/hooks/useColorScheme";
 
@@ -83,6 +83,7 @@ const Header = () => {
             ) : (
               <div className="flex items-center">
                 <Avatar className="size-11 border border-gray-400 mr-2 dark:border-border">
+                  <AvatarImage src={user?.profile_picture} />
                   <AvatarFallback>
                     {getInitials(collocateMemberName(user!))}
                   </AvatarFallback>

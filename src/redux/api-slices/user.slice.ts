@@ -26,8 +26,20 @@ const userApi = api.injectEndpoints({
           body: payload,
         }),
       }),
+
+      updateProfilePicture: build.mutation<ResponseType, FormData>({
+        query: (body) => ({
+          url: "/user/upload-dp",
+          method: "post",
+          body: body,
+        }),
+      }),
     };
   },
 });
 
-export const { useUpdateProfileMutation, useUpdatePasswordMutation } = userApi;
+export const {
+  useUpdateProfileMutation,
+  useUpdatePasswordMutation,
+  useUpdateProfilePictureMutation,
+} = userApi;

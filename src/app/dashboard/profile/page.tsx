@@ -5,7 +5,8 @@ import UndertakingDocument from "@/components/documents/undertaking-document";
 import Input from "@/components/input";
 import Modal from "@/components/Modal";
 import SectionLoader from "@/components/SectionLoader";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import UploadProfilePictureModal from "@/components/UploadProfilePictureModal";
 import { DEFAULT_ERROR_MESSAGE } from "@/constants";
 import useDebounceValue from "@/hooks/useDebounce";
 import { useFetchUserAndLogin } from "@/hooks/useLogin";
@@ -27,7 +28,7 @@ import {
 } from "@/utils";
 import { PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
 import { useFormik } from "formik";
-import { ArrowRight2, LogoutCurve } from "iconsax-react";
+import { ArrowRight2, Edit, LogoutCurve } from "iconsax-react";
 import moment from "moment";
 import { useRouter } from "next/navigation";
 import React, { FunctionComponent, useState } from "react";
@@ -45,6 +46,7 @@ const ProfilePage = () => {
     passwordUpdateModal: false,
     logoutModal: false,
     undertakingDocsModal: false,
+    profilePictureModal: false,
   });
 
   const actions: { label: string; id: keyof typeof state }[] = [
@@ -55,13 +57,20 @@ const ProfilePage = () => {
 
   return (
     <div>
-      <div className="flex bg-white p-4 rounded-[10px] mb-4 dark:bg-card">
-        <Avatar className="size-[70px] mr-3">
+      <div className="flex flex-col items-center pt-5 rounded-[10px] mb-4 ">
+        <Avatar className="size-[100px] mr-3 relative">
+          <div
+            onClick={() => handleStateChange({ profilePictureModal: true })}
+            className="bg-black/50 inset-0 absolute flex items-center justify-center "
+          >
+            <Edit color="var(--color-default)" size={20} />
+          </div>
+          <AvatarImage src={user?.profile_picture} />
           <AvatarFallback className=" border border-gray-400 !bg-white text-[20px] dark:!bg-accent dark:border-border">
             {getInitials(memberName)}
           </AvatarFallback>
         </Avatar>
-        <div>
+        <div className="text-center">
           <h1 className="font-semibold text-[20px] tracking-tight">
             {memberName}
           </h1>
@@ -108,6 +117,10 @@ const ProfilePage = () => {
       <UndertakingDocsModal
         open={state.undertakingDocsModal}
         setOpen={(bool) => handleStateChange({ undertakingDocsModal: bool })}
+      />
+      <UploadProfilePictureModal
+        open={state.profilePictureModal}
+        setOpen={(bool) => handleStateChange({ profilePictureModal: bool })}
       />
     </div>
   );

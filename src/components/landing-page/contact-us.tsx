@@ -1,11 +1,15 @@
 import React from "react";
 import HeadingText from "./heading-text";
-import { FaInstagram, FaTiktok, FaXTwitter } from "react-icons/fa6";
+import { FaInstagram, FaTiktok, FaWhatsapp, FaXTwitter } from "react-icons/fa6";
 import { IconType } from "react-icons/lib";
 import Link from "next/link";
 
 const ContactUs = () => {
   const social_links: { icon: IconType; url: string }[] = [
+    {
+      icon: FaWhatsapp,
+      url: "https://wa.me/+2348120825084?text=Hello%20SEN-SEI Fitness",
+    },
     {
       icon: FaInstagram,
       url: "https://www.instagram.com/sens.ei4fitness",
