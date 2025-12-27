@@ -6,7 +6,7 @@ export const TERMS = "/terms";
 
 export const PRIVAY_POLICY = "/privacy-policy";
 
-export const CONTACT_US = "/contact-us";
+export const CONTACT_US = "/#contact-us";
 
 export const ABOUT_US = "/about";
 
