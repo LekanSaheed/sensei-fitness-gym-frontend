@@ -91,13 +91,13 @@ const OurPlans = () => {
           <div className="text-center">
             {days.map((day, id) => {
               return (
-                <div key={id} className="mb-2">
-                  <HeadingText className="text-default"> {day}</HeadingText>
+                <div key={id} className="mb-2 ">
+                  <HeadingText className="text-default "> {day}</HeadingText>
                   {id === 6 ? (
-                    <p>Closed</p>
+                    <p className="text-[12px] text-default-tertiary">Closed</p>
                   ) : (
                     <p className="text-[12px]">
-                      Morning: 8am - 12pm, Evening: 4pm - 9pm
+                      Morning: 7am - 11am, Evening: 5pm - 9pm
                     </p>
                   )}
                 </div>
