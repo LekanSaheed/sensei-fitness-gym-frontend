@@ -82,6 +82,8 @@ const adminApi = api.injectEndpoints({
           activeMembers: number;
           registeredThisMonth: number;
           membersWithoutActiveSub: number;
+          totalMembersWithTrainers: number;
+          totalMembersWithOutTrainers: number;
         }>,
         null
       >({

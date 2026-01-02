@@ -97,7 +97,9 @@ const OurPlans = () => {
                     <p className="text-[12px] text-default-tertiary">Closed</p>
                   ) : (
                     <p className="text-[12px]">
-                      Morning: 7am - 11am, Evening: 5pm - 9pm
+                      Morning: 7am - 11am
+                      {day?.toLowerCase() !== "saturday" &&
+                        ", Evening: 5pm - 9pm"}
                     </p>
                   )}
                 </div>

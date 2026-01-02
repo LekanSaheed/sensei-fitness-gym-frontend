@@ -93,6 +93,16 @@ const AdminHomePage = () => {
       loading: membersAnalyticsLoading,
     },
     {
+      description: "Active Members With Trainers",
+      value: membersAnalytics?.totalMembersWithTrainers,
+      loading: membersAnalyticsLoading,
+    },
+    {
+      description: "Active Members Without Trainers",
+      value: membersAnalytics?.totalMembersWithOutTrainers,
+      loading: membersAnalyticsLoading,
+    },
+    {
       description: "Check Ins ",
       value:
         checkInAnalytics?.[
@@ -107,7 +117,7 @@ const AdminHomePage = () => {
   ];
   return (
     <div>
-      <div className="mb-4 *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-2 gap-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mb-4 *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-2 gap-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs sm:grid-cols-2 lg:grid-cols-3">
         {cards.map((card, id) => {
           return <SectionCard {...card} key={id} />;
         })}

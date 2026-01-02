@@ -2,6 +2,7 @@
 
 import SectionCard from "@/components/SectionCard";
 import Table, { ColumnProps } from "@/components/table";
+import { TableFilter } from "@/components/table/table-controls";
 import { MEMBERS } from "@/constants/routes";
 import {
   useGetMembersAnalyticsQuery,
@@ -46,6 +47,7 @@ const UsersPage = () => {
       page: searchParams.get("page") || "1",
       limit: searchParams.get("pageSize") || String(defaultPageSize),
       search: searchParams.get("searchQuery") || "",
+      subscriptionStatus: searchParams.get("subscriptionStatus") || "",
     })
   );
 
@@ -121,10 +123,31 @@ const UsersPage = () => {
       description: "Members Without Active Sub",
       value: membersAnalytics?.membersWithoutActiveSub,
     },
+    {
+      description: "Active Members With Trainers",
+      value: membersAnalytics?.totalMembersWithTrainers,
+    },
+    {
+      description: "Active Members Without Trainers",
+      value: membersAnalytics?.totalMembersWithOutTrainers,
+    },
+  ];
+
+  const filters: TableFilter[] = [
+    {
+      keyName: "subscriptionStatus",
+      title: "Subscription status",
+      options: [
+        { label: "All", value: "all" },
+        { label: "Subscription Active", value: "active" },
+        { label: "Subscription Expired", value: "expired" },
+        { label: "No subscription", value: "no-sub" },
+      ],
+    },
   ];
   return (
     <div>
-      <div className="mb-4 *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-2 gap-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mb-4 *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-2 gap-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs sm:grid-cols-2 lg:grid-cols-3">
         {cards.map((card, id) => {
           return (
             <SectionCard
@@ -147,6 +170,7 @@ const UsersPage = () => {
         totalRecords={paginationInfo?.totalItems || 0}
         columns={columns}
         rows={rows}
+        filters={filters}
         onRowClick={(row) => {
           router.push(
             `${MEMBERS}/${row?._id}?name=${row?.firstname || ""} ${
