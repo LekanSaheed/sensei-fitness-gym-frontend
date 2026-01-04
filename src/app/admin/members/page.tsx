@@ -14,6 +14,7 @@ import {
   getInitials,
   onlyFieldsWithValue,
 } from "@/utils";
+import { UserTick } from "iconsax-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import React from "react";
 
@@ -48,6 +49,7 @@ const UsersPage = () => {
       limit: searchParams.get("pageSize") || String(defaultPageSize),
       search: searchParams.get("searchQuery") || "",
       subscriptionStatus: searchParams.get("subscriptionStatus") || "",
+      trainer: searchParams.get("trainer") || "",
     })
   );
 
@@ -72,15 +74,30 @@ const UsersPage = () => {
       paidRegFee: r?.registrationFeePaid ? "Yes" : "No",
       currentPlan: r?.latestSubscription?.planNameSnapshot,
       currentPlanStatus: (
-        <div className="capitalize inline-flex items-center">
-          <div
-            className={`size-[10px] shrink-0 rounded-full mr-1 ${
-              r?.latestSubscription?.status === "active"
-                ? "bg-emerald-500"
-                : "bg-rose-500"
-            }`}
-          />
-          {r?.latestSubscription?.status || "No subcription"}
+        <div className="flex items-center gap-4">
+          <div className="capitalize inline-flex items-center">
+            <div
+              className={`size-[10px] shrink-0 rounded-full mr-1 ${
+                r?.latestSubscription?.status === "active"
+                  ? "bg-emerald-500"
+                  : "bg-rose-500"
+              }`}
+            />
+            {r?.latestSubscription?.status || "No subcription"}
+          </div>
+          {r?.latestSubscription?.includesTrainer && (
+            <div title="Has Trainer" className="shrink-0">
+              <UserTick
+                size={16}
+                variant="Bold"
+                color={
+                  r?.latestSubscription?.status === "active"
+                    ? "var(--color-emerald-500)"
+                    : "var(--color-rose-500)"
+                }
+              />
+            </div>
+          )}
         </div>
       ),
       currentPlanStartDate: r?.latestSubscription?.startDate,
@@ -142,6 +159,15 @@ const UsersPage = () => {
         { label: "Subscription Active", value: "active" },
         { label: "Subscription Expired", value: "expired" },
         { label: "No subscription", value: "no-sub" },
+      ],
+    },
+    {
+      keyName: "trainer",
+      title: "Trainer Assigned",
+      options: [
+        { label: "All", value: "all" },
+        { label: "Trainer Assigned", value: "assigned" },
+        { label: "Trainer Not Assigned", value: "not-assigned" },
       ],
     },
   ];
