@@ -37,6 +37,7 @@ import {
 } from "@/redux/api-slices/admin.slice";
 import {
   SubscriptionStatus,
+  useAdminRequerySubMutation,
   useGetPlansQuery,
 } from "@/redux/api-slices/subscription.slice";
 import { ErrorResponse } from "@/types";
@@ -48,10 +49,16 @@ import {
   onlyFieldsWithValue,
 } from "@/utils";
 import FormatNumber from "@/utils/format-number";
-import { CloseCircle, InfoCircle, User } from "iconsax-react";
+import {
+  CloseCircle,
+  InfoCircle,
+  Refresh,
+  Refresh2,
+  User,
+} from "iconsax-react";
 import moment from "moment";
 import { useSearchParams } from "next/navigation";
-import React, { useState } from "react";
+import React, { FunctionComponent, use, useState } from "react";
 import toast from "react-hot-toast";
 
 const SubscriptionsPage = () => {
@@ -111,6 +118,8 @@ const SubscriptionsPage = () => {
   };
 
   const [open, setOpen] = useState(false);
+
+  const [openRequery, setOpenRequery] = useState(false);
   return (
     <div>
       <Table
@@ -157,17 +166,85 @@ const SubscriptionsPage = () => {
           };
         })}
         customNode={
-          <Button
-            label={"Activate member's subscription"}
-            color="black"
-            size="sm"
-            permissions={["activate_member_subscription"]}
-            onClick={() => setOpen(true)}
-          />
+          <>
+            <Button
+              label="Requery Payment"
+              variant="outlined"
+              icon={Refresh}
+              rtl
+              color="black"
+              onClick={() => setOpenRequery(true)}
+              size="sm"
+            />
+            <Button
+              label={"Activate member's subscription"}
+              color="black"
+              size="sm"
+              permissions={["activate_member_subscription"]}
+              onClick={() => setOpen(true)}
+            />
+          </>
         }
       />
       <ActivateMemberSubModal open={open} setOpen={setOpen} />
+      <RequeryPaymentModal open={openRequery} setOpen={setOpenRequery} />
     </div>
+  );
+};
+
+const RequeryPaymentModal: FunctionComponent<{
+  open: boolean;
+  setOpen: (bool: boolean) => void;
+}> = ({ open, setOpen }) => {
+  if (!open) return null;
+
+  const [requeryPayment, { isLoading }] = useAdminRequerySubMutation();
+
+  const [ref, setRef] = useState("");
+
+  const handleRequery = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const res = await requeryPayment(ref);
+
+    if ("error" in res && isFetchBaseQueryError(res.error)) {
+      const errorData = res.error.data as ErrorResponse;
+
+      toast.error(errorData?.error || DEFAULT_ERROR_MESSAGE);
+    } else {
+      const response = res.data;
+
+      if (response?.success) {
+        if (response?.data?.status === "success" || !response?.data) {
+          setOpen(false);
+          toast.success("Successfully Requeried");
+        } else {
+          toast.error(response?.data?.status || "Failed to requery payment");
+        }
+      } else {
+        toast.error(response?.error || DEFAULT_ERROR_MESSAGE);
+      }
+    }
+  };
+  return (
+    <DialogModal
+      title="Requery Payment"
+      description="Enter the payment reference"
+      open={open}
+      setOpen={setOpen}
+    >
+      <form onSubmit={handleRequery}>
+        <Input
+          value={ref}
+          onChange={(e) => setRef(e.target.value)}
+          required
+          showAsterisk
+          placeholder="Payment Reference"
+          label="Payment Reference"
+        />
+        <Button label="Requery" fullWidth loading={isLoading} />
+      </form>
+    </DialogModal>
   );
 };
 

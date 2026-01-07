@@ -106,6 +106,13 @@ const subscriptionApi = api.injectEndpoints({
       >({
         query: (ref) => `/subscriptions/activate?ref=${ref}`,
       }),
+      adminRequerySub: build.mutation<
+        ResponseType<{ status: "success" | "failed" | "pending" | "reversed" }>,
+        string
+      >({
+        query: (ref) => `/subscriptions/activate?ref=${ref}`,
+        invalidatesTags: ["members-sub"],
+      }),
       checkIn: build.mutation<ResponseType, null>({
         query: () => ({
           url: "/subscriptions/check-ins",
@@ -199,4 +206,5 @@ export const {
   useGetCheckInHistoryInfiniteQuery,
   useGetCheckInsForMonthQuery,
   useGetSubscriptionsHistoryInfiniteQuery,
+  useAdminRequerySubMutation,
 } = subscriptionApi;

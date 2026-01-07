@@ -128,7 +128,7 @@ const RenewSubPage = () => {
                         className="size-[20px] mr-2 "
                       />
                       <span>
-                        Trainer add-on (
+                        Tick this to include trainer on current plan (
                         {FormatNumber.ngnAmount(plan.trainerFee)})
                       </span>
                     </label>
