@@ -5,6 +5,7 @@ import Button from "@/components/button";
 import DialogModal from "@/components/dialog-modal";
 import Input from "@/components/input";
 import Select, { SelectDropdownOption } from "@/components/select";
+import SelectInput from "@/components/select-input";
 import Table, { ColumnProps } from "@/components/table";
 import TextArea from "@/components/textarea";
 import { DEFAULT_ERROR_MESSAGE } from "@/constants";
@@ -422,6 +423,27 @@ const UpdatePlan: FunctionComponent<{
     }
   };
 
+  const type = selectedPlan?.type;
+
+  const selectedDays = (getField("allowedDays") || []) as WeekDay[];
+
+  const selectedAllowedDaysOptions = selectedDays.map((day) => {
+    const optionObject = Object.entries(WeekDay).find(
+      (entry) => entry[1] === day
+    );
+
+    if (!optionObject) return;
+
+    return {
+      label: optionObject[0],
+      value: optionObject[1],
+    };
+  });
+
+  const allowedDaysOptions: SelectDropdownOption[] = Object.entries(
+    WeekDay
+  ).map((day) => ({ label: day[0], value: day[1] }));
+
   if (!selectedPlan) return null;
 
   return (
@@ -439,60 +461,109 @@ const UpdatePlan: FunctionComponent<{
           e.preventDefault();
         }}
       >
-        <Input
-          value={getField("name")}
-          onChange={(e) => handleStateChange({ name: e.target.value })}
-          required
-          label={"Plan Name"}
-          placeholder="Plan Name"
-        />
-        <TextArea
-          value={getField("description")}
-          onChange={(e) => handleStateChange({ description: e.target.value })}
-          required
-          label="Description"
-          placeholder="Description"
-        />
-        <div className="flex gap-4 mb-4">
+        <div className="max-h-[70vh] pr-4 -mr-4 overflow-y-auto">
           <Input
-            value={getField("price")}
-            onChange={(e) =>
-              handleStateChange({ price: e.target.value as unknown as number })
-            }
-            remove_margin
-            placeholder="1000"
+            value={getField("name")}
+            onChange={(e) => handleStateChange({ name: e.target.value })}
+            required
+            label={"Plan Name"}
+            placeholder="Plan Name"
+          />
+          <TextArea
+            value={getField("description")}
+            onChange={(e) => handleStateChange({ description: e.target.value })}
+            required
+            label="Description"
+            placeholder="Description"
+          />
+          <div className="flex gap-4 mb-4">
+            <Input
+              value={getField("price")}
+              onChange={(e) =>
+                handleStateChange({
+                  price: e.target.value as unknown as number,
+                })
+              }
+              remove_margin
+              placeholder="1000"
+              type="number"
+              inputMode="numeric"
+              label={"Subscription Fee"}
+              required
+            />
+            <Input
+              value={getField("trainerFee")}
+              onChange={(e) =>
+                handleStateChange({
+                  trainerFee: e.target.value as unknown as number,
+                })
+              }
+              remove_margin
+              placeholder="1000"
+              type="number"
+              inputMode="numeric"
+              label={"Trainer Fee"}
+            />
+          </div>
+          {type === PlanType.SessionBased && (
+            <>
+              <Input
+                label={"Check-ins Per week"}
+                max={6}
+                value={getField("checkInsPerWeek")}
+                onChange={(e) => {
+                  handleStateChange({
+                    checkInsPerWeek: e.target.value as unknown as number,
+                  });
+                }}
+                required
+                info="The number of days a member can check-in in a week"
+                type="number"
+                inputMode="numeric"
+              />
+              <Input
+                label={"Total check-ins"}
+                value={getField("totalCheckIns")}
+                onChange={(e) => {
+                  handleStateChange({
+                    totalCheckIns: e.target.value as unknown as number,
+                  });
+                }}
+                required
+                info="The total number of days a member can check-in for"
+                type="number"
+                inputMode="numeric"
+              />
+              <Select
+                label="Allowed Days"
+                multi
+                options={allowedDaysOptions}
+                multipleSelected={
+                  selectedAllowedDaysOptions as SelectDropdownOption[]
+                }
+                onMultiSelect={(options) => {
+                  handleStateChange({
+                    allowedDays: options.map((o) => o.value as WeekDay),
+                  });
+                }}
+              />
+            </>
+          )}
+          <Input
+            placeholder="Plan duration"
+            label={"Plan Duration (In Days)"}
+            required
             type="number"
             inputMode="numeric"
-            label={"Subscription Fee"}
-            required
-          />
-          <Input
-            value={getField("trainerFee")}
+            value={getField("durationInDays")}
             onChange={(e) =>
               handleStateChange({
-                trainerFee: e.target.value as unknown as number,
+                durationInDays: e.target.value as unknown as number,
               })
             }
-            remove_margin
-            placeholder="1000"
-            type="number"
-            inputMode="numeric"
-            label={"Trainer Fee"}
           />
         </div>
-        <Input
-          placeholder="Plan duration"
-          label={"Plan Duration (In Days)"}
-          required
-          type="number"
-          inputMode="numeric"
-          value={getField("durationInDays")}
-          onChange={(e) =>
-            handleStateChange({
-              durationInDays: e.target.value as unknown as number,
-            })
-          }
-        />
+
         <Alert
           title="Update Subscription Plan?"
           description="Are you sure you want to update this plan?"
