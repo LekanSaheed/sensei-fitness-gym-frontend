@@ -42,24 +42,27 @@ const Page = () => {
       .string()
       .min(2)
       .max(30)
-      .required("Your first name is required"),
+      .required("Your first name is required")
+      .trim(),
     lastname: yup
       .string()
       .min(2)
       .max(30)
-      .required("Your last name is required"),
+      .required("Your last name is required")
+      .trim(),
     username: yup
       .string()
       .min(3)
       .max(20)
-      .required("Your user name is required"),
+      .required("Your user name is required")
+      .trim(),
     phoneNumber: yup.string().max(15).required("Your phone number is required"),
     password: yup
       .string()
       .min(8)
       .matches(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-        "Must contain upper, lower, number & special char"
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/,
+        "Must include uppercase, lowercase, number, and special character",
       )
       .required("Your password is required"),
     confirmPassword: yup
@@ -78,7 +81,7 @@ const Page = () => {
   };
 
   const [countryCode, setCountryCode] = useState<SelectDropdownOption | null>(
-    null
+    null,
   );
 
   const createAccount = async (data: typeof initV) => {
@@ -165,7 +168,7 @@ const Page = () => {
         value: countryCode,
         img: country?.flags?.png || country?.flags?.png,
       };
-    }
+    },
   );
 
   useEffect(() => {
@@ -266,8 +269,8 @@ const Page = () => {
           usernameCheckError
             ? "Could not username availability, please retry"
             : touched.username && !usernameIsAvailable
-            ? "Username is not available"
-            : (touched.username && errors.username) || ""
+              ? "Username is not available"
+              : (touched.username && errors.username) || ""
         }
         value={values.username}
         onChange={handleChange}
