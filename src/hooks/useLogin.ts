@@ -45,10 +45,6 @@ const useLogin = () => {
             return router.push(ADMIN_DASHBOARD);
           }
 
-          if (return_url && !return_url.startsWith("/admin")) {
-            return router.push(return_url);
-          }
-
           router.push(DASHBOARD);
         });
       }
@@ -77,7 +73,7 @@ export const useFetchUserAndLogin = () => {
 
   const fetchUserAndLogin = async (
     arg_token?: string,
-    callback?: (user: IUser) => void
+    callback?: (user: IUser) => void,
   ) => {
     const token = arg_token || Cookies.get("access_token") || "";
 
@@ -89,7 +85,7 @@ export const useFetchUserAndLogin = () => {
 
     if (!userResponse?.success) {
       return toast.error(
-        userResponse?.message || userResponse?.error || "Could not get profile"
+        userResponse?.message || userResponse?.error || "Could not get profile",
       );
     }
     const user: IUser = userResponse?.data;

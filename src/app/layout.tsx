@@ -34,8 +34,37 @@ const gabarito = Gabarito({
   variable: "--font-gabarito",
 });
 export const metadata: Metadata = {
-  title: "Sensei Fitness",
-  description: "Promoting Wellness",
+  title: "Sensei Fitness - Promoting Wellness",
+  description: "Fitness and Wellness Gym in Ilorin",
+  applicationName: "Sensei Fitness",
+
+  authors: [
+    {
+      name: "Sensei Fitness",
+      url: "https://sensei-fitness.com",
+    },
+  ],
+  keywords: [
+    "fitness",
+    "wellness",
+    "health",
+    "fitness in ilorin",
+    "gym in ilorin",
+    "boxing gym in ilorin",
+    "personal training in ilorin",
+    "nutrition coaching in ilorin",
+    "fitness classes in ilorin",
+  ],
+  openGraph: {
+    title: "Sensei Fitness - Promoting Wellness",
+    description: "Fitness and Wellness Gym in Ilorin",
+    url: "https://sensei-fitness.com",
+    siteName: "Sensei Fitness",
+
+    type: "website",
+    locale: "en_NG",
+    countryName: "Nigeria",
+  },
 };
 
 export const viewport: Viewport = {

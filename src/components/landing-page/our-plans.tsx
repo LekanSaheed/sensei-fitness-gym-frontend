@@ -1,19 +1,17 @@
 "use client";
 import React from "react";
 import HeadingText from "./heading-text";
-import { useGetPlansQuery } from "@/redux/api-slices/subscription.slice";
+import {
+  ISubscriptionPlan,
+  useGetPlansQuery,
+} from "@/redux/api-slices/subscription.slice";
 import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";
 import FormatNumber from "@/utils/format-number";
 import Button from "../button";
 import Link from "next/link";
 import { SIGNUP } from "@/constants/routes";
 
-const OurPlans = () => {
-  const { isLoading, isFetching, data, isError, refetch } =
-    useGetPlansQuery(null);
-
-  const plans = data?.data?.plans || [];
-
+const OurPlans = ({ plans = [] }: { plans: ISubscriptionPlan[] }) => {
   const days = [
     "Monday",
     "Tuesday",
@@ -38,7 +36,7 @@ const OurPlans = () => {
 
         <div className="overflow-hidden">
           <div className="flex overflow-x-auto scroll-con pb-4 snap-x gap-4 snap-mandatory">
-            {(isLoading || isFetching) && (
+            {/* {(isLoading || isFetching) && (
               <>
                 {[...Array(7)].map((_, id) => {
                   return (
@@ -54,7 +52,7 @@ const OurPlans = () => {
                   );
                 })}
               </>
-            )}
+            )} */}
             {plans.map((plan, id) => {
               return (
                 <div

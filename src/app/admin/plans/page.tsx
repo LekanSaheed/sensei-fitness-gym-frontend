@@ -123,7 +123,7 @@ const CreateNewPlan: FunctionComponent<{
     state;
 
   const disabled = Object.entries(
-    state.type === PlanType.SessionBased ? state : s
+    state.type === PlanType.SessionBased ? state : s,
   ).some((s) => !s[1]);
 
   const [create, createStatus] = useCreatePlanMutation();
@@ -154,14 +154,14 @@ const CreateNewPlan: FunctionComponent<{
         +state.checkInsPerWeek > state.allowedDays.length
       ) {
         return toast.error(
-          "Checkins per week cannot be more than allowed days. Set it to something less or add more days to the allowed days"
+          "Checkins per week cannot be more than allowed days. Set it to something less or add more days to the allowed days",
         );
       }
 
       if (state.checkInsPerWeek && state.totalCheckIns) {
         if (+state.checkInsPerWeek > +state.totalCheckIns) {
           return toast.error(
-            "Checkins per week cannot be more than total checkins"
+            "Checkins per week cannot be more than total checkins",
           );
         }
       } else {
@@ -186,6 +186,7 @@ const CreateNewPlan: FunctionComponent<{
         toast.success(response?.message || "Successful");
         setOpen(false);
         handleStateChange(defaultValues);
+        await fetch("/admin/api/revalidate?tag=plans");
       } else {
         toast.error(response?.error || DEFAULT_ERROR_MESSAGE);
       }
@@ -193,7 +194,7 @@ const CreateNewPlan: FunctionComponent<{
   };
 
   const allowedDaysOptions: SelectDropdownOption[] = Object.entries(
-    WeekDay
+    WeekDay,
   ).map((day) => ({ label: day[0], value: day[1] }));
 
   const weekStartOptions: SelectDropdownOption[] = [
@@ -202,7 +203,7 @@ const CreateNewPlan: FunctionComponent<{
   ];
 
   const selectedWeekStart = weekStartOptions.find(
-    (w) => w.value === state.weekStart
+    (w) => w.value === state.weekStart,
   );
   return (
     <DialogModal
@@ -311,7 +312,7 @@ const CreateNewPlan: FunctionComponent<{
                 multipleSelected={state.allowedDays
                   .map((day) => {
                     const optionObject = allowedDaysOptions.find(
-                      (allowedDay) => allowedDay.value === day
+                      (allowedDay) => allowedDay.value === day,
                     );
 
                     return optionObject as SelectDropdownOption;
@@ -398,7 +399,7 @@ const UpdatePlan: FunctionComponent<{
     Object.entries(state).some((a) => !a[1]) ||
     Object.entries(state).length < 1 ||
     Object.entries(state).every(
-      (entry) => entry[1] == selectedPlan?.[entry[0] as PlanKey]
+      (entry) => entry[1] == selectedPlan?.[entry[0] as PlanKey],
     );
 
   const [update, updateStatus] = useUpdatePlanMutation();
@@ -417,6 +418,7 @@ const UpdatePlan: FunctionComponent<{
         toast.success(response?.message || "Successful");
         setOpen(false);
         setState({});
+        await fetch("/admin/api/revalidate?tag=plans");
       } else {
         toast.error(response?.error || DEFAULT_ERROR_MESSAGE);
       }
@@ -429,7 +431,7 @@ const UpdatePlan: FunctionComponent<{
 
   const selectedAllowedDaysOptions = selectedDays.map((day) => {
     const optionObject = Object.entries(WeekDay).find(
-      (entry) => entry[1] === day
+      (entry) => entry[1] === day,
     );
 
     if (!optionObject) return;
@@ -441,7 +443,7 @@ const UpdatePlan: FunctionComponent<{
   });
 
   const allowedDaysOptions: SelectDropdownOption[] = Object.entries(
-    WeekDay
+    WeekDay,
   ).map((day) => ({ label: day[0], value: day[1] }));
 
   if (!selectedPlan) return null;

@@ -11,6 +11,7 @@ import Button from "./button";
 import { EmptyMedia } from "./ui/empty";
 import { InfoCircle, MoneyRemove } from "iconsax-react";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { label } from "framer-motion/client";
 
 const SubscriptionCard = () => {
   const getActiveSubQuery = useGetActiveSubscriptionQuery(null);
@@ -18,6 +19,8 @@ const SubscriptionCard = () => {
   const getCheckInAnalytics = useGetCheckInAnalyticsQuery(null);
 
   const checkInAnalytics = getCheckInAnalytics.data?.data || null;
+
+  const totalCheckInsByUser = checkInAnalytics?.totalCheckIns || 0;
 
   const activeSub = getActiveSubQuery?.data?.data || null;
 
@@ -50,6 +53,7 @@ const SubscriptionCard = () => {
         </span>
       ),
     },
+    { label: "All time check-ins ", value: totalCheckInsByUser },
   ].filter((s) => !s?.hide);
 
   const getActiveSubQueryLoading =

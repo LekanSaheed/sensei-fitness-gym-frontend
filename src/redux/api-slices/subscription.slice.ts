@@ -130,7 +130,11 @@ const subscriptionApi = api.injectEndpoints({
         providesTags: ["has-checked-in"],
       }),
       getCheckInAnalytics: build.query<
-        ResponseType<{ totalOnSub: number; currentSessionWeek: number }>,
+        ResponseType<{
+          totalOnSub: number;
+          currentSessionWeek: number;
+          totalCheckIns: number;
+        }>,
         null
       >({
         query: () => "/subscriptions/check-ins/analytics",
@@ -147,7 +151,7 @@ const subscriptionApi = api.injectEndpoints({
       >({
         query: ({ pageParam, queryArg }) =>
           `/subscriptions/check-ins?${formatQuery(queryArg)}&${formatQuery(
-            pageParam
+            pageParam,
           )}`,
         infiniteQueryOptions: {
           initialPageParam: {
