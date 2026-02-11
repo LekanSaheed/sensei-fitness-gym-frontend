@@ -5,7 +5,6 @@ import { DEFAULT_ERROR_MESSAGE } from "@/constants";
 import { useForgotPasswordMutation } from "@/redux/api-slices/auth.slice";
 import { ErrorResponse } from "@/types";
 import { isFetchBaseQueryError } from "@/utils";
-import { Metadata } from "next";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 
@@ -26,7 +25,7 @@ const Page = () => {
 
       if (response?.success) {
         toast.success(
-          "A password reset link has been sent. Please check your inbox/spam to continue"
+          "A password reset link has been sent. Please check your inbox/spam to continue",
         );
         setEmail("");
       } else {
