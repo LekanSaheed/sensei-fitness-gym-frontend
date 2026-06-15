@@ -2,13 +2,13 @@ import IUser from "@/types/User";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 
 export const isFetchBaseQueryError = (
-  error: unknown
+  error: unknown,
 ): error is FetchBaseQueryError => {
   return typeof error === "object" && error != null && "status" in error;
 };
 
 export const isErrorWithMessage = (
-  error: unknown
+  error: unknown,
 ): error is { message: string } => {
   return (
     typeof error === "object" &&
@@ -54,3 +54,23 @@ export const pageSizeOptions = [24, 40, 50, 100, 500];
 export const defaultPageSize = pageSizeOptions[0];
 
 export const isWindow = typeof window !== "undefined";
+
+export function formatNigerianPhoneNumber(phoneNumber: string) {
+  if (!phoneNumber) return phoneNumber;
+
+  const cleaned = String(phoneNumber).replace(/\s+/g, "").replace(/-/g, "");
+
+  if (cleaned.startsWith("+234")) {
+    return cleaned;
+  }
+
+  if (cleaned.startsWith("234")) {
+    return `+${cleaned}`;
+  }
+
+  if (cleaned.startsWith("0")) {
+    return `+234${cleaned.slice(1)}`;
+  }
+
+  return cleaned;
+}

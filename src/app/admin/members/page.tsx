@@ -24,6 +24,7 @@ const UsersPage = () => {
     { label: "Member Name", field: "member" },
     { label: "Email Address", field: "email" },
     { label: "Username", field: "username" },
+    { label: "Phone Number", field: "phoneNumber" },
     { label: "Paid Registration fee", field: "paidRegFee" },
     { label: "Current Subscription Plan", field: "currentPlan" },
     { label: "Subscription Status", field: "currentPlanStatus" },
@@ -50,7 +51,7 @@ const UsersPage = () => {
       search: searchParams.get("searchQuery") || "",
       subscriptionStatus: searchParams.get("subscriptionStatus") || "",
       trainer: searchParams.get("trainer") || "",
-    })
+    }),
   );
 
   const pageProps = data?.data || null;
@@ -201,7 +202,7 @@ const UsersPage = () => {
           router.push(
             `${MEMBERS}/${row?._id}?name=${row?.firstname || ""} ${
               row?.lastname || ""
-            }`
+            }`,
           );
         }}
       />

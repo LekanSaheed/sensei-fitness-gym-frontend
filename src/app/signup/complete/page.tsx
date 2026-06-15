@@ -16,7 +16,7 @@ import {
   useGetSessionQuery,
 } from "@/redux/api-slices/auth.slice";
 import { ErrorResponse } from "@/types";
-import { isFetchBaseQueryError } from "@/utils";
+import { formatNigerianPhoneNumber, isFetchBaseQueryError } from "@/utils";
 import { useFormik } from "formik";
 import { CloseCircle, TickCircle } from "iconsax-react";
 import Link from "next/link";
@@ -80,16 +80,17 @@ const Page = () => {
     phoneNumber: "",
   };
 
-  const [countryCode, setCountryCode] = useState<SelectDropdownOption | null>(
-    null,
-  );
+  const [countryCode, setCountryCode] = useState<SelectDropdownOption | null>({
+    label: "+234",
+    value: "+234",
+  });
 
   const createAccount = async (data: typeof initV) => {
     if (!countryCode) return toast.error("Please select a country code");
 
     const { confirmPassword, phoneNumber, ...payload } = data;
 
-    const newPhone = `${countryCode?.value}${phoneNumber}`;
+    const newPhone = formatNigerianPhoneNumber(phoneNumber);
 
     const res = await create({
       ...payload,
@@ -254,6 +255,7 @@ const Page = () => {
               onChange={(e) => setFieldValue("phoneNumber", e.target.value)}
               onBlur={handleBlur}
               name="phoneNumber"
+              info="Please do not include the trailing 0"
             />
           </div>
         </div>
