@@ -255,7 +255,7 @@ const Page = () => {
               onChange={(e) => setFieldValue("phoneNumber", e.target.value)}
               onBlur={handleBlur}
               name="phoneNumber"
-              info="Please do not include the trailing 0"
+              // info="Please do not include the trailing 0"
             />
           </div>
         </div>
