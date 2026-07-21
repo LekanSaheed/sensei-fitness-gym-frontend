@@ -81,6 +81,7 @@ const PaymentsPage = () => {
     failed: "bg-rose-500",
     pending: "bg-amber-500",
     successful: "bg-emerald-500",
+    expired: "bg-gray-500",
   };
 
   const statusDropdown: DropdownOption[] = [
@@ -88,6 +89,7 @@ const PaymentsPage = () => {
     { label: "Pending", value: "pending" },
     { label: "Successful", value: "successful" },
     { label: "Failed", value: "failed" },
+    { label: "Expired", value: "expired" },
   ];
 
   const [openRequery, setOpenRequery] = useState(false);

@@ -1,7 +1,7 @@
 import { PaymentMode } from "@/redux/api-slices/subscription.slice";
 import IUser from "./User";
 
-export type PaymentLogStatus = "pending" | "successful" | "failed";
+export type PaymentLogStatus = "pending" | "successful" | "failed" | "expired";
 
 interface PaymentLog {
   _id: string;
