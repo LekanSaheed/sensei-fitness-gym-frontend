@@ -20,6 +20,7 @@ const permissions_string = [
   "manage_notification_settings",
   "manage_gallery",
   "manage_archive",
+  "manage_check_in_location",
 ] as const;
 
 export type Permission = (typeof permissions_string)[number];

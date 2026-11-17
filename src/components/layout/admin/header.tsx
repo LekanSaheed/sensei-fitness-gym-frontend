@@ -14,6 +14,7 @@ import {
   ADMIN_ARCHIVE,
   ADMIN_GALLERY,
   ADMIN_NOTIFICATION_SETTINGS,
+  ADMIN_CHECK_IN_LOCATION_SETTINGS,
   ACTIVITY_ZONES,
   ADMIN_DASHBOARD,
   ADMIN_SECURITY_SETTINGS,
@@ -91,6 +92,9 @@ const Header = () => {
     },
     [ADMIN_NOTIFICATION_SETTINGS]: {
       label: "Notification Settings",
+    },
+    [ADMIN_CHECK_IN_LOCATION_SETTINGS]: {
+      label: "Check-in Location",
     },
     [ACTIVITY_ZONES]: {
       label: "Activity Zones",

@@ -113,13 +113,29 @@ const subscriptionApi = api.injectEndpoints({
         query: (ref) => `/subscriptions/activate?ref=${ref}`,
         invalidatesTags: ["members-sub"],
       }),
-      checkIn: build.mutation<ResponseType, null>({
-        query: () => ({
+      checkIn: build.mutation<
+        ResponseType,
+        {
+          location?: {
+            latitude: number;
+            longitude: number;
+            accuracy: number;
+          } | null;
+        } | null
+      >({
+        query: (body) => ({
           url: "/subscriptions/check-ins",
           method: "post",
-          body: {},
+          body: body || {},
         }),
         invalidatesTags: ["has-checked-in"],
+      }),
+      getCheckInLocationRequirement: build.query<
+        ResponseType<{ required: boolean; radiusMeters: number }>,
+        null
+      >({
+        query: () => "/subscriptions/check-ins/location-requirement",
+        providesTags: ["check-in-location"],
       }),
       checkIfCheckedInToday: build.query<
         ResponseType<{ checkedIn: boolean }>,
@@ -204,6 +220,7 @@ export const {
   useSubscribeMutation,
   useActivateSubQuery,
   useCheckInMutation,
+  useGetCheckInLocationRequirementQuery,
   useCheckIfCheckedInTodayQuery,
   useGetCheckInAnalyticsQuery,
   useGetRecentCheckInsQuery,

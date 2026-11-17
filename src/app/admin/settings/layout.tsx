@@ -3,6 +3,7 @@
 import TabLinks from "@/components/tab-links";
 import {
   ADMIN_NOTIFICATION_SETTINGS,
+  ADMIN_CHECK_IN_LOCATION_SETTINGS,
   ADMIN_SECURITY_SETTINGS,
   ADMIN_SETTINGS,
 } from "@/constants/routes";
@@ -20,6 +21,14 @@ const SettingsLayout = ({ children }: { children: ReactNode }) => {
           { label: "Security Settings", path: ADMIN_SECURITY_SETTINGS },
           ...(canPerform(["manage_notification_settings"])
             ? [{ label: "Notifications", path: ADMIN_NOTIFICATION_SETTINGS }]
+            : []),
+          ...(canPerform(["manage_check_in_location"])
+            ? [
+                {
+                  label: "Check-in Location",
+                  path: ADMIN_CHECK_IN_LOCATION_SETTINGS,
+                },
+              ]
             : []),
         ]}
       />

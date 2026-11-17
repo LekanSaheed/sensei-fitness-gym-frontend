@@ -52,6 +52,8 @@ export const ADMIN_SECURITY_SETTINGS = `${ADMIN_SETTINGS}/security`;
 
 export const ADMIN_NOTIFICATION_SETTINGS = `${ADMIN_SETTINGS}/notifications`;
 
+export const ADMIN_CHECK_IN_LOCATION_SETTINGS = `${ADMIN_SETTINGS}/check-in-location`;
+
 export const PAYMENT_LOGS = `${ADMIN_DASHBOARD}/payments`;
 
 export const ACTIVITY_ZONES = `${ADMIN_DASHBOARD}/activity-zones`;

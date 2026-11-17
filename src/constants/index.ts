@@ -20,6 +20,7 @@ import {
   ADMIN_ARCHIVE,
   ADMIN_GALLERY,
   ADMIN_NOTIFICATION_SETTINGS,
+  ADMIN_CHECK_IN_LOCATION_SETTINGS,
   ACTIVITY_ZONES,
   ACTIVITY_ZONE_SETTINGS,
   ADMIN_DASHBOARD,
@@ -72,6 +73,7 @@ export const routesAndTheirPermissions: Record<string, Permission[]> = {
   [ACTIVITY_ZONES]: ["view_all_members"],
   [ACTIVITY_ZONE_SETTINGS]: ["manage_activity_zones"],
   [ADMIN_NOTIFICATION_SETTINGS]: ["manage_notification_settings"],
+  [ADMIN_CHECK_IN_LOCATION_SETTINGS]: ["manage_check_in_location"],
   [ADMIN_GALLERY]: ["manage_gallery", "manage_archive"],
   [ADMIN_ARCHIVE]: ["manage_archive"],
 };

@@ -5,6 +5,16 @@ import {
   ResponseType,
 } from "@/types";
 import { api } from "../api";
+
+export interface CheckInLocationSettings {
+  enabled: boolean;
+  latitude: number | null;
+  longitude: number | null;
+  radiusMeters: number;
+  maxAccuracyMeters: number;
+  updatedAt?: string;
+}
+
 import IUser from "@/types/User";
 import { formatQuery } from "@/utils";
 import { ISubscription, ISubscriptionPlan } from "./subscription.slice";
@@ -320,6 +330,24 @@ const adminApi = api.injectEndpoints({
           "members",
         ],
       }),
+      getCheckInLocationSettings: build.query<
+        ResponseType<CheckInLocationSettings>,
+        null
+      >({
+        query: () => "/admin/check-in-location",
+        providesTags: ["check-in-location"],
+      }),
+      updateCheckInLocationSettings: build.mutation<
+        ResponseType<CheckInLocationSettings>,
+        Omit<CheckInLocationSettings, "updatedAt">
+      >({
+        query: (body) => ({
+          url: "/admin/check-in-location",
+          method: "put",
+          body,
+        }),
+        invalidatesTags: ["check-in-location"],
+      }),
       getNotificationSettings: build.query<
         ResponseType<AdminNotificationSettings>,
         null
@@ -394,6 +422,8 @@ export const {
   useGetMembersPieChartDataQuery,
   useGetActivityZoneSummaryQuery,
   useGetActivityZoneSettingsQuery,
+  useGetCheckInLocationSettingsQuery,
+  useUpdateCheckInLocationSettingsMutation,
   useGetNotificationSettingsQuery,
   usePreviewQrCheckInMutation,
   useConfirmQrCheckInMutation,

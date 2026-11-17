@@ -6,6 +6,7 @@ import { CHECK_INS, DASHBOARD } from "@/constants/routes";
 import {
   useCheckIfCheckedInTodayQuery,
   useCheckInMutation,
+  useGetCheckInLocationRequirementQuery,
 } from "@/redux/api-slices/subscription.slice";
 import { ErrorResponse } from "@/types";
 import { isFetchBaseQueryError } from "@/utils";
@@ -13,9 +14,10 @@ import { LocationTick, TickCircle } from "iconsax-react";
 import moment from "moment";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { useState } from "react";
 import toast from "react-hot-toast";
 import Spinner from "@/components/Spinner";
+import { getDeviceLocation, LocationError } from "@/utils/geolocation";
 
 const CheckIn = () => {
   const [checkIn, checkInStatus] = useCheckInMutation();
@@ -29,13 +31,38 @@ const CheckIn = () => {
 
   const router = useRouter();
 
+  const requirement = useGetCheckInLocationRequirementQuery(null);
+
+  const needsLocation = !!requirement.data?.data?.required;
+
+  const [locating, setLocating] = useState(false);
+
   const checkInForToday = async () => {
-    const res = await checkIn(null);
+    let location = null;
+
+    if (needsLocation) {
+      setLocating(true);
+
+      try {
+        location = await getDeviceLocation();
+      } catch (err) {
+        toast.error(
+          err instanceof LocationError ? err.message : DEFAULT_ERROR_MESSAGE,
+          { duration: 6000 }
+        );
+
+        return;
+      } finally {
+        setLocating(false);
+      }
+    }
+
+    const res = await checkIn(location ? { location } : null);
 
     if ("error" in res && isFetchBaseQueryError(res.error)) {
       const errorData = res.error.data as ErrorResponse;
 
-      toast.error(errorData?.error || DEFAULT_ERROR_MESSAGE);
+      toast.error(errorData?.error || DEFAULT_ERROR_MESSAGE, { duration: 6000 });
     } else {
       const response = res?.data;
 
@@ -73,17 +100,23 @@ const CheckIn = () => {
             <p className="text-[13px] text-white/70 mt-2">
               Tap the button to check in for today&apos;s session.
             </p>
+            {needsLocation && (
+              <p className="text-[12px] text-white/50 mt-2">
+                You need to be at the gym. We&apos;ll ask for your location
+                once, only to confirm that; you&apos;re not tracked.
+              </p>
+            )}
 
             <div className="my-8 flex justify-center">
               <button
                 onClick={checkInForToday}
-                disabled={checkInStatus.isLoading}
+                disabled={checkInStatus.isLoading || locating}
                 aria-label="Check in for today"
                 className="group relative size-[180px] rounded-full bg-default text-white flex flex-col items-center justify-center gap-2 shadow-[0_18px_45px_-12px_var(--color-default)] transition active:scale-95 disabled:opacity-80"
               >
                 <span className="absolute inset-0 rounded-full border-2 border-default animate-ping opacity-30" />
                 <span className="absolute -inset-3 rounded-full border border-default/30" />
-                {checkInStatus.isLoading ? (
+                {checkInStatus.isLoading || locating ? (
                   <span className="text-[36px]">
                     <Spinner className="text-white" />
                   </span>
