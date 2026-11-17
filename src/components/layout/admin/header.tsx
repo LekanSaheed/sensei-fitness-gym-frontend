@@ -11,6 +11,8 @@ import {
 import {
   ACCESS_CONTROL,
   ACTIVITY_ZONE_SETTINGS,
+  ADMIN_ARCHIVE,
+  ADMIN_GALLERY,
   ADMIN_NOTIFICATION_SETTINGS,
   ACTIVITY_ZONES,
   ADMIN_DASHBOARD,
@@ -81,6 +83,12 @@ const Header = () => {
     [ADMIN_SECURITY_SETTINGS]: {
       label: "Security Settings",
     },
+    [ADMIN_GALLERY]: {
+      label: "Gallery",
+    },
+    [ADMIN_ARCHIVE]: {
+      label: "Archive",
+    },
     [ADMIN_NOTIFICATION_SETTINGS]: {
       label: "Notification Settings",
     },
@@ -92,7 +100,11 @@ const Header = () => {
     },
   };
 
-  const pathlabel = pathLabels[pathname] || { label: "Route" };
+  const pathlabel =
+    pathLabels[pathname] ||
+    (pathname.startsWith(`${ADMIN_ARCHIVE}/`)
+      ? { label: "Archive Folder", isSub: true }
+      : { label: "Route" });
 
   const showBack = isSubPath || pathlabel?.isSub;
 

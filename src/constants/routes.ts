@@ -56,4 +56,11 @@ export const PAYMENT_LOGS = `${ADMIN_DASHBOARD}/payments`;
 
 export const ACTIVITY_ZONES = `${ADMIN_DASHBOARD}/activity-zones`;
 
+export const ADMIN_GALLERY = `${ADMIN_DASHBOARD}/gallery`;
+
+export const ADMIN_ARCHIVE = `${ADMIN_DASHBOARD}/archive`;
+
+/** Public archive pages on the website */
+export const PUBLIC_ARCHIVE = "/archive";
+
 export const ACTIVITY_ZONE_SETTINGS = `${ACTIVITY_ZONES}/settings`;

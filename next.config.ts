@@ -8,6 +8,7 @@ const nextConfig: NextConfig = {
       { hostname: "flagcdn.com" },
       { hostname: "upload.wikimedia.org" },
       { hostname: "nigerianbanks.xyz" },
+      { hostname: "res.cloudinary.com" },
     ],
   },
 };

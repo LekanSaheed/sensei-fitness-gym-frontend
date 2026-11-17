@@ -37,6 +37,62 @@ const errorMessage = (res: unknown) => {
   return r?.data?.error || DEFAULT_ERROR_MESSAGE;
 };
 
+/** Turns a failed lookup into a title + explanation the admin can act on */
+const describeFailure = (res: unknown): { title: string; message: string } => {
+  const error = (res as { error?: { status?: number | string } })?.error;
+
+  const status = error?.status;
+
+  const serverMessage = errorMessage(res);
+
+  if (status === 401 || status === 403) {
+    return /role 'user'/i.test(serverMessage)
+      ? {
+          title: "Signed in as a member",
+          message:
+            "This browser is signed in with a member account, so the scan was refused. Sign out and sign in as an admin to scan codes. (Members and admins can't use the same browser at the same time.)",
+        }
+      : status === 401
+      ? {
+          title: "Session expired",
+          message: "Your admin session has expired. Sign in again and retry.",
+        }
+      : {
+          title: "Not allowed",
+          message:
+            "Your admin account doesn't have the \"check member in\" permission.",
+        };
+  }
+
+  if (status === 404) {
+    return {
+      title: "Member not found",
+      message:
+        "This code belongs to an account that no longer exists or isn't a member account.",
+    };
+  }
+
+  if (status === 429) {
+    return {
+      title: "Too many requests",
+      message: "Too many requests from this network. Wait a minute and retry.",
+    };
+  }
+
+  if (status === "FETCH_ERROR" || status === "TIMEOUT_ERROR") {
+    return {
+      title: "Couldn't reach the server",
+      message: "Check the internet connection and try again.",
+    };
+  }
+
+  if (/different copy of the app/i.test(serverMessage)) {
+    return { title: "Pass from a different site", message: serverMessage };
+  }
+
+  return { title: "Code not recognised", message: serverMessage };
+};
+
 /**
  * Admin QR check-in: scan the member's permanent code, review who it is and
  * whether they're allowed in, then confirm. All rules are enforced on the
@@ -69,6 +125,11 @@ const QrCheckInScanner = ({
 
   const [scanError, setScanError] = useState<string | null>(null);
 
+  const [failure, setFailure] = useState<{
+    title: string;
+    message: string;
+  } | null>(null);
+
   const [previewCheckIn] = usePreviewQrCheckInMutation();
 
   const [confirmCheckIn, confirmStatus] = useConfirmQrCheckInMutation();
@@ -91,6 +152,8 @@ const QrCheckInScanner = ({
 
       setScanError(null);
 
+      setFailure(null);
+
       setStep("checking");
 
       const res = await previewCheckIn({ code: scanned });
@@ -100,7 +163,7 @@ const QrCheckInScanner = ({
 
         setStep("preview");
       } else {
-        setScanError(errorMessage(res));
+        setFailure(describeFailure(res));
 
         setStep("preview");
 
@@ -136,50 +199,102 @@ const QrCheckInScanner = ({
 
       await video.play();
 
+      // Prefer the browser's built-in detector (Chrome/Android): faster and
+      // better with real cameras. jsQR is the fallback everywhere else.
+      type Detector = { detect: (s: CanvasImageSource) => Promise<{ rawValue: string }[]> };
+
+      let detector: Detector | null = null;
+
+      const BD = (window as unknown as {
+        BarcodeDetector?: {
+          new (o: { formats: string[] }): Detector;
+          getSupportedFormats?: () => Promise<string[]>;
+        };
+      }).BarcodeDetector;
+
+      if (BD) {
+        try {
+          const formats = (await BD.getSupportedFormats?.()) || [];
+
+          if (formats.includes("qr_code")) {
+            detector = new BD({ formats: ["qr_code"] });
+          }
+        } catch {
+          detector = null;
+        }
+      }
+
       let last = 0;
 
-      const tick = (time: number) => {
+      let busy = false;
+
+      const handle = (text: string | undefined | null) => {
+        if (!text) return;
+
+        const value = text.trim();
+
+        if (value.startsWith(CODE_PREFIX)) {
+          if (navigator.vibrate) navigator.vibrate(80);
+
+          void lookUp(value);
+        } else {
+          setScanError(
+            "That QR code isn't a SEN-SEI member code. Ask the member to open the code on their profile."
+          );
+        }
+      };
+
+      const tick = async (time: number) => {
         frameRef.current = requestAnimationFrame(tick);
 
         // ~6 decodes a second is plenty and keeps the CPU cool
-        if (time - last < 160) return;
+        if (busy || time - last < 160) return;
 
         last = time;
 
-        const canvas = canvasRef.current;
+        if (video.readyState < 2 || !video.videoWidth) return;
 
-        if (!canvas || video.readyState < 2) return;
+        busy = true;
 
-        const w = video.videoWidth;
+        try {
+          if (detector) {
+            const codes = await detector.detect(video);
 
-        const h = video.videoHeight;
+            handle(codes[0]?.rawValue);
 
-        if (!w || !h) return;
-
-        canvas.width = w;
-
-        canvas.height = h;
-
-        const ctx = canvas.getContext("2d", { willReadFrequently: true });
-
-        if (!ctx) return;
-
-        ctx.drawImage(video, 0, 0, w, h);
-
-        const found = jsQR(ctx.getImageData(0, 0, w, h).data, w, h, {
-          inversionAttempts: "dontInvert",
-        });
-
-        if (found?.data) {
-          if (found.data.startsWith(CODE_PREFIX)) {
-            if (navigator.vibrate) navigator.vibrate(80);
-
-            void lookUp(found.data);
-          } else {
-            setScanError(
-              "That QR code isn't a SEN-SEI member code. Ask the member to open the code on their profile."
-            );
+            return;
           }
+
+          const canvas = canvasRef.current;
+
+          if (!canvas) return;
+
+          // Decode a scaled-down frame: much faster on phones, still sharp enough
+          const scale = Math.min(1, 800 / video.videoWidth);
+
+          const w = Math.round(video.videoWidth * scale);
+
+          const h = Math.round(video.videoHeight * scale);
+
+          canvas.width = w;
+
+          canvas.height = h;
+
+          const ctx = canvas.getContext("2d", { willReadFrequently: true });
+
+          if (!ctx) return;
+
+          ctx.drawImage(video, 0, 0, w, h);
+
+          const found = jsQR(ctx.getImageData(0, 0, w, h).data, w, h, {
+            inversionAttempts: "attemptBoth",
+          });
+
+          handle(found?.data);
+        } catch {
+          // ignore a bad frame and keep scanning
+        } finally {
+          busy = false;
         }
       };
 
@@ -205,6 +320,8 @@ const QrCheckInScanner = ({
     setManualCode("");
 
     setScanError(null);
+
+    setFailure(null);
 
     setStep("scanning");
   }, []);
@@ -376,9 +493,11 @@ const QrCheckInScanner = ({
           <span className="size-14 rounded-full bg-rose-50 flex items-center justify-center">
             <CloseCircle size={28} color="var(--color-rose-500)" variant="Bold" />
           </span>
-          <p className="font-semibold">Code not recognised</p>
-          <p className="text-[13px] text-gray-500 max-w-[340px]">
-            {scanError}
+          <p className="font-semibold">
+            {failure?.title || "Code not recognised"}
+          </p>
+          <p className="text-[13px] text-gray-500 max-w-[360px]">
+            {failure?.message}
           </p>
         </div>
       )}

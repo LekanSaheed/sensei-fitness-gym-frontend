@@ -1,4 +1,5 @@
 import AboutUs from "@/components/landing-page/about-us";
+import ArchiveGlimpse from "@/components/landing-page/archive-glimpse";
 import ContactUs from "@/components/landing-page/contact-us";
 import GetFamiliar from "@/components/landing-page/get-familiar";
 import HeroSection from "@/components/landing-page/hero";
@@ -7,6 +8,7 @@ import VisionAndMission from "@/components/landing-page/vision-and-mission";
 import WhyChooseUs from "@/components/landing-page/why-choose-us";
 import { ISubscriptionPlan } from "@/redux/api-slices/subscription.slice";
 import { ResponseType } from "@/types";
+import { fetchPublicArchive } from "@/utils/archive";
 import React from "react";
 
 const HomePage = async () => {
@@ -20,6 +22,8 @@ const HomePage = async () => {
 
   const plans = data?.data?.plans || [];
 
+  const archive = await fetchPublicArchive(4);
+
   return (
     <div>
       <HeroSection />
@@ -27,6 +31,7 @@ const HomePage = async () => {
       <AboutUs />
       <VisionAndMission />
       <GetFamiliar />
+      <ArchiveGlimpse events={archive.events} total={archive.total} />
       <OurPlans plans={plans} />
       <ContactUs />
     </div>

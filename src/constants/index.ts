@@ -1,5 +1,7 @@
 import {
   Activity,
+  Folder2,
+  Gallery,
   Document,
   DocumentText,
   HeartCircle,
@@ -15,6 +17,8 @@ import {
   Setting2,
 } from "iconsax-react";
 import {
+  ADMIN_ARCHIVE,
+  ADMIN_GALLERY,
   ADMIN_NOTIFICATION_SETTINGS,
   ACTIVITY_ZONES,
   ACTIVITY_ZONE_SETTINGS,
@@ -68,6 +72,8 @@ export const routesAndTheirPermissions: Record<string, Permission[]> = {
   [ACTIVITY_ZONES]: ["view_all_members"],
   [ACTIVITY_ZONE_SETTINGS]: ["manage_activity_zones"],
   [ADMIN_NOTIFICATION_SETTINGS]: ["manage_notification_settings"],
+  [ADMIN_GALLERY]: ["manage_gallery", "manage_archive"],
+  [ADMIN_ARCHIVE]: ["manage_archive"],
 };
 
 export const admin_side_bar: IMenu[] = [
@@ -123,6 +129,23 @@ export const admin_side_bar: IMenu[] = [
     ],
   },
   {
+    label: "Content",
+    links: [
+      {
+        label: "Gallery",
+        path: ADMIN_GALLERY,
+        icon: Gallery,
+        permissions: routesAndTheirPermissions[ADMIN_GALLERY],
+      },
+      {
+        label: "Archive",
+        path: ADMIN_ARCHIVE,
+        icon: Folder2,
+        permissions: routesAndTheirPermissions[ADMIN_ARCHIVE],
+      },
+    ],
+  },
+  {
     label: "Control",
     links: [
       {
@@ -139,5 +162,6 @@ export const admin_side_bar: IMenu[] = [
 export const landing_page_nav_links: { label: string; path: string }[] = [
   { label: "Home", path: "/" },
   { label: "About Us", path: "/about" },
+  { label: "Archive", path: "/archive" },
   { label: "Contact", path: "/#contact-us" },
 ];

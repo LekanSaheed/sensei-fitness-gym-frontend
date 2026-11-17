@@ -31,5 +31,7 @@ export const api = createApi({
     "activity-zone-settings",
     "inactivity-feedback",
     "notification-settings",
+    "gallery",
+    "archive",
   ],
 });

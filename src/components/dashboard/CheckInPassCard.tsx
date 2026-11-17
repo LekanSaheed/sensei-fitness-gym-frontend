@@ -21,19 +21,26 @@ const CheckInPassCard = () => {
 
   const [fullScreen, setFullScreen] = useState(false);
 
-  const qr = (size: number) => (
+  /**
+   * Small codes stay plain (medium error correction = fewer, bigger squares);
+   * the large full-screen code can afford the logo with high error correction.
+   * Both encode exactly the same text.
+   */
+  const qr = (size: number, withLogo: boolean) => (
     <QRCode
       value={code || ""}
       size={size}
       quietZone={10}
-      ecLevel="M"
-      logoImage={logo.src}
-      logoWidth={size * 0.2}
-      logoHeight={size * 0.2}
-      removeQrCodeBehindLogo
-      logoPaddingStyle="square"
+      ecLevel={withLogo ? "H" : "M"}
+      {...(withLogo && {
+        logoImage: logo.src,
+        logoWidth: size * 0.18,
+        logoHeight: size * 0.18,
+        removeQrCodeBehindLogo: true,
+        logoPaddingStyle: "square" as const,
+      })}
       qrStyle="squares"
-      eyeRadius={6}
+      eyeRadius={withLogo ? 6 : 0}
       fgColor="#121212"
       bgColor="#ffffff"
     />
@@ -48,13 +55,13 @@ const CheckInPassCard = () => {
           className="relative shrink-0 rounded-[14px] bg-white p-1.5 border border-gray-200 dark:border-transparent"
         >
           {isLoading ? (
-            <div className="size-[104px] rounded-[10px] bg-gray-200 animate-pulse" />
+            <div className="size-[140px] rounded-[10px] bg-gray-200 animate-pulse" />
           ) : isError || !code ? (
-            <div className="size-[104px] rounded-[10px] bg-gray-100 flex items-center justify-center">
+            <div className="size-[140px] rounded-[10px] bg-gray-100 flex items-center justify-center">
               <ScanBarcode size={32} color="var(--color-gray-400)" />
             </div>
           ) : (
-            qr(104)
+            qr(140, false)
           )}
         </button>
         <div className="min-w-0 flex-1">
@@ -107,7 +114,7 @@ const CheckInPassCard = () => {
             <p className="text-[13px] text-gray-500 mt-1 mb-6">
               @{user?.username} · Show this to staff to check in
             </p>
-            <div onClick={(e) => e.stopPropagation()}>{qr(280)}</div>
+            <div onClick={(e) => e.stopPropagation()}>{qr(300, true)}</div>
             <p className="text-[12px] text-gray-400 mt-6">
               Turn your screen brightness up if it doesn&apos;t scan
             </p>
