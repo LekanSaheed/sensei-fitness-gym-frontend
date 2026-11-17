@@ -73,29 +73,40 @@ const CheckInsHistory = () => {
 };
 
 export const CheckInHistory = ({ checkIn }: { checkIn: ICheckIn }) => {
+  const isAdmin = checkIn?.checkInType === "admin";
+
+  const date = moment(checkIn?.createdAt);
+
   return (
-    <li className=" border-t flex items-center py-3 px-5 dark:text-card-foreground">
-      <div className="size-[40px] mr-2 rounded-full shrink-0 bg-gray-600/10 dark:bg-secondary flex justify-center items-center">
-        {React.createElement(
-          checkIn?.checkInType === "admin" ? SecurityUser : FaPersonWalking,
-          { size: 20, color: "var(--color-gray-500)", variant: "Bold" }
-        )}
+    <li className="flex items-center gap-3 p-3 dark:text-card-foreground">
+      <div className="w-[52px] h-[56px] shrink-0 rounded-[14px] bg-default/10 border border-default/20 flex flex-col items-center justify-center">
+        <span className="font-league text-[26px] leading-none text-default">
+          {date.format("DD")}
+        </span>
+        <span className="text-[10px] uppercase tracking-wide text-gray-500 dark:text-muted-foreground">
+          {date.format("ddd")}
+        </span>
       </div>
-      <div>
-        <h1 className="font-semibold tracking-tight text-[14px]">
-          {checkIn?.checkInType === "admin"
-            ? `You were checked in by ${checkIn?.checkedInBy?.firstname || ""},`
-            : "You checked in"}{" "}
-          {moment(checkIn.createdAt).fromNow()} at{" "}
-          {moment(checkIn.createdAt).format("hh:mm a")}
-        </h1>
-        <p className="text-[12px] text-gray-400">
-          {moment(checkIn?.createdAt).format("llll")} -{" "}
-          <span className="capitalize text-gray-600">
-            {checkIn?.checkInType}
-          </span>
+      <div className="flex-1 min-w-0">
+        <h3 className="font-semibold tracking-tight text-[14px] truncate">
+          {isAdmin
+            ? `Checked in by ${checkIn?.checkedInBy?.firstname || "staff"}`
+            : "Self check-in"}
+        </h3>
+        <p className="text-[12px] text-gray-500 dark:text-muted-foreground">
+          {date.format("hh:mm a")} · {date.fromNow()}
         </p>
       </div>
+      <span
+        title={isAdmin ? "Checked in by staff" : "Self check-in"}
+        className="size-9 shrink-0 rounded-full bg-default inline-flex items-center justify-center"
+      >
+        {React.createElement(isAdmin ? SecurityUser : FaPersonWalking, {
+          size: 16,
+          color: "var(--color-white)",
+          variant: "Bold",
+        })}
+      </span>
     </li>
   );
 };

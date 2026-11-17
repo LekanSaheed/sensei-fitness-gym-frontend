@@ -30,6 +30,8 @@ export const NEW_CHECK_IN = `${CHECK_INS}/new`;
 
 export const PROFILE = `${DASHBOARD}/profile`;
 
+export const INACTIVITY_FEEDBACK = "/inactivity-feedback";
+
 // ADMIN
 
 export const ADMIN_DASHBOARD = `/admin`;
@@ -48,4 +50,10 @@ export const ADMIN_SETTINGS = `${ADMIN_DASHBOARD}/settings`;
 
 export const ADMIN_SECURITY_SETTINGS = `${ADMIN_SETTINGS}/security`;
 
+export const ADMIN_NOTIFICATION_SETTINGS = `${ADMIN_SETTINGS}/notifications`;
+
 export const PAYMENT_LOGS = `${ADMIN_DASHBOARD}/payments`;
+
+export const ACTIVITY_ZONES = `${ADMIN_DASHBOARD}/activity-zones`;
+
+export const ACTIVITY_ZONE_SETTINGS = `${ACTIVITY_ZONES}/settings`;

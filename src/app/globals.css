@@ -181,3 +181,135 @@ html {
     @apply bg-background text-foreground;
   }
 }
+
+/* Landing page discipline ticker (content is repeated, so -50% loops seamlessly) */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-\[marquee_28s_linear_infinite\] {
+    animation: none;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Auth screens: restyle the shared Input / Button inside .auth-form   */
+/* ------------------------------------------------------------------ */
+.auth-form label.inline-block {
+  color: rgb(255 255 255 / 0.75);
+  font-size: 12px;
+  letter-spacing: 0.02em;
+}
+
+/* Input wrapper (the Input component marks it with aria-disabled) */
+.auth-form div[aria-disabled] {
+  border-radius: 14px;
+  border-color: rgb(255 255 255 / 0.14);
+  background: rgb(255 255 255 / 0.04);
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s,
+    background 0.15s;
+}
+
+.auth-form div[aria-disabled]:focus-within {
+  border-color: var(--color-default);
+  background: rgb(255 255 255 / 0.06);
+  box-shadow: 0 0 0 4px rgb(195 140 47 / 0.18);
+}
+
+.auth-form div[aria-disabled="true"] {
+  background: rgb(255 255 255 / 0.02);
+  color: rgb(255 255 255 / 0.5);
+}
+
+.auth-form div[aria-disabled] input {
+  height: 48px;
+  font-size: 15px;
+}
+
+.auth-form div[aria-disabled] input::placeholder {
+  color: rgb(255 255 255 / 0.35);
+  font-size: 13px;
+}
+
+/* Password eye toggle divider */
+.auth-form div[aria-disabled] > div.border-l {
+  height: 46px;
+  border-color: rgb(255 255 255 / 0.12);
+}
+
+/* Primary actions: pill buttons */
+.auth-form button.bg-default,
+.auth-form form > button {
+  border-radius: 9999px;
+  min-height: 50px;
+  box-shadow: 0 12px 30px -12px var(--color-default);
+}
+
+/* ------------------------------------------------------------------ */
+/* Modal forms: restyle the shared Input / TextArea / Select in modals */
+/* ------------------------------------------------------------------ */
+.modal-form label.inline-block {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgb(55 65 81);
+}
+
+.modal-form div[aria-disabled] {
+  border-radius: 12px;
+  border-color: rgb(229 231 235);
+  background: #fff;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+
+.modal-form div[aria-disabled]:focus-within {
+  border-color: var(--color-default);
+  box-shadow: 0 0 0 4px rgb(195 140 47 / 0.15);
+}
+
+.modal-form div[aria-disabled="true"] {
+  background: rgb(249 250 251);
+}
+
+.modal-form div[aria-disabled] input {
+  height: 44px;
+}
+
+.modal-form textarea {
+  padding-top: 10px;
+}
+
+/* custom Select (components/select.tsx) */
+.modal-form .pointer-events-auto.border.border-gray-400 {
+  border-radius: 12px;
+  border-color: rgb(229 231 235);
+}
+
+.modal-form .pointer-events-auto.border.border-gray-400:focus-within {
+  border-color: var(--color-default);
+  box-shadow: 0 0 0 4px rgb(195 140 47 / 0.15);
+}
+
+.modal-form .pointer-events-auto.border.border-gray-400 input {
+  height: 44px;
+}
+
+/* QR scanner viewfinder line */
+@keyframes scanline {
+  0%,
+  100% {
+    top: 8%;
+  }
+  50% {
+    top: 92%;
+  }
+}

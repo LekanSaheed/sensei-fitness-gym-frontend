@@ -1,15 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import HamdburgerMenu from "./hamburger-menu";
 
 import NavigationMenu from "./navigation-menu";
 import { landing_page_nav_links } from "@/constants";
 import Link from "next/link";
-import Button from "../button";
 import { LOGIN, SIGNUP } from "@/constants/routes";
-import { motion, stagger, Variant, Variants } from "framer-motion";
+import { motion, stagger, Variants } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
@@ -35,32 +34,39 @@ export const staggerChildrenVariant: Variants = {
 };
 
 const Header = () => {
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24);
+
+    onScroll();
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
-    <header className=" backdrop-blur-[10px] z-[20] border-b-muted-foreground/20 sticky top-0 py-2 px-4 border-b ">
-      <div className="flex container mx-auto justify-between items-center max-w-7xl">
-        <Link href={"/"} className="relative h-[60px] w-[160px]">
+    <header
+      className={cn(
+        "z-[20] sticky top-0 px-4 transition-all duration-300",
+        scrolled
+          ? "bg-[#000]/80 backdrop-blur-xl border-b border-white/10 py-1"
+          : "bg-transparent border-b border-transparent py-3"
+      )}
+    >
+      <div className="flex container mx-auto justify-between items-center max-w-7xl gap-4">
+        <Link href={"/"} className="relative h-[56px] w-[150px] shrink-0">
           <Image
             quality={100}
             priority
             placeholder="blur"
             blurDataURL="/logo-white.png"
             src={"/logo-white.png"}
-            alt="logo"
+            alt="SEN-SEI Fitness"
             fill
-            className="object-contain"
+            className="object-contain object-left"
           />
-          <div className="hidden">
-            <Image
-              quality={100}
-              priority
-              placeholder="blur"
-              blurDataURL="/logo.png"
-              src={"/logo.png"}
-              alt="logo"
-              fill
-              className="object-contain "
-            />
-          </div>
         </Link>
         <DesktopNavigation />
         <div className="lg:hidden">
@@ -70,22 +76,19 @@ const Header = () => {
           initial="hidden"
           animate="visible"
           variants={staggerContainerVariant}
-          className="hidden lg:flex"
+          className="hidden lg:flex items-center gap-2"
         >
-          <Link href={LOGIN}>
-            <Button
-              label="Login"
-              className="font-league uppercase text-[20px] rounded-none"
-              font="regular"
-              variant="outlined"
-            />
+          <Link
+            href={LOGIN}
+            className="font-league uppercase text-[19px] tracking-wide px-5 py-2 text-white/80 hover:text-white transition"
+          >
+            Login
           </Link>
-          <Link href={SIGNUP} className="">
-            <Button
-              label="Register"
-              className="font-league uppercase text-[20px] rounded-none"
-              font="regular"
-            />
+          <Link
+            href={SIGNUP}
+            className="font-league uppercase text-[19px] tracking-wide px-6 py-2 rounded-full bg-default text-white shadow-[0_8px_24px_-10px_var(--color-default)] transition hover:brightness-110 active:scale-[0.97]"
+          >
+            Join now
           </Link>
         </motion.div>
       </div>
@@ -101,7 +104,7 @@ const DesktopNavigation = () => {
       initial={"hidden"}
       animate="visible"
       variants={staggerContainerVariant}
-      className="hidden lg:flex gap-8"
+      className="hidden lg:flex items-center gap-1 rounded-full border border-white/10 bg-white/[0.04] px-2 py-1"
     >
       {landing_page_nav_links.map((link, id) => {
         const isActive = link.path === pathname;
@@ -109,8 +112,10 @@ const DesktopNavigation = () => {
           <MotionLink
             variants={staggerChildrenVariant}
             className={cn(
-              "font-league uppercase text-[20px] tracking-tight",
-              isActive ? "text-default" : ""
+              "font-league uppercase text-[18px] tracking-wide px-4 py-1.5 rounded-full transition",
+              isActive
+                ? "bg-default/15 text-default"
+                : "text-white/70 hover:text-white"
             )}
             href={link.path}
             key={id}

@@ -14,11 +14,16 @@ import useStateReducer from "@/hooks/useStateReducer";
 import useUser from "@/hooks/useUser";
 import { actions } from "@/redux";
 import { useCheckUsernameQuery } from "@/redux/api-slices/auth.slice";
-import { useGetSubscriptionsHistoryInfiniteQuery } from "@/redux/api-slices/subscription.slice";
 import {
+  useGetCheckInAnalyticsQuery,
+  useGetSubscriptionsHistoryInfiniteQuery,
+} from "@/redux/api-slices/subscription.slice";
+import {
+  useUpdateNotificationPreferencesMutation,
   useUpdatePasswordMutation,
   useUpdateProfileMutation,
 } from "@/redux/api-slices/user.slice";
+import { Switch } from "@/components/ui/switch";
 import { ErrorResponse } from "@/types";
 import IUser from "@/types/User";
 import {
@@ -28,7 +33,18 @@ import {
 } from "@/utils";
 import { PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
 import { useFormik } from "formik";
-import { ArrowRight2, Edit, LogoutCurve } from "iconsax-react";
+import {
+  ArrowRight2,
+  DocumentText,
+  Edit,
+  Icon,
+  Lock1,
+  LogoutCurve,
+  Notification,
+  UserEdit,
+} from "iconsax-react";
+import SectionTitle from "@/components/dashboard/SectionTitle";
+import CheckInPassCard from "@/components/dashboard/CheckInPassCard";
 import moment from "moment";
 import { useRouter } from "next/navigation";
 import React, { FunctionComponent, useState } from "react";
@@ -49,59 +65,150 @@ const ProfilePage = () => {
     profilePictureModal: false,
   });
 
-  const actions: { label: string; id: keyof typeof state }[] = [
-    { label: "Update profile details", id: "profileUpdateModal" },
-    { label: "Change password", id: "passwordUpdateModal" },
-    { label: "My Undertaking Documents", id: "undertakingDocsModal" },
+  const actions: {
+    label: string;
+    description: string;
+    id: keyof typeof state;
+    icon: Icon;
+  }[] = [
+    {
+      label: "Update profile details",
+      description: "Name and username",
+      id: "profileUpdateModal",
+      icon: UserEdit,
+    },
+    {
+      label: "Change password",
+      description: "Keep your account secure",
+      id: "passwordUpdateModal",
+      icon: Lock1,
+    },
+    {
+      label: "My Undertaking Documents",
+      description: "Signed with each plan",
+      id: "undertakingDocsModal",
+      icon: DocumentText,
+    },
+  ];
+
+  const analytics = useGetCheckInAnalyticsQuery(null);
+
+  const stats = [
+    {
+      label: "Check-ins",
+      value: analytics.isLoading
+        ? "-"
+        : analytics.data?.data?.totalCheckIns ?? 0,
+    },
+    { label: "Plan", value: user?.hasActiveSub ? "Active" : "None" },
+    {
+      label: "Reg. fee",
+      value: user?.registrationFeePaid ? "Paid" : "Unpaid",
+    },
   ];
 
   return (
-    <div>
-      <div className="flex flex-col items-center pt-5 rounded-[10px] mb-4 ">
-        <Avatar className="size-[100px] mr-3 relative">
-          <div
+    <div className="flex flex-col gap-5 pt-2">
+      <section className="relative overflow-hidden rounded-[24px] bg-default-black text-white p-5 dark:border dark:border-border">
+        <div className="pointer-events-none absolute -right-16 -top-16 size-48 rounded-full bg-default/40 blur-3xl" />
+        <div className="relative flex items-center gap-4">
+          <button
             onClick={() => handleStateChange({ profilePictureModal: true })}
-            className="bg-black/50 inset-0 absolute flex items-center justify-center "
+            aria-label="Change profile picture"
+            className="relative shrink-0 rounded-full"
           >
-            <Edit color="var(--color-default)" size={20} />
+            <Avatar className="size-[84px] ring-2 ring-default ring-offset-2 ring-offset-default-black">
+              <AvatarImage src={user?.profile_picture} />
+              <AvatarFallback className="!bg-white/10 text-white text-[24px]">
+                {getInitials(memberName)}
+              </AvatarFallback>
+            </Avatar>
+            <span className="absolute -bottom-1 -right-1 size-8 rounded-full bg-default border-2 border-default-black inline-flex items-center justify-center">
+              <Edit color="var(--color-white)" size={14} />
+            </span>
+          </button>
+          <div className="min-w-0">
+            <h1 className="font-league uppercase text-[30px] leading-none truncate">
+              {memberName}
+            </h1>
+            <p className="text-[13px] text-white/70 truncate mt-1">
+              {user?.email}
+            </p>
+            <p className="text-[12px] text-default-tertiary">
+              @{user?.username}
+            </p>
           </div>
-          <AvatarImage src={user?.profile_picture} />
-          <AvatarFallback className=" border border-gray-400 !bg-white text-[20px] dark:!bg-accent dark:border-border">
-            {getInitials(memberName)}
-          </AvatarFallback>
-        </Avatar>
-        <div className="text-center">
-          <h1 className="font-semibold text-[20px] tracking-tight">
-            {memberName}
-          </h1>
-          <p className="text-[14px] text-gray-400">{user?.email}</p>
-          <p className="text-[12px] text-default">@{user?.username}</p>
         </div>
-      </div>
-      <ul className="bg-white p-2 mb-4 dark:bg-card">
-        {actions.map((action, id) => {
-          return (
-            <li
-              onClick={() => handleStateChange({ [action.id]: true })}
-              key={id}
-              className="flex cursor-pointer justify-between items-center px-2 py-4 border-b last:border-b-0 dark:border-b-sidebar-border"
+        <dl className="relative grid grid-cols-3 gap-2 mt-5">
+          {stats.map((stat) => (
+            <div
+              key={stat.label}
+              className="rounded-[14px] bg-white/[0.06] border border-white/10 px-3 py-2.5"
             >
-              {action.label}{" "}
-              <ArrowRight2
-                size={16}
-                color="var(--color-secondary-foreground)"
-              />
-            </li>
-          );
-        })}
-      </ul>
-      <Button
+              <dd className="font-league text-[24px] leading-none">
+                {stat.value}
+              </dd>
+              <dt className="text-[10px] uppercase tracking-wide text-white/60 mt-1">
+                {stat.label}
+              </dt>
+            </div>
+          ))}
+        </dl>
+      </section>
+
+      <section>
+        <SectionTitle>Check-in pass</SectionTitle>
+        <CheckInPassCard />
+      </section>
+
+      <section>
+        <SectionTitle>Account</SectionTitle>
+        <ul className="rounded-[20px] bg-white border border-gray-200/70 divide-y divide-gray-200/70 dark:bg-card dark:border-border dark:divide-border">
+          {actions.map((action) => {
+            return (
+              <li key={action.id}>
+                <button
+                  onClick={() => handleStateChange({ [action.id]: true })}
+                  className="w-full flex items-center gap-3 p-4 text-left transition active:bg-gray-50 dark:active:bg-secondary"
+                >
+                  <span className="size-10 shrink-0 rounded-[12px] bg-default/10 inline-flex items-center justify-center">
+                    {React.createElement(action.icon, {
+                      size: 20,
+                      color: "var(--color-default)",
+                      variant: "Bold",
+                    })}
+                  </span>
+                  <span className="flex-1 min-w-0">
+                    <span className="block font-semibold text-[14px]">
+                      {action.label}
+                    </span>
+                    <span className="block text-[12px] text-gray-500 dark:text-muted-foreground">
+                      {action.description}
+                    </span>
+                  </span>
+                  <ArrowRight2
+                    size={16}
+                    color="var(--color-secondary-foreground)"
+                  />
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+
+      <section>
+        <SectionTitle>Notifications</SectionTitle>
+        <ActivityRemindersToggle />
+      </section>
+
+      <button
         onClick={() => handleStateChange({ logoutModal: true })}
-        size="lg"
-        label="Logout"
-        fullWidth
-        color="black"
-      />
+        className="w-full flex items-center justify-center gap-2 rounded-full border border-rose-500/40 bg-rose-500/5 py-3.5 text-[15px] font-semibold text-rose-600 transition active:scale-[0.98] dark:text-rose-400"
+      >
+        <LogoutCurve size={18} color="currentColor" />
+        Logout
+      </button>
       <UpdateProfileDetails
         open={state.profileUpdateModal}
         setOpen={(bool) => handleStateChange({ profileUpdateModal: bool })}
@@ -123,6 +230,53 @@ const ProfilePage = () => {
         setOpen={(bool) => handleStateChange({ profilePictureModal: bool })}
       />
     </div>
+  );
+};
+
+const ActivityRemindersToggle = () => {
+  const user = useUser();
+
+  const [update, updateStatus] = useUpdateNotificationPreferencesMutation();
+
+  const { fetchUserAndLogin } = useFetchUserAndLogin();
+
+  const enabled = user?.notificationPreferences?.activityReminders !== false;
+
+  const toggle = async (checked: boolean) => {
+    const res = await update({ activityReminders: checked });
+
+    if ("error" in res && isFetchBaseQueryError(res.error)) {
+      const errorData = res.error?.data as ErrorResponse;
+
+      toast.error(errorData?.error || DEFAULT_ERROR_MESSAGE);
+    } else if (res.data?.success) {
+      toast.success(
+        checked ? "Activity reminders turned on" : "Activity reminders turned off"
+      );
+
+      fetchUserAndLogin();
+    } else {
+      toast.error(res.data?.error || DEFAULT_ERROR_MESSAGE);
+    }
+  };
+
+  return (
+    <label className="rounded-[20px] bg-white border border-gray-200/70 p-4 flex items-center gap-3 cursor-pointer dark:bg-card dark:border-border">
+      <span className="size-10 shrink-0 rounded-[12px] bg-default/10 inline-flex items-center justify-center">
+        <Notification size={20} color="var(--color-default)" variant="Bold" />
+      </span>
+      <div className="flex-1 min-w-0">
+        <p className="font-semibold text-[14px]">Activity reminder emails</p>
+        <p className="text-[12px] text-gray-500 dark:text-muted-foreground">
+          Get a reminder when you haven&apos;t checked in for a while
+        </p>
+      </div>
+      <Switch
+        checked={enabled}
+        disabled={updateStatus.isLoading}
+        onCheckedChange={toggle}
+      />
+    </label>
   );
 };
 
@@ -187,6 +341,8 @@ const UndertakingDocsModal: FunctionComponent<{
           open={!!selectedDocument}
           setOpen={() => setSelected("")}
           title={`Undertaking Document`}
+          icon={DocumentText}
+          size="lg"
         >
           <PDFViewer
             style={{ width: "100%", height: "60vh", marginBottom: "20px" }}

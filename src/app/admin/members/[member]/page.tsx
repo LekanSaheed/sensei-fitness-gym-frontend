@@ -1,5 +1,6 @@
 "use client";
 
+import ActivityZoneBadge from "@/components/ActivityZoneBadge";
 import Alert from "@/components/alert";
 import Button from "@/components/button";
 import SectionLoader from "@/components/SectionLoader";
@@ -7,6 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   useGetCheckInsQuery,
   useGetMemberByIdQuery,
+  UserWithSub,
   useWaiveRegistrationFeeMutation,
 } from "@/redux/api-slices/admin.slice";
 import { SubscriptionStatus } from "@/redux/api-slices/subscription.slice";
@@ -73,7 +75,7 @@ const Member = () => {
       <SectionLoader loading={loading} error={isError} refetch={refetch} />
 
       {!loading && !isError && memberDetails && (
-        <div className="">
+        <div className="bg-white rounded-[18px] border border-gray-200/80 px-5 md:px-7 py-2 shadow-[0_1px_2px_rgb(0_0_0/0.04),0_8px_24px_-12px_rgb(0_0_0/0.08)]">
           <div className="border-b  flex items-center gap-2 py-4">
             <Avatar className="size-20 text-[25px]">
               <AvatarImage src={memberDetails?.profile_picture} />
@@ -184,6 +186,7 @@ const Member = () => {
               </div>
             )}
           </div>
+          <MemberActivitySection member={memberDetails} />
           <div className="py-4 text-[13px]">
             <h1 className="text-[12px] text-gray-800 font-bold">
               Last Check-In
@@ -206,6 +209,141 @@ const Member = () => {
             )}
           </div>
         </div>
+      )}
+    </div>
+  );
+};
+
+const formatDays = (days?: number | null) =>
+  days === null || days === undefined
+    ? null
+    : days === 0
+    ? "Today"
+    : `${days} day${days > 1 ? "s" : ""} ago`;
+
+const MemberActivitySection = ({ member }: { member: UserWithSub }) => {
+  const activity = member?.activity;
+
+  const reasonLabel: Record<string, string> = {
+    "check-in": "after a check-in",
+    login: "after logging in",
+    scheduled: "due to inactivity",
+  };
+
+  const stats: { label: string; value: React.ReactNode; sub?: string | null }[] =
+    [
+      {
+        label: "Last Check-in",
+        value: member?.lastCheckInAt
+          ? moment(member.lastCheckInAt).format("ll")
+          : "Never checked in",
+        sub: formatDays(activity?.daysSinceLastCheckIn),
+      },
+      {
+        label: "Last Login",
+        value: member?.lastLoginAt
+          ? moment(member.lastLoginAt).format("ll")
+          : "No login recorded",
+        sub: formatDays(activity?.daysSinceLastLogin),
+      },
+      {
+        label: "In Zone Since",
+        value: activity?.zoneEnteredAt
+          ? moment(activity.zoneEnteredAt).format("ll")
+          : "N/A",
+        sub: activity?.zoneEnteredAt
+          ? moment(activity.zoneEnteredAt).fromNow()
+          : null,
+      },
+      {
+        label: "Previous Zone",
+        value: activity?.previousZone ? (
+          <ActivityZoneBadge zone={activity.previousZone} />
+        ) : (
+          "N/A"
+        ),
+      },
+    ];
+
+  return (
+    <div className="py-4 border-b">
+      <div className="flex items-center justify-between gap-2 mb-2">
+        <h1 className="text-[12px] text-gray-800 font-bold">Activity Zone</h1>
+        <ActivityZoneBadge zone={activity?.zone} />
+      </div>
+
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
+        {stats.map((stat) => (
+          <div key={stat.label} className="p-3 border rounded-[10px]">
+            <p className="text-[11px] text-gray-500 mb-1">{stat.label}</p>
+            <div className="text-[13px] font-medium">{stat.value}</div>
+            {stat.sub && (
+              <p className="text-[11px] text-gray-500 mt-0.5">{stat.sub}</p>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {!!activity?.history?.length && (
+        <div className="mt-3">
+          <p className="text-[11px] text-gray-500 mb-1">Recent zone changes</p>
+          <ul className="text-[12px]">
+            {activity.history.map((h) => (
+              <li
+                key={h._id}
+                className="flex flex-wrap items-center gap-1 py-1 border-b last:border-b-0"
+              >
+                <span className="text-gray-500 mr-1">
+                  {moment(h.createdAt).format("ll")}
+                </span>
+                {h.from ? <ActivityZoneBadge zone={h.from} /> : "-"}
+                <span>→</span>
+                <ActivityZoneBadge zone={h.to} />
+                <span className="text-gray-500">
+                  {reasonLabel[h.reason] || ""}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {!!activity?.inactivityFeedback?.length && (
+        <div className="mt-3">
+          <p className="text-[11px] text-gray-500 mb-1">
+            Reasons given for inactivity
+          </p>
+          <ul className="grid gap-2">
+            {activity.inactivityFeedback.map((f) => (
+              <li key={f._id} className="p-3 border rounded-[10px] text-[12px]">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <span className="font-semibold text-[13px]">
+                    {f.reasonLabel}
+                  </span>
+                  <span className="text-gray-500">
+                    {moment(f.updatedAt).format("ll")}
+                  </span>
+                </div>
+                {f.note && (
+                  <p className="mt-1 text-gray-700 whitespace-pre-line break-words">
+                    &ldquo;{f.note}&rdquo;
+                  </p>
+                )}
+                <p className="mt-1 text-gray-500 flex flex-wrap items-center gap-1">
+                  From the reminder{" "}
+                  {f.reminderKind === "after" ? "after entering" : "before"}{" "}
+                  <ActivityZoneBadge zone={f.reminderZone} />
+                </p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {member?.notificationPreferences?.activityReminders === false && (
+        <p className="text-[11px] text-gray-500 mt-2">
+          This member has turned off activity reminder emails.
+        </p>
       )}
     </div>
   );

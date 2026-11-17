@@ -7,6 +7,7 @@ import { SecurityUser } from "iconsax-react";
 import { FaPersonWalking } from "react-icons/fa6";
 import moment from "moment";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import SectionTitle from "./dashboard/SectionTitle";
 
 const CheckInCalendar = () => {
   const defaultClassNames = getDefaultClassNames();
@@ -19,8 +20,6 @@ const CheckInCalendar = () => {
 
   const y = date.getFullYear();
 
-  console.log(month);
-
   const { data, isLoading, isFetching, isError, refetch } =
     useGetCheckInsForMonthQuery({ month: m, year: y });
 
@@ -30,9 +29,25 @@ const CheckInCalendar = () => {
 
   const loading = isLoading || isFetching;
 
-  console.log({ daysCheckedIn });
   return (
-    <div>
+    <section>
+      <SectionTitle
+        action={
+          <div className="flex items-center gap-3 text-[11px] text-gray-500 dark:text-muted-foreground">
+            <span className="inline-flex items-center gap-1">
+              <FaPersonWalking size={12} color="var(--color-default)" />
+              Self
+            </span>
+            <span className="inline-flex items-center gap-1">
+              <SecurityUser size={12} color="var(--color-default)" variant="Bold" />
+              Admin
+            </span>
+          </div>
+        }
+      >
+        Training log
+      </SectionTitle>
+      <div className="rounded-[24px] bg-white dark:bg-card border border-gray-200/70 dark:border-border p-4">
       <SectionLoader loading={loading} error={isError} refetch={refetch} />
       {!loading && !isError && (
         <DayPicker
@@ -120,7 +135,8 @@ const CheckInCalendar = () => {
           selected={undefined}
         />
       )}
-    </div>
+      </div>
+    </section>
   );
 };
 

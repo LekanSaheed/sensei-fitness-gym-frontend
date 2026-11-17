@@ -1,20 +1,21 @@
 "use client";
 
-import Button from "@/components/button";
 import SectionLoader from "@/components/SectionLoader";
 import { DEFAULT_ERROR_MESSAGE } from "@/constants";
-import { DASHBOARD } from "@/constants/routes";
+import { CHECK_INS, DASHBOARD } from "@/constants/routes";
 import {
   useCheckIfCheckedInTodayQuery,
   useCheckInMutation,
 } from "@/redux/api-slices/subscription.slice";
 import { ErrorResponse } from "@/types";
 import { isFetchBaseQueryError } from "@/utils";
-import { TickCircle } from "iconsax-react";
+import { LocationTick, TickCircle } from "iconsax-react";
+import moment from "moment";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React from "react";
 import toast from "react-hot-toast";
+import Spinner from "@/components/Spinner";
 
 const CheckIn = () => {
   const [checkIn, checkInStatus] = useCheckInMutation();
@@ -51,56 +52,99 @@ const CheckIn = () => {
   const isCheckedIn = data?.data?.checkedIn;
 
   return (
-    <div>
-      <SectionLoader loading={loading} error={isError} refetch={refetch} />
+    <div className="pt-2">
+      <SectionLoader
+        loading={loading && !checkInStatus.isLoading}
+        error={isError}
+        refetch={refetch}
+      />
 
       {canCheckIn && (
-        <div className="sm:max-w-[400px] mx-auto bg-white p-6 rounded-[10px] dark:bg-card">
-          <div className="text-center mb-4">
-            <h1 className="font-black text-[23px]">Check In</h1>
-            <p className="text-center  text-gray-500">
-              Are you ready to check in for today?
+        <section className="relative overflow-hidden sm:max-w-[440px] mx-auto rounded-[28px] bg-default-black text-white px-6 pt-8 pb-6 text-center dark:border dark:border-border">
+          <div className="pointer-events-none absolute -top-20 left-1/2 -translate-x-1/2 size-64 rounded-full bg-default/30 blur-3xl" />
+
+          <div className="relative">
+            <p className="text-[11px] uppercase tracking-[0.2em] text-default-tertiary">
+              {moment().format("dddd, D MMMM")}
             </p>
-          </div>
-          <div className="flex gap-2">
-            <Button
+            <h1 className="font-league uppercase text-[40px] leading-none mt-2">
+              Ready to train?
+            </h1>
+            <p className="text-[13px] text-white/70 mt-2">
+              Tap the button to check in for today&apos;s session.
+            </p>
+
+            <div className="my-8 flex justify-center">
+              <button
+                onClick={checkInForToday}
+                disabled={checkInStatus.isLoading}
+                aria-label="Check in for today"
+                className="group relative size-[180px] rounded-full bg-default text-white flex flex-col items-center justify-center gap-2 shadow-[0_18px_45px_-12px_var(--color-default)] transition active:scale-95 disabled:opacity-80"
+              >
+                <span className="absolute inset-0 rounded-full border-2 border-default animate-ping opacity-30" />
+                <span className="absolute -inset-3 rounded-full border border-default/30" />
+                {checkInStatus.isLoading ? (
+                  <span className="text-[36px]">
+                    <Spinner className="text-white" />
+                  </span>
+                ) : (
+                  <>
+                    <LocationTick size={48} color="currentColor" variant="Bold" />
+                    <span className="font-league uppercase text-[26px] leading-none">
+                      Check in
+                    </span>
+                  </>
+                )}
+              </button>
+            </div>
+
+            <button
               onClick={() => router.replace(DASHBOARD)}
-              label="No, go back"
-              variant="outlined"
-              color="black"
-              fullWidth
-              size="lg"
-            />
-            <Button
-              label="Check in"
-              fullWidth
-              size="lg"
-              loading={checkInStatus.isLoading}
-              onClick={checkInForToday}
-            />
+              className="text-[13px] text-white/70 underline-offset-4 hover:underline"
+            >
+              No, go back
+            </button>
           </div>
-        </div>
+        </section>
       )}
 
       {isCheckedIn && !loading && !isError && (
-        <div className="sm:max-w-[400px] mx-auto">
-          <div className="bg-white p-6 rounded-[10px] dark:bg-card dark:text-card-foreground">
-            <TickCircle size={80} color="green" className="mx-auto mb-4" />
-            <h1 className="text-center text-[25px] mb-2 font-bold">
-              You have checked in
+        <section className="sm:max-w-[440px] mx-auto">
+          <div className="rounded-[28px] bg-white border border-gray-200/70 p-8 text-center dark:bg-card dark:text-card-foreground dark:border-border">
+            <div className="relative mx-auto mb-5 size-[120px]">
+              <span className="absolute inset-0 rounded-full bg-emerald-500/10" />
+              <span className="absolute inset-3 rounded-full bg-emerald-500/15" />
+              <TickCircle
+                size={72}
+                color="var(--color-emerald-500)"
+                variant="Bold"
+                className="absolute inset-0 m-auto"
+              />
+            </div>
+            <h1 className="font-league uppercase text-[34px] leading-none mb-3">
+              You&apos;re checked in
             </h1>
-            <p className="text-[14px] text-center text-gray-500 dark:text-gray-400">
+            <p className="text-[14px] text-gray-500 dark:text-gray-400">
               {"You’re"} checked in for today! Have a productive and enjoyable
               workout session. Remember to stay hydrated and show respect to
               fellow members.
             </p>
           </div>
-          <div className="flex justify-center">
-            <Link href={DASHBOARD} className="mt-4 ">
-              <Button size="lg" label="Go to dashboard" />
+          <div className="grid grid-cols-2 gap-3 mt-4">
+            <Link
+              href={DASHBOARD}
+              className="rounded-full bg-default px-4 py-3 text-center text-[14px] font-semibold text-white transition active:scale-[0.97]"
+            >
+              Go to dashboard
+            </Link>
+            <Link
+              href={CHECK_INS}
+              className="rounded-full border border-default px-4 py-3 text-center text-[14px] font-semibold text-default transition active:scale-[0.97]"
+            >
+              View training log
             </Link>
           </div>
-        </div>
+        </section>
       )}
     </div>
   );

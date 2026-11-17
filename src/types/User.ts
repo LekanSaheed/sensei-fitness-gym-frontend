@@ -1,4 +1,5 @@
 import { Permission } from "@/hooks/usePermissions";
+import { MemberActivity } from "./ActivityZone";
 
 interface IUser {
   _id: string;
@@ -16,6 +17,12 @@ interface IUser {
   hasActiveSub: boolean;
   registrationFeeWaivedBy: Pick<IUser, "firstname" | "lastname"> | null;
   phoneNumber: string;
+  lastLoginAt?: string | null;
+  lastCheckInAt?: string | null;
+  activity?: MemberActivity;
+  notificationPreferences?: {
+    activityReminders: boolean;
+  };
 }
 
 export default IUser;

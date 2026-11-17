@@ -16,6 +16,8 @@ const permissions_string = [
   "invite_admin",
   "update_admin",
   "waive_registration_fee",
+  "manage_activity_zones",
+  "manage_notification_settings",
 ] as const;
 
 export type Permission = (typeof permissions_string)[number];

@@ -27,5 +27,9 @@ export const api = createApi({
     "admins",
     "admin",
     "subscriptions",
+    "activity-zones",
+    "activity-zone-settings",
+    "inactivity-feedback",
+    "notification-settings",
   ],
 });

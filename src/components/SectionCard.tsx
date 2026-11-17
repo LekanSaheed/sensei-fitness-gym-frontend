@@ -39,16 +39,22 @@ const SectionCard: FunctionComponent<SectionCardProps> = ({
 
   const updateSearchParams = useUpdateSearchParams();
   return (
-    <Card className="relative border-gray-300">
+    <Card className="relative h-full gap-3 py-5 !bg-none !bg-white border-gray-200/80 rounded-[18px] !shadow-[0_1px_2px_rgb(0_0_0/0.04),0_8px_24px_-12px_rgb(0_0_0/0.08)] transition hover:border-default/40">
       <CardHeader>
-        <CardDescription className="">{description}</CardDescription>
+        <CardDescription
+          className={`text-[11px] font-semibold uppercase tracking-wider text-gray-500 ${
+            dropdown?.options?.length > 1 ? "pr-20" : ""
+          }`}
+        >
+          {description}
+        </CardDescription>
         <CardTitle
-          className={`text-2xl font-semibold  lg:text-3xl ${
+          className={`text-[26px] font-black tracking-tight tabular-nums lg:text-[32px] ${
             classNames?.value || ""
           }`}
         >
           {loading ? (
-            <div className="animate-pulse h-[15px] w-[60%] bg-slate-200 rounded-[10px] lg:h-[30px]" />
+            <div className="animate-pulse h-[26px] w-[55%] bg-gray-100 rounded-[8px] lg:h-[32px]" />
           ) : (
             (value as string)
           )}
@@ -57,10 +63,10 @@ const SectionCard: FunctionComponent<SectionCardProps> = ({
           <div className="absolute top-6 right-6">
             <div className="relative">
               <div
-                className="text-[10px] flex gap-1 items-center border-b border-black/80 justify-between cursor-pointer"
+                className="text-[11px] flex gap-1 items-center rounded-full bg-gray-100 px-2.5 py-1 justify-between cursor-pointer hover:bg-gray-200 transition"
                 onClick={() => setOpen(!open)}
               >
-                <span className="whitespaces-nowrap bg-white">
+                <span className="whitespace-nowrap">
                   {dropdown?.selected?.label}
                 </span>
                 <ArrowDown2
@@ -69,7 +75,7 @@ const SectionCard: FunctionComponent<SectionCardProps> = ({
                 />
               </div>
               {open && (
-                <ul className="absolute bg-white w-[120px] right-0 shadow-xl rounded-[10px] border border-gray-300 p-1 z-[100]">
+                <ul className="absolute bg-white w-[140px] right-0 mt-1 shadow-xl rounded-[14px] border border-gray-200 p-1 z-[100]">
                   {dropdown?.options?.map((option) => {
                     const isSelected =
                       option?.value === dropdown?.selected?.value;
@@ -83,7 +89,7 @@ const SectionCard: FunctionComponent<SectionCardProps> = ({
                           setOpen(false);
                         }}
                         key={`${option?.label}_${String(option?.value)}`}
-                        className={`text-[10px] rounded-[4px] mb-1 cursor-pointer px-2 py-0.5 hover:bg-gray-100 ${
+                        className={`text-[12px] rounded-[10px] cursor-pointer px-2.5 py-1.5 hover:bg-gray-100 ${
                           isSelected ? "bg-default/10 text-default" : ""
                         }`}
                       >

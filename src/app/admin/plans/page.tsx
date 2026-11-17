@@ -23,6 +23,14 @@ import {
 import { ErrorResponse } from "@/types";
 import { isFetchBaseQueryError } from "@/utils";
 import React, { FunctionComponent, useState } from "react";
+import FormatNumber from "@/utils/format-number";
+import {
+  CalendarTick,
+  Icon,
+  ReceiptAdd,
+  ReceiptEdit,
+  Timer1,
+} from "iconsax-react";
 import toast from "react-hot-toast";
 
 const PlansPage = () => {
@@ -98,6 +106,69 @@ const PlansPage = () => {
     </div>
   );
 };
+
+/** Titled group of fields inside the plan modals */
+const FormSection: FunctionComponent<{
+  title: string;
+  description?: string;
+  children: React.ReactNode;
+}> = ({ title, description, children }) => (
+  <section className="mb-6 last:mb-0">
+    <div className="mb-3">
+      <h3 className="text-[11px] font-bold uppercase tracking-[0.15em] text-default-secondary">
+        {title}
+      </h3>
+      {description && (
+        <p className="text-[12px] text-gray-500 mt-0.5">{description}</p>
+      )}
+    </div>
+    {children}
+  </section>
+);
+
+const planTypeCards: {
+  value: PlanType;
+  title: string;
+  description: string;
+  icon: Icon;
+}[] = [
+  {
+    value: PlanType.Linear,
+    title: "Linear",
+    description: "Check in any day until the plan ends",
+    icon: CalendarTick,
+  },
+  {
+    value: PlanType.SessionBased,
+    title: "Session based",
+    description: "A set number of check-ins on chosen days",
+    icon: Timer1,
+  },
+];
+
+/** Live one-line summary shown above the main button */
+const PlanSummary: FunctionComponent<{
+  name?: string;
+  price?: number | string;
+  trainerFee?: number | string;
+  days?: number | string;
+}> = ({ name, price, trainerFee, days }) => (
+  <div className="flex items-center justify-between gap-3 mb-3 text-[12px]">
+    <span className="truncate text-gray-600">
+      <span className="font-semibold text-gray-900">{name || "New plan"}</span>
+      {days ? ` · ${days} day${Number(days) === 1 ? "" : "s"}` : ""}
+    </span>
+    <span className="shrink-0 font-semibold text-gray-900">
+      {FormatNumber.ngnAmount(Number(price) || 0)}
+      {Number(trainerFee) > 0 && (
+        <span className="font-normal text-gray-500">
+          {" "}
+          + {FormatNumber.ngnAmount(Number(trainerFee))} trainer
+        </span>
+      )}
+    </span>
+  </div>
+);
 
 const CreateNewPlan: FunctionComponent<{
   open: boolean;
@@ -209,30 +280,63 @@ const CreateNewPlan: FunctionComponent<{
     <DialogModal
       title="Create Subscription Plan"
       description="Fill out the form below to create a new plan"
+      icon={ReceiptAdd}
+      size="md"
       open={open}
       setOpen={setOpen}
+      footer={
+        <>
+          <PlanSummary
+            name={state.name}
+            price={state.price}
+            trainerFee={state.trainerFee}
+            days={state.durationInDays}
+          />
+          <Alert
+            title="Create Subscription Plan?"
+            description="Are you sure you want to create this subscription plan?"
+            onContinueClick={createPlan}
+            loading={createStatus.isLoading}
+            alertTrigger={
+              <Button
+                permissions={["create_subscription_plan"]}
+                disabled={disabled}
+                type="button"
+                fullWidth
+                fullRadius
+                size="lg"
+                label="Create Plan"
+                loading={createStatus.isLoading}
+              />
+            }
+          />
+        </>
+      }
     >
       <form
         onSubmit={(e) => {
           e.preventDefault();
         }}
       >
-        <div className="max-h-[70vh] pr-4 -mr-4 overflow-y-auto">
+        <FormSection title="Basics">
           <Input
             value={state.name}
             onChange={(e) => handleStateChange({ name: e.target.value })}
             required
             label={"Plan Name"}
-            placeholder="Plan Name"
+            placeholder="e.g. Monthly plan"
           />
           <TextArea
             value={state.description}
             onChange={(e) => handleStateChange({ description: e.target.value })}
             required
             label="Description"
-            placeholder="Description"
+            placeholder="What members get with this plan"
           />
-          <div className="flex gap-4 mb-4">
+        </FormSection>
+
+        <FormSection title="Pricing">
+          <div className="grid grid-cols-2 gap-3">
             <Input
               value={state.price}
               onChange={(e) =>
@@ -241,6 +345,7 @@ const CreateNewPlan: FunctionComponent<{
                 })
               }
               remove_margin
+              isCurrency
               placeholder="1000"
               type="number"
               inputMode="numeric"
@@ -256,47 +361,92 @@ const CreateNewPlan: FunctionComponent<{
                 })
               }
               remove_margin
-              placeholder="1000"
+              isCurrency
+              placeholder="0"
               type="number"
               inputMode="numeric"
               label={"Trainer Fee"}
             />
           </div>
-          <Select
-            options={planTypeOptions}
-            label="Plan Type"
-            selected={rawSelectedType}
-            onSelect={(o) => handleStateChange({ type: o.value as PlanType })}
-          />
+        </FormSection>
+
+        <FormSection title="Plan Type">
+          <div
+            role="radiogroup"
+            aria-label="Plan Type"
+            className="grid grid-cols-2 gap-3"
+          >
+            {planTypeCards.map((card) => {
+              const selected = state.type === card.value;
+
+              return (
+                <button
+                  key={card.value}
+                  type="button"
+                  role="radio"
+                  aria-checked={selected}
+                  onClick={() => handleStateChange({ type: card.value })}
+                  className={`text-left rounded-[14px] border-2 p-3.5 transition ${
+                    selected
+                      ? "border-default bg-default/[0.06]"
+                      : "border-gray-200 hover:border-gray-300"
+                  }`}
+                >
+                  <span
+                    className={`size-9 rounded-[10px] inline-flex items-center justify-center mb-2 ${
+                      selected ? "bg-default" : "bg-gray-100"
+                    }`}
+                  >
+                    {React.createElement(card.icon, {
+                      size: 18,
+                      variant: "Bold",
+                      color: selected
+                        ? "var(--color-white)"
+                        : "var(--color-gray-500)",
+                    })}
+                  </span>
+                  <span className="block text-[13px] font-semibold">
+                    {card.title}
+                  </span>
+                  <span className="block text-[11px] text-gray-500 leading-snug mt-0.5">
+                    {card.description}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+
           {state.type === PlanType.SessionBased && (
-            <>
-              <Input
-                label={"Check-ins Per week"}
-                max={6}
-                value={state.checkInsPerWeek}
-                onChange={(e) => {
-                  handleStateChange({
-                    checkInsPerWeek: e.target.value as unknown as number,
-                  });
-                }}
-                required
-                info="The number of days a member can check-in in a week"
-                type="number"
-                inputMode="numeric"
-              />
-              <Input
-                label={"Total check-ins"}
-                value={state.totalCheckIns}
-                onChange={(e) => {
-                  handleStateChange({
-                    totalCheckIns: e.target.value as unknown as number,
-                  });
-                }}
-                required
-                info="The total number of days a member can check-in for"
-                type="number"
-                inputMode="numeric"
-              />
+            <div className="mt-4 rounded-[16px] bg-gray-50 border border-gray-100 p-4">
+              <div className="grid grid-cols-2 gap-3">
+                <Input
+                  label={"Check-ins Per week"}
+                  max={6}
+                  value={state.checkInsPerWeek}
+                  onChange={(e) => {
+                    handleStateChange({
+                      checkInsPerWeek: e.target.value as unknown as number,
+                    });
+                  }}
+                  required
+                  info="The number of days a member can check-in in a week"
+                  type="number"
+                  inputMode="numeric"
+                />
+                <Input
+                  label={"Total check-ins"}
+                  value={state.totalCheckIns}
+                  onChange={(e) => {
+                    handleStateChange({
+                      totalCheckIns: e.target.value as unknown as number,
+                    });
+                  }}
+                  required
+                  info="The total number of days a member can check-in for"
+                  type="number"
+                  inputMode="numeric"
+                />
+              </div>
 
               <Select
                 multi
@@ -328,15 +478,20 @@ const CreateNewPlan: FunctionComponent<{
                   handleStateChange({ weekStart: o.value as WeekDay })
                 }
                 selected={selectedWeekStart}
+                remove_margin
               />
-            </>
+            </div>
           )}
+        </FormSection>
+
+        <FormSection title="Validity">
           <Input
-            placeholder="Plan duration"
+            placeholder="e.g. 30"
             label={"Plan Duration or Validity (In Days)"}
             required
             type="number"
             inputMode="numeric"
+            remove_margin
             value={state.durationInDays}
             onChange={(e) =>
               handleStateChange({
@@ -344,23 +499,7 @@ const CreateNewPlan: FunctionComponent<{
               })
             }
           />
-        </div>
-        <Alert
-          title="Create Subscription Plan?"
-          description="Are you sure you want to create this subscription plan?"
-          onContinueClick={createPlan}
-          loading={createStatus.isLoading}
-          alertTrigger={
-            <Button
-              permissions={["create_subscription_plan"]}
-              disabled={disabled}
-              type="submit"
-              fullWidth
-              label="Create Plan"
-              loading={createStatus.isLoading}
-            />
-          }
-        />
+        </FormSection>
       </form>
     </DialogModal>
   );
@@ -448,22 +587,74 @@ const UpdatePlan: FunctionComponent<{
 
   if (!selectedPlan) return null;
 
+  const typeCard = planTypeCards.find((c) => c.value === type);
+
   return (
     <DialogModal
       title="Plan Details"
+      description={`Edit ${selectedPlan.name}. Changes apply to new subscriptions.`}
+      icon={ReceiptEdit}
+      size="md"
       open={open}
       setOpen={(bool) => {
         setOpen(bool);
 
         setState({});
       }}
+      footer={
+        <>
+          <PlanSummary
+            name={getField("name") as string}
+            price={getField("price") as number}
+            trainerFee={getField("trainerFee") as number}
+            days={getField("durationInDays") as number}
+          />
+          <Alert
+            title="Update Subscription Plan?"
+            description="Are you sure you want to update this plan?"
+            onContinueClick={updatePlan}
+            loading={updateStatus.isLoading}
+            alertTrigger={
+              <Button
+                disabled={disabled}
+                type="button"
+                fullWidth
+                fullRadius
+                size="lg"
+                label="Update Plan"
+                loading={updateStatus.isLoading}
+              />
+            }
+          />
+        </>
+      }
     >
       <form
         onSubmit={(e) => {
           e.preventDefault();
         }}
       >
-        <div className="max-h-[70vh] pr-4 -mr-4 overflow-y-auto">
+        {typeCard && (
+          <div className="flex items-center gap-3 rounded-[14px] bg-gray-50 border border-gray-100 p-3 mb-6">
+            <span className="size-9 rounded-[10px] bg-default inline-flex items-center justify-center shrink-0">
+              {React.createElement(typeCard.icon, {
+                size: 18,
+                variant: "Bold",
+                color: "var(--color-white)",
+              })}
+            </span>
+            <div className="min-w-0">
+              <p className="text-[13px] font-semibold">
+                {typeCard.title} plan
+              </p>
+              <p className="text-[11px] text-gray-500">
+                {typeCard.description}. The plan type can&apos;t be changed.
+              </p>
+            </div>
+          </div>
+        )}
+
+        <FormSection title="Basics">
           <Input
             value={getField("name")}
             onChange={(e) => handleStateChange({ name: e.target.value })}
@@ -478,7 +669,10 @@ const UpdatePlan: FunctionComponent<{
             label="Description"
             placeholder="Description"
           />
-          <div className="flex gap-4 mb-4">
+        </FormSection>
+
+        <FormSection title="Pricing">
+          <div className="grid grid-cols-2 gap-3">
             <Input
               value={getField("price")}
               onChange={(e) =>
@@ -487,6 +681,7 @@ const UpdatePlan: FunctionComponent<{
                 })
               }
               remove_margin
+              isCurrency
               placeholder="1000"
               type="number"
               inputMode="numeric"
@@ -501,14 +696,18 @@ const UpdatePlan: FunctionComponent<{
                 })
               }
               remove_margin
-              placeholder="1000"
+              isCurrency
+              placeholder="0"
               type="number"
               inputMode="numeric"
               label={"Trainer Fee"}
             />
           </div>
-          {type === PlanType.SessionBased && (
-            <>
+        </FormSection>
+
+        {type === PlanType.SessionBased && (
+          <FormSection title="Sessions">
+            <div className="grid grid-cols-2 gap-3">
               <Input
                 label={"Check-ins Per week"}
                 max={6}
@@ -536,27 +735,32 @@ const UpdatePlan: FunctionComponent<{
                 type="number"
                 inputMode="numeric"
               />
-              <Select
-                label="Allowed Days"
-                multi
-                options={allowedDaysOptions}
-                multipleSelected={
-                  selectedAllowedDaysOptions as SelectDropdownOption[]
-                }
-                onMultiSelect={(options) => {
-                  handleStateChange({
-                    allowedDays: options.map((o) => o.value as WeekDay),
-                  });
-                }}
-              />
-            </>
-          )}
+            </div>
+            <Select
+              label="Allowed Days"
+              multi
+              options={allowedDaysOptions}
+              multipleSelected={
+                selectedAllowedDaysOptions as SelectDropdownOption[]
+              }
+              onMultiSelect={(options) => {
+                handleStateChange({
+                  allowedDays: options.map((o) => o.value as WeekDay),
+                });
+              }}
+              remove_margin
+            />
+          </FormSection>
+        )}
+
+        <FormSection title="Validity">
           <Input
             placeholder="Plan duration"
             label={"Plan Duration (In Days)"}
             required
             type="number"
             inputMode="numeric"
+            remove_margin
             value={getField("durationInDays")}
             onChange={(e) =>
               handleStateChange({
@@ -564,23 +768,7 @@ const UpdatePlan: FunctionComponent<{
               })
             }
           />
-        </div>
-
-        <Alert
-          title="Update Subscription Plan?"
-          description="Are you sure you want to update this plan?"
-          onContinueClick={updatePlan}
-          loading={updateStatus.isLoading}
-          alertTrigger={
-            <Button
-              disabled={disabled}
-              type="submit"
-              fullWidth
-              label="Update Plan"
-              loading={updateStatus.isLoading}
-            />
-          }
-        />
+        </FormSection>
       </form>
     </DialogModal>
   );

@@ -11,6 +11,11 @@ import { ISubscription, ISubscriptionPlan } from "./subscription.slice";
 import { EditablePlanFields } from "@/app/admin/plans/page";
 import PaymentLog from "@/types/PaymentLog";
 import { Permission } from "@/hooks/usePermissions";
+import {
+  ActivityZoneSettings,
+  ActivityZoneSummary,
+  InactivityFeedbackSummary,
+} from "@/types/ActivityZone";
 
 export type UserWithSub = IUser & {
   latestSubscription:
@@ -28,6 +33,41 @@ export type UserWithSub = IUser & {
       })
     | null;
 };
+
+export interface QrCheckInPreview {
+  eligible: boolean;
+  reason?: string;
+  member: {
+    _id: string;
+    firstname: string;
+    lastname: string;
+    username: string;
+    email: string;
+    profile_picture: string;
+    zone?: string;
+  };
+  subscription: {
+    _id: string;
+    planName: string;
+    planType: string;
+    endDate: string;
+    includesTrainer: boolean;
+    checkInsPerWeek?: number;
+    totalCheckIns?: number;
+    checkInsThisWeek?: number;
+    totalOnPlan?: number;
+    allowedDays?: string[];
+  } | null;
+  checkedInToday: boolean;
+  lastCheckInAt: string | null;
+}
+
+export interface AdminNotificationSettings {
+  recipients: string[];
+  events: Record<string, { enabled: boolean }>;
+  availableEvents: { key: string; label: string; description: string }[];
+  updatedAt?: string;
+}
 
 export interface AdminInvitation {
   email: string;
@@ -101,7 +141,7 @@ const adminApi = api.injectEndpoints({
           url: "/admin/check-ins",
           body: payload,
         }),
-        invalidatesTags: ["admin-check-ins"],
+        invalidatesTags: ["admin-check-ins", "activity-zones", "member", "members"],
       }),
       adminGetPlans: build.query<ResponseType<ISubscriptionPlan[]>, undefined>({
         query: () => "/admin/plans",
@@ -240,6 +280,90 @@ const adminApi = api.injectEndpoints({
       >({
         query: () => "/admin/dashboard/members-pie-chart",
       }),
+      getActivityZoneSummary: build.query<
+        ResponseType<ActivityZoneSummary>,
+        null
+      >({
+        query: () => "/admin/activity-zones/summary",
+        providesTags: ["activity-zones"],
+      }),
+      getInactivityFeedbackSummary: build.query<
+        ResponseType<InactivityFeedbackSummary>,
+        null
+      >({
+        query: () => "/admin/activity-zones/feedback",
+        providesTags: ["inactivity-feedback"],
+      }),
+      previewQrCheckIn: build.mutation<
+        ResponseType<QrCheckInPreview>,
+        { code: string }
+      >({
+        query: (body) => ({
+          url: "/admin/check-ins/scan/preview",
+          method: "post",
+          body,
+        }),
+      }),
+      confirmQrCheckIn: build.mutation<
+        ResponseType<{ member: QrCheckInPreview["member"] }>,
+        { code: string }
+      >({
+        query: (body) => ({
+          url: "/admin/check-ins/scan",
+          method: "post",
+          body,
+        }),
+        invalidatesTags: [
+          "admin-check-ins",
+          "activity-zones",
+          "member",
+          "members",
+        ],
+      }),
+      getNotificationSettings: build.query<
+        ResponseType<AdminNotificationSettings>,
+        null
+      >({
+        query: () => "/admin/notification-settings",
+        providesTags: ["notification-settings"],
+      }),
+      updateNotificationSettings: build.mutation<
+        ResponseType<AdminNotificationSettings>,
+        {
+          recipients: string;
+          events: AdminNotificationSettings["events"];
+        }
+      >({
+        query: (body) => ({
+          url: "/admin/notification-settings",
+          method: "put",
+          body,
+        }),
+        invalidatesTags: ["notification-settings"],
+      }),
+      getActivityZoneSettings: build.query<
+        ResponseType<ActivityZoneSettings>,
+        null
+      >({
+        query: () => "/admin/activity-zones/settings",
+        providesTags: ["activity-zone-settings"],
+      }),
+      updateActivityZoneSettings: build.mutation<
+        ResponseType<ActivityZoneSettings>,
+        ActivityZoneSettings
+      >({
+        query: ({ thresholds, notifications, afterEntering }) => ({
+          url: "/admin/activity-zones/settings",
+          method: "put",
+          body: { thresholds, notifications, afterEntering },
+        }),
+        invalidatesTags: [
+          "activity-zone-settings",
+          "activity-zones",
+          "members",
+          "member",
+        ],
+      }),
     };
   },
 });
@@ -268,4 +392,12 @@ export const {
   useGetRevenuePageAnalyticsQuery,
   useWaiveRegistrationFeeMutation,
   useGetMembersPieChartDataQuery,
+  useGetActivityZoneSummaryQuery,
+  useGetActivityZoneSettingsQuery,
+  useGetNotificationSettingsQuery,
+  usePreviewQrCheckInMutation,
+  useConfirmQrCheckInMutation,
+  useUpdateNotificationSettingsMutation,
+  useGetInactivityFeedbackSummaryQuery,
+  useUpdateActivityZoneSettingsMutation,
 } = adminApi;

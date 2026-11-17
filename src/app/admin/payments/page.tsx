@@ -250,6 +250,7 @@ const RequeryPaymentModal: FunctionComponent<{
     <DialogModal
       title="Requery Payment"
       description="Enter the payment reference"
+      icon={Refresh}
       open={open}
       setOpen={setOpen}
     >

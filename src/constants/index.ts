@@ -1,4 +1,5 @@
 import {
+  Activity,
   Document,
   DocumentText,
   HeartCircle,
@@ -14,6 +15,9 @@ import {
   Setting2,
 } from "iconsax-react";
 import {
+  ADMIN_NOTIFICATION_SETTINGS,
+  ACTIVITY_ZONES,
+  ACTIVITY_ZONE_SETTINGS,
   ADMIN_DASHBOARD,
   ADMIN_SETTINGS,
   ACCESS_CONTROL,
@@ -61,6 +65,9 @@ export const routesAndTheirPermissions: Record<string, Permission[]> = {
   [MANAGE_PLANS]: ["view_subscription_plans"],
   [PAYMENT_LOGS]: ["view_payment_logs"],
   [ACCESS_CONTROL]: ["view_access_control"],
+  [ACTIVITY_ZONES]: ["view_all_members"],
+  [ACTIVITY_ZONE_SETTINGS]: ["manage_activity_zones"],
+  [ADMIN_NOTIFICATION_SETTINGS]: ["manage_notification_settings"],
 };
 
 export const admin_side_bar: IMenu[] = [
@@ -89,6 +96,12 @@ export const admin_side_bar: IMenu[] = [
         path: USERS_SUBSCRIPTIONS,
         icon: HeartCircle,
         permissions: routesAndTheirPermissions[USERS_SUBSCRIPTIONS],
+      },
+      {
+        label: "Activity Zones",
+        path: ACTIVITY_ZONES,
+        icon: Activity,
+        permissions: routesAndTheirPermissions[ACTIVITY_ZONES],
       },
     ],
   },

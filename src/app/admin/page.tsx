@@ -1,5 +1,7 @@
 "use client";
 
+import ActivityZoneCards from "@/components/ActivityZoneCards";
+import ActivityZonePieChart from "@/components/ActivityZonePieChart";
 import DashboardAreaChart from "@/components/DashboardAreaChart";
 import DashboardPieChart from "@/components/DashboardPieChart";
 import SectionCard, { SectionCardProps } from "@/components/SectionCard";
@@ -10,11 +12,15 @@ import {
   useGetMembersAnalyticsQuery,
 } from "@/redux/api-slices/admin.slice";
 import FormatNumber from "@/utils/format-number";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
+import { ACTIVITY_ZONES } from "@/constants/routes";
 import React from "react";
 
 const AdminHomePage = () => {
   const searchParams = useSearchParams();
+
+  const router = useRouter();
 
   const revenueRange = searchParams.get("revenueRange");
 
@@ -128,6 +134,36 @@ const AdminHomePage = () => {
         </div>
         <div className="lg:basis-[30%] mt-4 lg:mt-0">
           <DashboardPieChart />
+        </div>
+      </div>
+
+      <div className="mt-6">
+        <div className="flex items-center justify-between mb-3 gap-2">
+          <h2 className="font-bold text-[16px] tracking-tight">
+            Member Activity
+          </h2>
+          <Link
+            href={ACTIVITY_ZONES}
+            className="text-[12px] text-default underline"
+          >
+            View members by zone
+          </Link>
+        </div>
+        <div className="lg:flex gap-4">
+          <div className="lg:basis-[70%]">
+            <ActivityZoneCards
+              onSelect={(zone) =>
+                router.push(
+                  zone
+                    ? ACTIVITY_ZONES + "?activityZone=" + zone
+                    : ACTIVITY_ZONES
+                )
+              }
+            />
+          </div>
+          <div className="lg:basis-[30%]">
+            <ActivityZonePieChart />
+          </div>
         </div>
       </div>
     </div>

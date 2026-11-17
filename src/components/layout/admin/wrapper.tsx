@@ -12,12 +12,12 @@ const lato = Gabarito({
 });
 const AdminDashboardWrapper = ({ children }: { children: ReactNode }) => {
   return (
-    <div className={`${lato.className}`}>
+    <div className={`${lato.className} min-h-screen bg-[#f5f5f4]`}>
       <SideNav />
       <AdminMobileNav />
-      <div className="md:ml-[200px] bg-gray-50/80 ">
+      <div className="md:ml-[240px] min-h-screen">
         <Header />
-        <div className="p-4">{children}</div>
+        <main className="p-4 md:p-8">{children}</main>
       </div>
     </div>
   );

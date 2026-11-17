@@ -49,7 +49,7 @@ import {
   onlyFieldsWithValue,
 } from "@/utils";
 import FormatNumber from "@/utils/format-number";
-import { CloseCircle, InfoCircle, User } from "iconsax-react";
+import { CloseCircle, Crown1, InfoCircle, User } from "iconsax-react";
 import moment from "moment";
 import { useSearchParams } from "next/navigation";
 import React, { FunctionComponent, use, useState } from "react";
@@ -269,6 +269,8 @@ const ActivateMemberSubModal = ({
     <DialogModal
       title="Select a member"
       description="Select a member you want to activate"
+      icon={Crown1}
+      size="md"
       open={open}
       setOpen={setOpen}
     >

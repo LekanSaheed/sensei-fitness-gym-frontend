@@ -20,6 +20,8 @@ import Link from "next/link";
 import { LOGIN, TERMS } from "@/constants/routes";
 import DialogModal from "@/components/dialog-modal";
 import Alert from "@/components/alert";
+import { Switch } from "@/components/ui/switch";
+import { Profile2User, TickCircle } from "iconsax-react";
 
 const RenewSubPage = () => {
   const { isLoading, isFetching, isError, data, refetch } =
@@ -68,84 +70,129 @@ const RenewSubPage = () => {
   return (
     <LayoutGroup>
       <div>
-        <SectionLoader loading={loading} error={isError} refetch={refetch} />
-        {plans.map((plan, id) => {
-          const hasTrainerFee = plan?.trainerFee > 0;
+        <div className="pt-2 pb-[120px]">
+          <SectionLoader loading={loading} error={isError} refetch={refetch} />
+          {!loading && !isError && plans.length === 0 && (
+            <p className="text-center text-[14px] text-gray-500 py-10">
+              No plans are available right now.
+            </p>
+          )}
+          <div className="grid gap-3 sm:grid-cols-2">
+            {plans.map((plan, id) => {
+              const hasTrainerFee = plan?.trainerFee > 0;
 
-          const isSelected = selectedPlan === plan._id;
-          return (
-            <motion.div
-              layout
-              key={id}
-              className={`bg-white p-5 border border-gray-300 rounded-[15px] overflow-hidden mb-3 dark:bg-card dark:text-card-foreground dark:border-border ${
-                isSelected ? "!border-default" : ""
-              }`}
-              onClick={() => {
-                setSelectedPlan(plan._id);
-                setIncludeTrainer(false);
-              }}
-            >
-              <motion.div layout>
-                <div className="tracking-tight">
-                  <h1 className="font-bold text-[18px] mb-1"> {plan?.name}</h1>
-                  <p className="font-medium text-[14px] text-gray-500 dark:text-gray-400">
-                    {" "}
-                    {plan?.description}
-                  </p>
-                </div>
-                <div
-                  className={`pt-2 mt-2 border-t border-t-gray-300 ${
-                    isSelected ? "!border-t-default" : ""
+              const isSelected = selectedPlan === plan._id;
+              return (
+                <motion.div
+                  layout
+                  key={id}
+                  role="radio"
+                  aria-checked={isSelected}
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      setSelectedPlan(plan._id);
+                      setIncludeTrainer(false);
+                    }
+                  }}
+                  className={`relative cursor-pointer p-5 border-2 rounded-[22px] overflow-hidden transition dark:text-card-foreground ${
+                    isSelected
+                      ? "border-default bg-default/[0.06] dark:bg-default/10"
+                      : "border-transparent bg-white dark:bg-card"
                   }`}
+                  onClick={() => {
+                    setSelectedPlan(plan._id);
+                    setIncludeTrainer(false);
+                  }}
                 >
-                  <p className="flex justify-between items-end">
-                    <span className="font-bold tracking-tighter text-default text-[30px]">
-                      {" "}
-                      {FormatNumber.ngnAmount(plan?.price)}
-                    </span>{" "}
-                    <span className="text-[14px]">
-                      {plan.durationInDays} day
-                      {plan.durationInDays > 1 ? "s" : ""}
-                    </span>
-                  </p>
-                </div>
-              </motion.div>
-
-              <AnimatePresence mode="popLayout">
-                {isSelected && hasTrainerFee && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 100 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 100 }}
-                    transition={{ type: "tween" }}
-                    className="mt-2 bg-gray-50 border border-gray-200 rounded-[8px] p-3 dark:bg-muted dark:text-muted-foreground dark:border-sidebar-border"
-                  >
-                    <label className="text-[14px]  inline-flex items-center">
-                      <input
-                        checked={includeTrainer}
-                        onChange={(e) => setIncludeTrainer(e.target.checked)}
-                        type="checkbox"
-                        className="size-[20px] mr-2 "
-                      />
-                      <span>
-                        Tick this to include trainer on current plan (
-                        {FormatNumber.ngnAmount(plan.trainerFee)})
+                  <motion.div layout>
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="tracking-tight min-w-0">
+                        <h1 className="font-bold text-[18px] mb-1">{plan?.name}</h1>
+                        <p className="font-medium text-[13px] text-gray-500 dark:text-gray-400">
+                          {plan?.description}
+                        </p>
+                      </div>
+                      <span
+                        className={`size-6 shrink-0 rounded-full border-2 inline-flex items-center justify-center transition ${
+                          isSelected
+                            ? "border-default bg-default"
+                            : "border-gray-300 dark:border-border"
+                        }`}
+                      >
+                        {isSelected && (
+                          <TickCircle size={16} color="var(--color-white)" variant="Bold" />
+                        )}
                       </span>
-                    </label>
+                    </div>
+                    <div className="flex items-end justify-between gap-2 mt-4">
+                      <span className="font-league text-default text-[38px] leading-none">
+                        {FormatNumber.ngnAmount(plan?.price)}
+                      </span>
+                      <span className="rounded-full bg-default-black text-white px-3 py-1 text-[11px] font-semibold uppercase tracking-wide dark:bg-secondary">
+                        {plan.durationInDays} day
+                        {plan.durationInDays > 1 ? "s" : ""}
+                      </span>
+                    </div>
                   </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.div>
-          );
-        })}
-        <div className="fixed px-4 bottom-[20px] right-0 left-0 ">
-          <Button
-            disabled={!selectedPlan}
-            size="lg"
-            label="Proceed"
-            fullWidth
-            onClick={() => setOpenModal(true)}
-          />
+
+                  <AnimatePresence mode="popLayout">
+                    {isSelected && hasTrainerFee && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 20 }}
+                        transition={{ type: "tween" }}
+                        className="mt-4 bg-white/80 border border-default/30 rounded-[14px] p-3 dark:bg-muted dark:border-sidebar-border"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <label className="text-[14px] flex items-center justify-between gap-3 cursor-pointer">
+                          <span className="flex items-center gap-2">
+                            <Profile2User size={18} color="var(--color-default)" variant="Bold" />
+                            <span>
+                              Include a trainer
+                              <span className="block text-[12px] text-gray-500 dark:text-muted-foreground">
+                                +{FormatNumber.ngnAmount(plan.trainerFee)}
+                              </span>
+                            </span>
+                          </span>
+                          <Switch
+                            checked={includeTrainer}
+                            onCheckedChange={(checked) => setIncludeTrainer(checked)}
+                            aria-label="Include trainer on current plan"
+                          />
+                        </label>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+        <div className="fixed px-4 bottom-0 pb-5 pt-3 right-0 left-0 z-[3] bg-[#f2f2f2]/95 backdrop-blur-md border-t border-gray-200 dark:bg-background/95 dark:border-border">
+          <div className="sm:max-w-[560px] mx-auto">
+            {RawSelectedPlan && (
+              <div className="flex items-center justify-between text-[13px] mb-2 px-1">
+                <span className="truncate">
+                  {RawSelectedPlan.name}
+                  {includeTrainer ? " + trainer" : ""}
+                </span>
+                <span className="font-semibold shrink-0">
+                  {FormatNumber.ngnAmount(totalAmount)}
+                </span>
+              </div>
+            )}
+            <Button
+              disabled={!selectedPlan}
+              size="lg"
+              label={selectedPlan ? "Proceed" : "Select a plan"}
+              fullWidth
+              fullRadius
+              onClick={() => setOpenModal(true)}
+            />
+          </div>
         </div>
       </div>
       <Alert

@@ -1,5 +1,6 @@
 "use client";
 
+import ActivityZoneBadge from "@/components/ActivityZoneBadge";
 import SectionCard from "@/components/SectionCard";
 import Table, { ColumnProps } from "@/components/table";
 import { TableFilter } from "@/components/table/table-controls";
@@ -15,6 +16,7 @@ import {
   onlyFieldsWithValue,
 } from "@/utils";
 import { UserTick } from "iconsax-react";
+import { ACTIVITY_ZONES, ZONE_META } from "@/types/ActivityZone";
 import { useRouter, useSearchParams } from "next/navigation";
 import React from "react";
 
@@ -28,6 +30,7 @@ const UsersPage = () => {
     { label: "Paid Registration fee", field: "paidRegFee" },
     { label: "Current Subscription Plan", field: "currentPlan" },
     { label: "Subscription Status", field: "currentPlanStatus" },
+    { label: "Activity Zone", field: "activityZone" },
     {
       label: "Subscription Start Date",
       field: "currentPlanStartDate",
@@ -51,6 +54,7 @@ const UsersPage = () => {
       search: searchParams.get("searchQuery") || "",
       subscriptionStatus: searchParams.get("subscriptionStatus") || "",
       trainer: searchParams.get("trainer") || "",
+      activityZone: searchParams.get("activityZone") || "",
     }),
   );
 
@@ -73,6 +77,7 @@ const UsersPage = () => {
       },
       member: `${r?.firstname} ${r?.lastname}`,
       paidRegFee: r?.registrationFeePaid ? "Yes" : "No",
+      activityZone: <ActivityZoneBadge zone={r?.activity?.zone} />,
       currentPlan: r?.latestSubscription?.planNameSnapshot,
       currentPlanStatus: (
         <div className="flex items-center gap-4">
@@ -156,7 +161,7 @@ const UsersPage = () => {
       keyName: "subscriptionStatus",
       title: "Subscription status",
       options: [
-        { label: "All", value: "all" },
+        { label: "All subscriptions", value: "all" },
         { label: "Subscription Active", value: "active" },
         { label: "Subscription Expired", value: "expired" },
         { label: "No subscription", value: "no-sub" },
@@ -166,9 +171,20 @@ const UsersPage = () => {
       keyName: "trainer",
       title: "Trainer Assigned",
       options: [
-        { label: "All", value: "all" },
+        { label: "Any trainer status", value: "all" },
         { label: "Trainer Assigned", value: "assigned" },
         { label: "Trainer Not Assigned", value: "not-assigned" },
+      ],
+    },
+    {
+      keyName: "activityZone",
+      title: "Activity zone",
+      options: [
+        { label: "All zones", value: "all" },
+        ...ACTIVITY_ZONES.map((zone) => ({
+          label: ZONE_META[zone].label,
+          value: zone,
+        })),
       ],
     },
   ];

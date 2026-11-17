@@ -41,7 +41,8 @@ import {
   isFetchBaseQueryError,
   onlyFieldsWithValue,
 } from "@/utils";
-import { CloseCircle, User } from "iconsax-react";
+import { CloseCircle, LocationTick, ScanBarcode, User } from "iconsax-react";
+import QrCheckInScanner from "@/components/QrCheckInScanner";
 import { useSearchParams } from "next/navigation";
 import React, { ReactNode, useState } from "react";
 
@@ -134,6 +135,8 @@ const CheckInsPage = () => {
   ];
 
   const [open, setOpen] = useState(false);
+
+  const [scannerOpen, setScannerOpen] = useState(false);
   return (
     <div>
       <div className="mb-4 *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-2 gap-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs sm:grid-cols-2 lg:grid-cols-4">
@@ -195,6 +198,13 @@ const CheckInsPage = () => {
         customNode={
           <>
             <MainButton
+              onClick={() => setScannerOpen(true)}
+              label="Scan QR code"
+              size="sm"
+              icon={ScanBarcode}
+              permissions={["check_member_in"]}
+            />
+            <MainButton
               onClick={() => setOpen(true)}
               label="Check a member in"
               size="sm"
@@ -205,6 +215,7 @@ const CheckInsPage = () => {
         }
       />
       <CheckInUserModal open={open} setOpen={setOpen} />
+      <QrCheckInScanner open={scannerOpen} setOpen={setScannerOpen} />
     </div>
   );
 };
@@ -264,6 +275,7 @@ const CheckInUserModal = ({
     <DialogModal
       title="Select a member"
       description="Select a member you want to check in"
+      icon={LocationTick}
       open={open}
       setOpen={setOpen}
     >

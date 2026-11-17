@@ -1,6 +1,7 @@
 import IUser from "@/types/User";
 import { api } from "../api";
 import { ResponseType } from "@/types";
+import { ActivityZone } from "@/types/ActivityZone";
 
 const userApi = api.injectEndpoints({
   endpoints(build) {
@@ -27,6 +28,35 @@ const userApi = api.injectEndpoints({
         }),
       }),
 
+      getMyCheckInCode: build.query<ResponseType<{ code: string }>, null>({
+        query: () => "/user/check-in-code",
+      }),
+
+      getMyActivityStatus: build.query<
+        ResponseType<{
+          zone: ActivityZone;
+          zoneEnteredAt: string | null;
+          lastCheckInAt: string | null;
+          daysSinceLastCheckIn: number | null;
+        }>,
+        null
+      >({
+        query: () => "/user/activity-status",
+        // refreshed whenever the member checks in
+        providesTags: ["has-checked-in"],
+      }),
+
+      updateNotificationPreferences: build.mutation<
+        ResponseType<{ activityReminders: boolean }>,
+        { activityReminders: boolean }
+      >({
+        query: (body) => ({
+          url: "/user/notification-preferences",
+          method: "put",
+          body,
+        }),
+      }),
+
       updateProfilePicture: build.mutation<ResponseType, FormData>({
         query: (body) => ({
           url: "/user/upload-dp",
@@ -42,4 +72,7 @@ export const {
   useUpdateProfileMutation,
   useUpdatePasswordMutation,
   useUpdateProfilePictureMutation,
+  useUpdateNotificationPreferencesMutation,
+  useGetMyActivityStatusQuery,
+  useGetMyCheckInCodeQuery,
 } = userApi;

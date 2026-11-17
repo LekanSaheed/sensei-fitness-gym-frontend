@@ -1,19 +1,25 @@
 "use client";
 
 import Alert from "@/components/alert";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { admin_side_bar } from "@/constants";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ADMIN_DASHBOARD, ADMIN_SETTINGS } from "@/constants/routes";
 import useNav from "@/hooks/useNav";
 import useUser from "@/hooks/useUser";
 import { actions } from "@/redux";
 import { collocateMemberName, getInitials } from "@/utils";
+import { LogoutCurve } from "iconsax-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import React from "react";
 import { useDispatch } from "react-redux";
+
+/** Dashboard only matches exactly; other sections also match their sub-pages */
+export const isNavLinkActive = (path: string, pathname: string) =>
+  path === ADMIN_DASHBOARD
+    ? pathname === path
+    : pathname === path || pathname.startsWith(`${path}/`);
 
 const SideNav = () => {
   const pathname = usePathname();
@@ -27,60 +33,93 @@ const SideNav = () => {
   const dispatch = useDispatch();
 
   return (
-    <aside className="max-md:hidden w-[200px] fixed left-0 bottom-0 top-0 p-4 border-r bg-[#f6f9f6] border-r-gray-300 flex flex-col">
-      <div className="relative h-[60px] w-[160px] mb-[10px]">
-        <Image src={"/logo.png"} alt="logo" fill className="object-contain" />
-      </div>
-      <div className="flex items-center mb-4 truncate">
-        <Avatar className="mr-2 shrink-0 bg-gray-500">
-          <AvatarFallback>
-            {getInitials(collocateMemberName(user!))}
-          </AvatarFallback>
-        </Avatar>
-        <div className="truncate">
-          <h1 className="font-semibold text-[13px]">
-            {user?.firstname} {user?.lastname}
-          </h1>
-          <p className="text-[11px] text-gray-500 truncate">{user?.email}</p>
-        </div>
-      </div>
-      <nav className="overflow-y-auto -mx-4 px-4">
+    <aside className="max-md:hidden w-[240px] fixed left-0 bottom-0 top-0 z-[5] flex flex-col bg-default-black text-white border-r border-white/5">
+      <div className="pointer-events-none absolute -top-24 -left-24 size-64 rounded-full bg-default/15 blur-3xl" />
+
+      <Link
+        href={ADMIN_DASHBOARD}
+        className="relative block h-[54px] w-[160px] mx-5 mt-5 mb-4"
+      >
+        <Image
+          src={"/logo-white.png"}
+          alt="SEN-SEI Fitness"
+          fill
+          className="object-contain object-left"
+        />
+      </Link>
+
+      <p className="relative mx-5 mb-2 text-[10px] uppercase tracking-[0.25em] text-default">
+        Admin console
+      </p>
+
+      <nav className="relative flex-1 overflow-y-auto px-3 pb-4">
         {menus.map((menu, id) => {
           return (
-            <ul key={id} className=" pt-5">
+            <div key={id} className="pt-4">
               {menu?.label && (
-                <h1 className="text-[12px] font-bold px-3 mb-3">
+                <p className="px-3 mb-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-white/35">
                   {menu?.label}
-                </h1>
+                </p>
               )}
-              {menu.links.map((link) => {
-                const isActive = link.path === pathname;
-                return (
-                  <li key={link.path} className="mb-[2px]">
-                    <Link
-                      href={link.path}
-                      className={`px-2.5 transition py-2.5  items-center hover:bg-gray-200 rounded-full inline-flex pr-10 gap-2 ${
-                        isActive ? "!bg-[#e9efe8] !font-bold" : ""
-                      }`}
-                    >
-                      {React.createElement(link.icon, {
-                        size: 18,
-                        color: "#000",
-                      })}
-                      <span className="text-[12px] whitespace-nowrap ">
-                        {link?.label}
-                      </span>
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
+              <ul className="space-y-0.5">
+                {menu.links.map((link) => {
+                  const isActive = isNavLinkActive(link.path, pathname);
+
+                  return (
+                    <li key={link.path}>
+                      <Link
+                        href={link.path}
+                        aria-current={isActive ? "page" : undefined}
+                        className={`group relative flex items-center gap-3 rounded-[12px] px-3 py-2.5 text-[13px] transition ${
+                          isActive
+                            ? "bg-default/15 text-default font-semibold"
+                            : "text-white/65 hover:bg-white/5 hover:text-white"
+                        }`}
+                      >
+                        {isActive && (
+                          <span className="absolute left-0 top-2 bottom-2 w-[3px] rounded-full bg-default" />
+                        )}
+                        {React.createElement(link.icon, {
+                          size: 18,
+                          color: "currentColor",
+                          variant: isActive ? "Bold" : "Linear",
+                        })}
+                        <span className="whitespace-nowrap">{link?.label}</span>
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
           );
         })}
       </nav>
-      <div className="mt-auto">
+
+      <div className="relative border-t border-white/10 p-3">
+        <Link
+          href={ADMIN_SETTINGS}
+          className="flex items-center gap-3 rounded-[12px] p-2 hover:bg-white/5 transition"
+        >
+          <Avatar className="size-9 shrink-0 ring-2 ring-default/50">
+            <AvatarImage src={user?.profile_picture} />
+            <AvatarFallback className="bg-default/20 text-default text-[12px] font-semibold">
+              {getInitials(collocateMemberName(user!))}
+            </AvatarFallback>
+          </Avatar>
+          <div className="min-w-0">
+            <p className="font-semibold text-[13px] truncate">
+              {user?.firstname} {user?.lastname}
+            </p>
+            <p className="text-[11px] text-white/50 truncate">{user?.email}</p>
+          </div>
+        </Link>
         <Alert
-          alertTrigger={<Button className="w-full">Logout</Button>}
+          alertTrigger={
+            <button className="mt-1 w-full flex items-center gap-3 rounded-[12px] px-3 py-2.5 text-[13px] text-rose-300 hover:bg-rose-500/10 transition">
+              <LogoutCurve size={18} color="currentColor" />
+              Logout
+            </button>
+          }
           title="Logout from account"
           onContinueClick={() => {
             dispatch(logout(null));

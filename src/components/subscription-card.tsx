@@ -7,11 +7,12 @@ import {
 import moment from "moment";
 import Link from "next/link";
 import React, { ReactNode } from "react";
-import Button from "./button";
-import { EmptyMedia } from "./ui/empty";
-import { InfoCircle, MoneyRemove } from "iconsax-react";
-import { useColorScheme } from "@/hooks/useColorScheme";
-import { label } from "framer-motion/client";
+import { InfoCircle, MoneyRemove, Crown1, ArrowRight2 } from "iconsax-react";
+import ProgressRing from "./dashboard/ProgressRing";
+import SectionTitle from "./dashboard/SectionTitle";
+
+const cardClass =
+  "rounded-[24px] bg-white dark:bg-card dark:text-card-foreground border border-gray-200/70 dark:border-border p-5";
 
 const SubscriptionCard = () => {
   const getActiveSubQuery = useGetActiveSubscriptionQuery(null);
@@ -20,41 +21,15 @@ const SubscriptionCard = () => {
 
   const checkInAnalytics = getCheckInAnalytics.data?.data || null;
 
-  const totalCheckInsByUser = checkInAnalytics?.totalCheckIns || 0;
-
   const activeSub = getActiveSubQuery?.data?.data || null;
 
   const type = activeSub?.planType;
 
+  const isSessionBased = type === PlanType.SessionBased;
+
   const remainingCheckIns =
     (activeSub?.checkInsPerWeek || 0) -
       (checkInAnalytics?.currentSessionWeek || 0) || 0;
-
-  const check_ins: {
-    label: string;
-    value: ReactNode;
-    hide?: boolean;
-  }[] = [
-    {
-      label: "Check-ins this week",
-      value: checkInAnalytics?.currentSessionWeek,
-      hide: type !== PlanType.SessionBased,
-    },
-    {
-      label: "Check-ins remaining for this week",
-      value: remainingCheckIns,
-      hide: type !== PlanType.SessionBased,
-    },
-    {
-      label: "Total check-ins on current plan",
-      value: (
-        <span>
-          {checkInAnalytics?.totalOnSub}/{activeSub?.totalCheckIns}
-        </span>
-      ),
-    },
-    { label: "All time check-ins ", value: totalCheckInsByUser },
-  ].filter((s) => !s?.hide);
 
   const getActiveSubQueryLoading =
     getActiveSubQuery.isLoading || getActiveSubQuery.isFetching;
@@ -63,114 +38,190 @@ const SubscriptionCard = () => {
 
   const endDate = activeSub?.endDate;
 
-  const daysLeft = moment(endDate).diff(moment(), "days");
+  const daysLeft = Math.max(0, moment(endDate).diff(moment(), "days"));
 
   const planDuration = activeSub?.planDurationInDaysSnapshot || 0;
 
   const daysUsed = planDuration - daysLeft;
 
-  const width = (daysUsed / planDuration) * 100;
-
   const allowedDays = activeSub?.allowedDays || [];
 
-  if (!getActiveSubQueryLoading && !getActiveSubQuery.isError && !activeSub)
-    return (
-      <div className="bg-white rounded-[16px] overflow-hidden dark:bg-secondary">
-        <div className="p-5 flex flex-col justify-center items-center">
-          <EmptyMedia variant={"icon"}>
-            <MoneyRemove size={22} color="var(--color-default)" />
-          </EmptyMedia>
-          <p className="mb-3"> You have no active subscription</p>
-          <Link href={RENEW_SUBSCRIPTION}>
-            <Button label="View subscription plans" />
-          </Link>
-        </div>
-      </div>
-    );
+  const totalOnSub = checkInAnalytics?.totalOnSub || 0;
+
+  const totalAllowed = activeSub?.totalCheckIns || 0;
+
+  const details: { label: string; value: ReactNode; hide?: boolean }[] = [
+    {
+      label: "This week",
+      value: `${checkInAnalytics?.currentSessionWeek || 0} / ${
+        activeSub?.checkInsPerWeek || 0
+      }`,
+      hide: !isSessionBased,
+    },
+    {
+      label: "Left this week",
+      value: remainingCheckIns,
+      hide: !isSessionBased,
+    },
+    {
+      label: "Check-ins on plan",
+      value: totalAllowed ? `${totalOnSub} / ${totalAllowed}` : totalOnSub,
+    },
+    {
+      label: "Started",
+      value: moment(startDate).format("DD MMM, YYYY"),
+      hide: isSessionBased,
+    },
+    {
+      label: isSessionBased ? "Valid until" : "Ends",
+      value: moment(endDate).format("DD MMM, YYYY"),
+    },
+  ].filter((d) => !d.hide);
 
   if (getActiveSubQueryLoading) {
     return (
-      <div className="border-default/50 border rounded-[16px] h-[200px] bg-default/10  p-4.5 animate-pulse">
-        <div className="h-[14px] w-[70%] bg-gray-500/30 mb-4 rounded-[10px] animate-pulse"></div>
-        <div className="h-[14px] w-[60px] bg-gray-500/30 mb-2 rounded-[10px] animate-pulse"></div>
-        <div className="h-[10px] w-full bg-gray-500/30 mb-2 rounded-full animate-pulse"></div>
-        <div className="flex justify-between">
-          <div className="h-[14px] w-[60px] bg-gray-500/30 mb-2 rounded-[10px] animate-pulse"></div>
-          <div className="h-[14px] w-[60px] bg-gray-500/30 mb-2 rounded-[10px] animate-pulse"></div>
+      <section>
+        <SectionTitle>Membership</SectionTitle>
+        <div className={`${cardClass} flex items-center gap-5 animate-pulse`}>
+          <div className="size-[120px] rounded-full border-[10px] border-gray-500/15 shrink-0" />
+          <div className="flex-1 space-y-3">
+            <div className="h-[16px] w-[70%] bg-gray-500/20 rounded-[8px]" />
+            <div className="h-[12px] w-[90%] bg-gray-500/20 rounded-[8px]" />
+            <div className="h-[12px] w-[80%] bg-gray-500/20 rounded-[8px]" />
+          </div>
         </div>
-      </div>
+      </section>
     );
   }
 
-  return (
-    <div className="bg-white border border-default rounded-[16px] overflow-hidden dark:bg-card dark:text-card-foreground">
-      <div className="bg-default/20">
-        <div className="p-4.5">
-          <h1 className="text-[16px] font-semibold mb-3">
-            {activeSub?.planNameSnapshot}
-          </h1>
-
-          {type === PlanType.SessionBased ? (
-            <div>
-              <p className="mb-2 text-[14px]">
-                You can check in {activeSub?.checkInsPerWeek}x per week for a
-                total of {activeSub?.totalCheckIns} days across these days until{" "}
-                {moment(activeSub?.endDate).format("llll")}
-              </p>
-              <ul className="flex">
-                {allowedDays.map((day, id) => {
-                  return (
-                    <li
-                      className="text-[12px] bg-default-tertiary text-black px-2 py-1"
-                      key={id}
-                    >
-                      {day}
-                    </li>
-                  );
-                })}
-              </ul>
-              <div className="flex mt-2 gap-1">
-                <InfoCircle color="var(--color-amber-200)" size={16} />
-                <p className="text-[12px] leading-[140%] text-amber-800 dark:text-amber-200 ">
-                  Ensure you check-in to the gym on your session days as there
-                  are no rollovers for missed days
-                </p>
-              </div>
-            </div>
-          ) : (
-            <div>
-              <p className="text-[14px] tracking-tight text-gray-500 mb-1 dark:text-secondary-foreground">
-                {daysLeft} day{daysLeft > 1 ? "s" : ""} left
-              </p>
-              <div className="relative overflow-hidden rounded-full  flex items-center mb-2">
-                <div className="bg-white absolute rounded-full inset-0 h-[5px] top-[1px]"></div>
-                <div
-                  className="bg-default h-[7px] rounded-full relative z-[1]"
-                  style={{ width: `${width}%` }}
-                />
-              </div>
-              <div className="flex justify-between text-[12px] tracking-tight">
-                <span>{moment(startDate).format("DD MMM, YYYY")}</span>
-                <span>{moment(endDate).format("DD MMM, YYYY")}</span>
-              </div>
-            </div>
-          )}
+  if (!getActiveSubQuery.isError && !activeSub)
+    return (
+      <section>
+        <SectionTitle>Membership</SectionTitle>
+        <div className={`${cardClass} flex flex-wrap items-center gap-4`}>
+          <span className="size-14 rounded-[16px] bg-default/10 inline-flex items-center justify-center shrink-0">
+            <MoneyRemove size={26} color="var(--color-default)" variant="Bulk" />
+          </span>
+          <div className="flex-1 min-w-[160px]">
+            <p className="font-semibold">You have no active subscription</p>
+            <p className="text-[13px] text-gray-500 dark:text-muted-foreground">
+              Pick a plan to start checking in.
+            </p>
+          </div>
+          <Link
+            href={RENEW_SUBSCRIPTION}
+            className="shrink-0 inline-flex items-center gap-1 rounded-full bg-default px-4 py-2 text-[13px] font-semibold text-white transition active:scale-[0.97] hover:brightness-110"
+          >
+            View plans
+            <ArrowRight2 size={14} color="currentColor" />
+          </Link>
         </div>
-        <ul className="p-4.5 pt-3  border-t border-t-default/70 ">
-          {check_ins.map((check_in, id) => {
-            return (
-              <li
-                key={id}
-                className="tracking-tight  flex justify-between text-[14px] mb-1.5"
+      </section>
+    );
+
+  if (!activeSub)
+    return (
+      <section>
+        <SectionTitle>Membership</SectionTitle>
+        <div className={`${cardClass} flex items-center justify-between gap-3`}>
+          <p className="text-[13px]">We couldn&apos;t load your membership.</p>
+          <button
+            onClick={() => getActiveSubQuery.refetch()}
+            className="rounded-full border border-default px-4 py-1.5 text-[13px] font-semibold text-default"
+          >
+            Retry
+          </button>
+        </div>
+      </section>
+    );
+
+  return (
+    <section>
+      <SectionTitle>Membership</SectionTitle>
+      <div className={cardClass}>
+        <div className="flex items-center justify-between gap-3 mb-4">
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="size-9 rounded-[12px] bg-default inline-flex items-center justify-center shrink-0">
+              <Crown1 size={18} color="var(--color-white)" variant="Bold" />
+            </span>
+            <h3 className="text-[16px] font-semibold truncate">
+              {activeSub?.planNameSnapshot}
+            </h3>
+          </div>
+          <span className="shrink-0 inline-flex items-center gap-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide">
+            <span className="size-[6px] rounded-full bg-emerald-500" />
+            Active
+          </span>
+        </div>
+
+        <div className="flex items-center gap-5">
+          {isSessionBased ? (
+            <ProgressRing value={totalAllowed ? totalOnSub / totalAllowed : 0}>
+              <span className="font-league text-[34px] leading-none">
+                {totalOnSub}
+                <span className="text-[20px] text-gray-400">/{totalAllowed}</span>
+              </span>
+              <span className="text-[10px] uppercase tracking-wide text-gray-500 dark:text-muted-foreground">
+                Sessions
+              </span>
+            </ProgressRing>
+          ) : (
+            <ProgressRing value={planDuration ? daysUsed / planDuration : 0}>
+              <span className="font-league text-[38px] leading-none">
+                {daysLeft}
+              </span>
+              <span className="text-[10px] uppercase tracking-wide text-gray-500 dark:text-muted-foreground">
+                Day{daysLeft === 1 ? "" : "s"} left
+              </span>
+            </ProgressRing>
+          )}
+
+          <dl className="flex-1 min-w-0 divide-y divide-gray-200/70 dark:divide-border">
+            {details.map((d) => (
+              <div
+                key={d.label}
+                className="flex items-center justify-between gap-2 py-1.5 text-[13px]"
               >
-                <span className="">{check_in.label} </span>{" "}
-                <span className="font-semibold">{check_in.value}</span>
-              </li>
-            );
-          })}
-        </ul>
+                <dt className="text-gray-500 dark:text-muted-foreground">
+                  {d.label}
+                </dt>
+                <dd className="font-semibold text-right">{d.value}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+
+        {isSessionBased && (
+          <div className="mt-4 pt-4 border-t border-gray-200/70 dark:border-border">
+            <p className="text-[13px] mb-2">
+              Check in {activeSub?.checkInsPerWeek}x per week for a total of{" "}
+              {activeSub?.totalCheckIns} days, on these days:
+            </p>
+            <ul className="flex flex-wrap gap-1.5">
+              {allowedDays.map((day, id) => (
+                <li
+                  className="text-[12px] rounded-full bg-default/10 text-default-secondary dark:text-default-tertiary border border-default/30 px-3 py-1 capitalize"
+                  key={id}
+                >
+                  {day}
+                </li>
+              ))}
+            </ul>
+            <div className="flex mt-3 gap-1.5 rounded-[12px] bg-amber-500/10 p-2.5">
+              <InfoCircle
+                color="var(--color-amber-500)"
+                size={16}
+                className="shrink-0"
+              />
+              <p className="text-[12px] leading-[140%] text-amber-800 dark:text-amber-200">
+                Ensure you check-in to the gym on your session days as there
+                are no rollovers for missed days
+              </p>
+            </div>
+          </div>
+        )}
       </div>
-    </div>
+    </section>
   );
 };
 

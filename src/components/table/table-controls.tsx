@@ -4,6 +4,7 @@ import {
   ArrowRight2,
   Icon,
   SearchNormal,
+  SearchNormal1,
 } from "iconsax-react";
 import React, {
   FunctionComponent,
@@ -88,13 +89,13 @@ const TableControls: FunctionComponent<{
         </motion.div>
       )}
 
-      <div className="flex flex-col-reverse  sm:flex-row gap-4 justify-between mb-3">
-        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-          <div className="w-full sm:max-w-[350px]">
+      <div className="flex flex-col-reverse sm:flex-row gap-3 justify-between mb-4">
+        <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3">
+          <div className="w-full sm:w-[300px]">
             {showSearch && <SearchInput {...search} />}
           </div>
           {filters?.length > 0 && (
-            <ul className="flex gap-3 ">
+            <ul className="flex flex-wrap gap-2">
               {filters?.map((filter, id) => {
                 const selectedValue = searchParams.get(filter?.keyName);
 
@@ -106,7 +107,7 @@ const TableControls: FunctionComponent<{
                     <SelectInput
                       options={filter?.options}
                       placeholder={filter?.title}
-                      triggerClassName={`rounded-full ${
+                      triggerClassName={`rounded-full !h-10 bg-white border-gray-200 px-4 text-[13px] shadow-[0_1px_2px_rgb(0_0_0/0.04)] hover:border-gray-300 ${
                         filter?.classNames?.trigger || ""
                       }`}
                       selected={
@@ -177,22 +178,33 @@ const SearchInput: FunctionComponent<InputHTMLAttributes<HTMLInputElement>> = ({
   }, []);
 
   return (
-    <motion.div
+    <motion.form
       layout
-      className="flex relative flex-1 overflow-hidden items-center  border border-gray-300 rounded-full"
+      onSubmit={(e) => {
+        e.preventDefault();
+        if (searchQuery) {
+          updateSearchParams("searchQuery", searchQuery);
+        }
+      }}
+      className="flex relative flex-1 overflow-hidden items-center bg-white border border-gray-200 rounded-full shadow-[0_1px_2px_rgb(0_0_0/0.04)] transition focus-within:border-default focus-within:ring-4 focus-within:ring-default/15"
     >
+      <SearchNormal1
+        size={16}
+        color="var(--color-gray-400)"
+        className="shrink-0 ml-3.5"
+      />
       <motion.div layout="position" className="w-full">
         <input
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder={props?.placeholder || "Search"}
-          className="w-full placeholder:text-[12px] text-[12px] outline-none border-r border-r-gray-300/50 h-[30px] px-3 bg-transparent"
+          className="w-full placeholder:text-[13px] placeholder:text-gray-400 text-[13px] outline-none h-[40px] px-2.5 bg-transparent"
         />
       </motion.div>
 
       <div
-        className={`px-2.5 cursor-pointer py-2.5 flex items-center justify-center ${
-          searchQuery ? "bg-default" : ""
+        className={`m-1 size-8 shrink-0 rounded-full cursor-pointer flex items-center justify-center transition ${
+          searchQuery ? "bg-default" : "bg-gray-100"
         }`}
       >
         {isSearching && searchQuery === searchParams.get("searchQuery") ? (
@@ -216,7 +228,7 @@ const SearchInput: FunctionComponent<InputHTMLAttributes<HTMLInputElement>> = ({
           />
         )}
       </div>
-    </motion.div>
+    </motion.form>
   );
 };
 
@@ -247,9 +259,9 @@ export const PageSize: FunctionComponent<{ totalRecords: number }> = ({
       <motion.div
         onClick={() => setShow(!show)}
         layout="preserve-aspect"
-        className="flex cursor-pointer border border-gray-300 justify-between items-center px-3 py-1.5 rounded-[10px]"
+        className="flex cursor-pointer bg-white border border-gray-200 justify-between items-center px-3.5 py-2 rounded-full shadow-[0_1px_2px_rgb(0_0_0/0.04)] hover:border-gray-300 transition"
       >
-        <p className="text-[12px] tracking-n-1">
+        <p className="text-[12px] text-gray-600 tabular-nums">
           Results {totalRecords <= 0 ? 0 : limitStart} -{" "}
           {totalRecords <= 0
             ? 0
@@ -265,7 +277,7 @@ export const PageSize: FunctionComponent<{ totalRecords: number }> = ({
       {show && (
         <motion.ul
           layout="position"
-          className="absolute bottom-[50px] bg-white border border-gray-300 rounded-[10px] overflow-hidden w-[140px]"
+          className="absolute z-[5] bottom-[46px] bg-white border border-gray-200 rounded-[14px] shadow-xl overflow-hidden w-[160px] p-1"
         >
           {pageSizeOptions.map((option) => {
             const isActive = option == pageSize;
@@ -276,7 +288,7 @@ export const PageSize: FunctionComponent<{ totalRecords: number }> = ({
 
                   setShow(false);
                 }}
-                className={`px-3 py-1 text-[12px] cursor-pointer hover:bg-gray-100 hover:text-gray-600 ${
+                className={`px-3 py-2 rounded-[10px] text-[12px] cursor-pointer hover:bg-gray-100 ${
                   isActive ? "bg-default/10 text-default" : ""
                 }`}
                 key={option}
@@ -304,7 +316,9 @@ export const PaginationControl: FunctionComponent<{
           handleClick();
         }
       }}
-      className="cursor-pointer p-1.5 active:opacity-40 transition data-[disabled=true]:text-gray-600"
+      role="button"
+      aria-disabled={disabled}
+      className="cursor-pointer size-9 rounded-full flex items-center justify-center transition hover:bg-default hover:text-white active:scale-95 data-[disabled=true]:cursor-not-allowed data-[disabled=true]:text-gray-300 data-[disabled=true]:hover:bg-transparent"
     >
       {React.createElement(icon, { size: 18 })}
     </div>
@@ -328,14 +342,14 @@ export const Pagination: FunctionComponent<{
 
   const nextDisabled = totalPages <= page;
   return (
-    <motion.div layout="position" className="flex items-center  mb-4">
-      <motion.div className="border text-[12px] px-3 py-1.5 border-gray-300 gap-1 mr-2 inline-flex  rounded-[8px]">
+    <motion.div layout="position" className="flex items-center gap-2">
+      <motion.div className="text-[12px] text-gray-600 tabular-nums px-1">
         <motion.p>
           {" "}
           Page {page} of {totalPages}
         </motion.p>
       </motion.div>
-      <div className="border border-gray-300 gap-1  inline-flex   rounded-[8px]">
+      <div className="bg-white border border-gray-200 inline-flex rounded-full p-0.5 shadow-[0_1px_2px_rgb(0_0_0/0.04)]">
         <PaginationControl
           handleClick={() => handlePage(page - 1)}
           disabled={prevDisabled}

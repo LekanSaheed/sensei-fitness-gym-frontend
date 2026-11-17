@@ -1,4 +1,5 @@
 import { CONTACT_US, PRIVAY_POLICY, TERMS } from "@/constants/routes";
+import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
@@ -9,20 +10,35 @@ const Footer = () => {
     { label: "Contact Us", href: CONTACT_US },
   ];
   return (
-    <footer className="py-[20px] border-t border-muted-foreground/20">
-      <div className="container mx-auto max-w-7xl px-4 flex max-sm:text-center max-sm:items-center flex-col gap-2 sm:flex-row sm: justify-between">
-        <nav>
+    <footer className="border-t border-white/10 bg-[#000]">
+      <div className="container mx-auto max-w-7xl px-4 py-10 flex flex-col gap-6 md:flex-row md:items-center md:justify-between max-md:items-center max-md:text-center">
+        <div className="max-md:flex max-md:flex-col max-md:items-center">
+          <Link href="/" className="relative block h-[52px] w-[150px]">
+            <Image
+              src="/logo-white.png"
+              alt="SEN-SEI Fitness"
+              fill
+              className="object-contain md:object-left"
+            />
+          </Link>
+          <p className="mt-2 text-[12px] uppercase tracking-[0.25em] text-default">
+            Promoting wellness
+          </p>
+        </div>
+        <nav className="flex flex-wrap justify-center gap-x-6 gap-y-2">
           {links.map((link, id) => (
             <Link
               key={id}
               href={link.href}
-              className="mr-4  text-[12px] text-muted hover:underline last:mr-0"
+              className="text-[13px] text-white/70 hover:text-default transition"
             >
               {link.label}
             </Link>
           ))}
         </nav>
-        <div className="text-[12px] text-muted-foreground ">
+      </div>
+      <div className="border-t border-white/10">
+        <div className="container mx-auto max-w-7xl px-4 py-5 text-[12px] text-white/40 text-center md:text-left">
           &copy; {new Date().getFullYear()} Sensei Fitness. All rights reserved
         </div>
       </div>

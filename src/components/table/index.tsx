@@ -10,11 +10,11 @@ import TableControls, {
   TableFilter,
 } from "./table-controls";
 
-// import { useIsSearching } from "@/hooks/useSearchParams";
+import { useIsSearching } from "@/hooks/useSearchParams";
 import { AnimatePresence, motion } from "framer-motion";
 import Button from "@/components/button";
 import useSerialNumber from "@/hooks/useSerialNumber";
-import { InfoCircle } from "iconsax-react";
+import { InfoCircle, SearchNormal1 } from "iconsax-react";
 import moment from "moment";
 import usePaginate from "@/hooks/usePaginate";
 import Spinner from "../Spinner";
@@ -71,7 +71,7 @@ const Table = <
 
   const noRecords = !loading && rows?.length === 0 && !error;
 
-  const isSearching = false;
+  const isSearching = useIsSearching();
 
   const getSerial = useSerialNumber();
 
@@ -81,59 +81,69 @@ const Table = <
 
   return (
     <div className="">
-      <div className="">
-        <div className="md:sticky top-[40px] ">
-          <TableControls
-            showSearch={showSearch}
-            filters={filters}
-            search={search!}
-            totalRecords={totalRecords}
-            showDateRange={showDateRange}
-            customNode={customNode}
-          />
-        </div>
-      </div>
-      <div className="shrink-0 overflow-hidden ">
+      <TableControls
+        showSearch={showSearch}
+        filters={filters}
+        search={search!}
+        totalRecords={totalRecords}
+        showDateRange={showDateRange}
+        customNode={customNode}
+      />
+      <div className="shrink-0 overflow-hidden">
         {beforeTable}
         <motion.div
           layout="position"
-          className="border bg-white overflow-auto relative border-gray-300 rounded-[8px] min-h-[400px] max-h-[80vh]"
+          className="bg-white overflow-auto relative border border-gray-200/80 rounded-[18px] shadow-[0_1px_2px_rgb(0_0_0/0.04),0_8px_24px_-12px_rgb(0_0_0/0.08)] min-h-[400px] max-h-[80vh]"
         >
           {(loading || noRecords || error) && (
-            <div className="absolute pointer-events-none inset-0 flex items-center justify-center">
+            <div className="absolute pointer-events-none inset-0 top-[48px] flex items-center justify-center">
               {loading ? (
                 <div className="text-default">
                   <Spinner className="text-[30px]" />
                 </div>
               ) : error ? (
-                <div className="flex pointer-events-auto items-center flex-col">
-                  <p className="text-[14px] mb-1">Failed to fetch</p>
+                <div className="flex pointer-events-auto items-center flex-col text-center">
+                  <span className="size-12 rounded-full bg-rose-50 inline-flex items-center justify-center mb-3">
+                    <InfoCircle size={22} color="var(--color-rose-500)" />
+                  </span>
+                  <p className="text-[14px] font-semibold mb-1">
+                    Failed to fetch
+                  </p>
+                  <p className="text-[12px] text-gray-500 mb-3">
+                    Something went wrong while loading this list.
+                  </p>
                   <Button
                     label="Retry"
                     fullWidth={false}
                     onClick={refetch}
                     size="sm"
                     variant="outlined"
-                    className="h-[33px]"
+                    fullRadius
+                    className="h-[34px] !px-5"
                   />
                 </div>
               ) : noRecords ? (
-                <p className="text-[14px] tracking-n-3">
-                  NO RECORDS {isSearching ? "FOUND" : ""}
-                </p>
+                <div className="flex flex-col items-center text-center">
+                  <span className="size-12 rounded-full bg-default/10 inline-flex items-center justify-center mb-3">
+                    <SearchNormal1 size={22} color="var(--color-default)" />
+                  </span>
+                  <p className="text-[14px] font-semibold uppercase tracking-wide">
+                    No records {isSearching ? "found" : ""}
+                  </p>
+                  <p className="text-[12px] text-gray-500 mt-1">
+                    Try changing your filters or search.
+                  </p>
+                </div>
               ) : (
                 ""
               )}
             </div>
           )}
-          <table className="w-full max-w-full">
-            <thead className=" z-[1] sticky top-0">
-              <tr className=" ">
+          <table className="w-full max-w-full border-separate border-spacing-0">
+            <thead className="z-[1] sticky top-0">
+              <tr>
                 {useSerial && (
-                  <th
-                    className="font-semibold  
-                    whitespace-nowrap bg-[#f5faf4] px-3 py-4 text-start text-[12px]  tracking-n-1"
-                  >
+                  <th className="bg-gray-50/95 backdrop-blur border-b border-gray-200 whitespace-nowrap px-4 py-3.5 text-start text-[11px] font-semibold uppercase tracking-wider text-gray-500">
                     S/N
                   </th>
                 )}
@@ -141,8 +151,7 @@ const Table = <
                   return (
                     <th
                       key={id}
-                      className="font-semibold bg-[#f5faf4]  
-                       whitespace-nowrap px-3 py-4 text-start text-[12px]  tracking-n-1"
+                      className="bg-gray-50/95 backdrop-blur border-b border-gray-200 whitespace-nowrap px-4 py-3.5 text-start text-[11px] font-semibold uppercase tracking-wider text-gray-500"
                     >
                       {column?.label}
                     </th>
@@ -162,13 +171,15 @@ const Table = <
                           onRowClick(row);
                         }
                       }}
-                      className={`${
-                        !!onRowClick ? "hover:bg-gray-50 cursor-pointer" : ""
-                      } transition relative`}
+                      className={`group transition relative ${
+                        !!onRowClick
+                          ? "cursor-pointer hover:bg-default/[0.05]"
+                          : "hover:bg-gray-50/70"
+                      }`}
                       key={id}
                     >
                       {useSerial && (
-                        <td className="px-3 py-4 text-[13px] tracking-n-1 border border-gray-200 ">
+                        <td className="px-4 py-3.5 text-[12px] text-gray-400 tabular-nums border-b border-gray-100">
                           {getSerial(id)}
                         </td>
                       )}
@@ -195,18 +206,18 @@ const Table = <
                         return (
                           <td
                             key={id}
-                            className={`px-3 py-4 text-[12px] tracking-n-1 border  ${
-                              bold || ["date", "currency"].includes(fieldType!)
-                                ? "font-semibold"
+                            className={`px-4 py-3.5 text-[13px] text-gray-800 border-b border-gray-100 ${
+                              bold || fieldType === "currency"
+                                ? "font-semibold text-gray-900"
                                 : ""
-                            } border-gray-200 ${
+                            } ${fieldType === "date" ? "text-gray-600" : ""} ${
                               !wrap ? "whitespace-nowrap" : ""
                             }`}
                           >
                             {fieldType === "avatar" ? (
-                              <Avatar className="size-8">
+                              <Avatar className="size-9 ring-2 ring-white shadow-sm">
                                 <AvatarImage src={avatarProps.src} />
-                                <AvatarFallback>
+                                <AvatarFallback className="bg-default/15 text-default-secondary text-[12px] font-semibold">
                                   {avatarProps?.initials}
                                 </AvatarFallback>
                               </Avatar>
@@ -216,10 +227,10 @@ const Table = <
                               !!cellValue ? (
                                 moment(cellValue)?.format("llll")
                               ) : (
-                                "N/A"
+                                <span className="text-gray-400">N/A</span>
                               )
                             ) : (
-                              cellValue || "N/A"
+                              cellValue || <span className="text-gray-400">N/A</span>
                             )}
                           </td>
                         );
@@ -231,7 +242,7 @@ const Table = <
             )}
           </table>
         </motion.div>
-        <div className="flex justify-end mt-4 gap-4">
+        <div className="flex flex-wrap items-center justify-between mt-4 gap-3">
           <PageSize totalRecords={totalRecords} />
           <Pagination totalPages={totalPages} />
         </div>

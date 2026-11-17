@@ -24,7 +24,8 @@ const SelectInput: FunctionComponent<{
 
   return (
     <Select
-      defaultValue={selected?.value as string}
+      // Controlled so the dropdown follows the URL when it changes elsewhere
+      value={selected?.value != null ? String(selected.value) : ""}
       onValueChange={(option) => {
         if (queryKey) {
           updateSearchParams(queryKey, option);

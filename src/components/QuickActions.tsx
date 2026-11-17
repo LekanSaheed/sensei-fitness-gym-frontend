@@ -1,5 +1,4 @@
 import {
-  CHECK_INS,
   NEW_CHECK_IN,
   RENEW_SUBSCRIPTION,
   SUBSCRIPTIONS,
@@ -7,39 +6,51 @@ import {
 import { HeartTick, Icon, LocationTick, RefreshCircle } from "iconsax-react";
 import Link from "next/link";
 import React from "react";
-import Heading from "./Heading";
 import useUser from "@/hooks/useUser";
+import SectionTitle from "./dashboard/SectionTitle";
 
 const QuickActions = () => {
   const user = useUser();
 
   const actions: {
     label: string;
+    description: string;
     path: string;
     icon: Icon;
     disabled?: boolean;
+    primary?: boolean;
   }[] = [
     {
       label: "Check In Now",
+      description: user?.hasActiveSub ? "Log today" : "Needs a plan",
       path: NEW_CHECK_IN,
       icon: LocationTick,
       disabled: !user?.hasActiveSub,
+      primary: true,
     },
     {
       label: "View Plans",
+      description: "Renew or upgrade",
       path: RENEW_SUBSCRIPTION,
       icon: HeartTick,
-      // disabled: !!activeSub,
     },
-    { label: "Plan History", path: SUBSCRIPTIONS, icon: RefreshCircle },
+    {
+      label: "Plan History",
+      description: "Past plans",
+      path: SUBSCRIPTIONS,
+      icon: RefreshCircle,
+    },
   ];
 
   return (
-    <div className="my-4">
-      <Heading>Quick actions</Heading>
-      <div className="flex justify-evenly gap-4">
+    <section>
+      <SectionTitle>Quick actions</SectionTitle>
+      <div className="grid grid-cols-3 gap-3">
         {actions.map((action, id) => {
           const disabled = action?.disabled;
+
+          const highlighted = action.primary && !disabled;
+
           return (
             <Link
               scroll={true}
@@ -51,31 +62,48 @@ const QuickActions = () => {
                 }
               }}
               href={action.path}
-              className="inline-flex  flex-col bg-white p-3 rounded-[15px] aria-[disabled=true]:!bg-gray-700/10 items-center w-full max-w-[120px] dark:bg-card"
+              className={`flex flex-col rounded-[18px] p-3.5 sm:p-4 border transition active:scale-[0.97] aria-[disabled=true]:cursor-not-allowed aria-[disabled=true]:opacity-60 ${
+                highlighted
+                  ? "bg-default border-default text-white shadow-[0_8px_24px_-10px_var(--color-default)]"
+                  : "bg-white border-gray-200/70 dark:bg-card dark:border-border"
+              }`}
             >
-              <div
-                className={` mb-2 size-[50px] border rounded-full inline-flex items-center justify-center ${
-                  disabled
-                    ? "border-gray-800/15 text-gray-500 bg-gray-500/10"
-                    : "border-default/15  text-default bg-default/10 "
+              <span
+                className={`size-10 rounded-[12px] inline-flex items-center justify-center mb-3 ${
+                  highlighted
+                    ? "bg-white/20"
+                    : disabled
+                    ? "bg-gray-500/10"
+                    : "bg-default/10"
                 }`}
               >
                 {React.createElement(action?.icon, {
-                  size: 24,
+                  size: 22,
+                  variant: "Bold",
+                  color: highlighted
+                    ? "var(--color-white)"
+                    : disabled
+                    ? "var(--color-gray-500)"
+                    : "var(--color-default)",
                 })}
-              </div>
-              <p
-                className={`text-center tracking-tight text-[12px] ${
-                  disabled ? "text-gray-500" : ""
+              </span>
+              <span className="text-[13px] font-semibold leading-tight tracking-tight">
+                {action.label}
+              </span>
+              <span
+                className={`text-[11px] mt-0.5 ${
+                  highlighted
+                    ? "text-white/80"
+                    : "text-gray-500 dark:text-muted-foreground"
                 }`}
               >
-                {action.label}
-              </p>
+                {action.description}
+              </span>
             </Link>
           );
         })}
       </div>
-    </div>
+    </section>
   );
 };
 
