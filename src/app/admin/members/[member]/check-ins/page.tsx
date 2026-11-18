@@ -12,6 +12,7 @@ import {
 import { ErrorResponse } from "@/types";
 import { defaultPageSize, isFetchBaseQueryError } from "@/utils";
 import moment from "moment";
+import { formatMeters } from "@/utils/geolocation";
 import { useParams, useSearchParams } from "next/navigation";
 import React from "react";
 import toast from "react-hot-toast";
@@ -102,6 +103,8 @@ const UserCheckInPage = () => {
             checkedBy:
               row?.checkInType === "admin"
                 ? `${row?.checkedInBy?.firstname} ${row?.checkedInBy?.lastname}`
+                : row?.location
+                ? `Self · ${formatMeters(row.location.distanceMeters)} from gym`
                 : "Self",
             fromNow: moment(row?.createdAt).fromNow(),
           };

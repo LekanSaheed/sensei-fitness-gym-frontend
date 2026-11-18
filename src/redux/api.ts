@@ -16,6 +16,7 @@ export const api = createApi({
   }),
   endpoints: () => ({}),
   tagTypes: [
+    "leaderboard",
     "check-in-location",
     "has-checked-in",
     "members",

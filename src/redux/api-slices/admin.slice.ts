@@ -5,6 +5,7 @@ import {
   ResponseType,
 } from "@/types";
 import { api } from "../api";
+import { Leaderboard, LeaderboardPeriod } from "@/types/Leaderboard";
 
 export interface CheckInLocationSettings {
   enabled: boolean;
@@ -151,7 +152,7 @@ const adminApi = api.injectEndpoints({
           url: "/admin/check-ins",
           body: payload,
         }),
-        invalidatesTags: ["admin-check-ins", "activity-zones", "member", "members"],
+        invalidatesTags: ["admin-check-ins", "leaderboard", "activity-zones", "member", "members"],
       }),
       adminGetPlans: build.query<ResponseType<ISubscriptionPlan[]>, undefined>({
         query: () => "/admin/plans",
@@ -325,10 +326,18 @@ const adminApi = api.injectEndpoints({
         }),
         invalidatesTags: [
           "admin-check-ins",
+          "leaderboard",
           "activity-zones",
           "member",
           "members",
         ],
+      }),
+      getAdminLeaderboard: build.query<
+        ResponseType<Leaderboard>,
+        { period: LeaderboardPeriod }
+      >({
+        query: ({ period }) => `/admin/leaderboard?period=${period}`,
+        providesTags: ["leaderboard"],
       }),
       getCheckInLocationSettings: build.query<
         ResponseType<CheckInLocationSettings>,
@@ -422,6 +431,7 @@ export const {
   useGetMembersPieChartDataQuery,
   useGetActivityZoneSummaryQuery,
   useGetActivityZoneSettingsQuery,
+  useGetAdminLeaderboardQuery,
   useGetCheckInLocationSettingsQuery,
   useUpdateCheckInLocationSettingsMutation,
   useGetNotificationSettingsQuery,

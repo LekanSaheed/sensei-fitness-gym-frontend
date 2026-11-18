@@ -52,5 +52,13 @@ export interface ICheckIn {
     email: string;
   };
   checkInType: "self" | "admin";
+  method?: "qr";
+  /** Saved for self check-ins made while location check-in is on */
+  location?: {
+    latitude: number;
+    longitude: number;
+    accuracy: number;
+    distanceMeters: number;
+  } | null;
   createdAt: string;
 }

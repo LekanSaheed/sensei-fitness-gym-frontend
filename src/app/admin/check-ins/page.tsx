@@ -49,6 +49,7 @@ import React, { ReactNode, useState } from "react";
 import MainButton from "@/components/button";
 import { Separator } from "@/components/ui/separator";
 import moment from "moment";
+import { formatMeters } from "@/utils/geolocation";
 import Alert from "@/components/alert";
 import toast from "react-hot-toast";
 import { ErrorResponse } from "@/types";
@@ -158,6 +159,8 @@ const CheckInsPage = () => {
             checkedBy:
               row?.checkInType === "admin"
                 ? `${row?.checkedInBy?.firstname} ${row?.checkedInBy?.lastname}`
+                : row?.location
+                ? `Self · ${formatMeters(row.location.distanceMeters)} from gym`
                 : "Self",
             fromNow: moment(row?.createdAt).fromNow(),
           };

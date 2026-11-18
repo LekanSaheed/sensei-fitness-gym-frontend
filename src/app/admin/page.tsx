@@ -16,11 +16,18 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { ACTIVITY_ZONES } from "@/constants/routes";
 import React from "react";
+import AdminLeaderboard from "@/components/admin/AdminLeaderboard";
+import { useUserCanPerformAction } from "@/hooks/usePermissions";
 
 const AdminHomePage = () => {
   const searchParams = useSearchParams();
 
   const router = useRouter();
+
+  const canSeeLeaderboard = useUserCanPerformAction()([
+    "view_check_ins",
+    "view_all_members",
+  ]);
 
   const revenueRange = searchParams.get("revenueRange");
 
@@ -166,6 +173,12 @@ const AdminHomePage = () => {
           </div>
         </div>
       </div>
+
+      {canSeeLeaderboard && (
+        <div className="mt-6">
+          <AdminLeaderboard />
+        </div>
+      )}
     </div>
   );
 };

@@ -2,6 +2,7 @@
 
 import ActivityZoneNotice from "@/components/ActivityZoneNotice";
 import CheckInCalendar from "@/components/CheckInCalendar";
+import Leaderboard from "@/components/dashboard/Leaderboard";
 import StatTiles from "@/components/dashboard/StatTiles";
 import TodayCard from "@/components/dashboard/TodayCard";
 import QuickActions from "@/components/QuickActions";
@@ -19,6 +20,7 @@ const UserHomePage = () => {
       <QuickActions />
       <SubscriptionCard />
       <CheckInCalendar />
+      <Leaderboard />
     </div>
   );
 };

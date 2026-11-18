@@ -1,3 +1,4 @@
+import { LeaderboardPeriod, MemberLeaderboard } from "@/types/Leaderboard";
 import {
   ICheckIn,
   PaginatedResponse,
@@ -128,7 +129,14 @@ const subscriptionApi = api.injectEndpoints({
           method: "post",
           body: body || {},
         }),
-        invalidatesTags: ["has-checked-in"],
+        invalidatesTags: ["has-checked-in", "leaderboard"],
+      }),
+      getLeaderboard: build.query<
+        ResponseType<MemberLeaderboard>,
+        { period: LeaderboardPeriod }
+      >({
+        query: ({ period }) => `/subscriptions/leaderboard?period=${period}`,
+        providesTags: ["leaderboard"],
       }),
       getCheckInLocationRequirement: build.query<
         ResponseType<{ required: boolean; radiusMeters: number }>,
@@ -221,6 +229,7 @@ export const {
   useActivateSubQuery,
   useCheckInMutation,
   useGetCheckInLocationRequirementQuery,
+  useGetLeaderboardQuery,
   useCheckIfCheckedInTodayQuery,
   useGetCheckInAnalyticsQuery,
   useGetRecentCheckInsQuery,
