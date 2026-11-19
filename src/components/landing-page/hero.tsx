@@ -27,8 +27,8 @@ const HeroSection = () => {
 
   const stats: { label: string; value: string }[] = [
     { label: "Years of experience", value: `${yearsOfExperience}+` },
-    { label: "Members", value: "5000+" },
-    { label: "Satisfied Members", value: "4000+" },
+    { label: "Members", value: "10k+" },
+    { label: "Satisfied Members", value: "8k+" },
   ];
 
   return (
@@ -151,7 +151,7 @@ const HeroSection = () => {
                 {item}
                 <span className="size-2 rotate-45 bg-black" />
               </span>
-            )
+            ),
           )}
         </div>
       </div>
