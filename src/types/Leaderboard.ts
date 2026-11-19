@@ -1,4 +1,4 @@
-export type LeaderboardPeriod = "week" | "month";
+export type LeaderboardPeriod = "week" | "month" | "all";
 
 export interface LeaderboardEntry {
   rank: number;
@@ -13,8 +13,9 @@ export interface LeaderboardEntry {
 
 export interface Leaderboard {
   period: LeaderboardPeriod;
-  start: string;
-  end: string;
+  /** null for all time */
+  start: string | null;
+  end: string | null;
   size: number;
   entries: LeaderboardEntry[];
 }

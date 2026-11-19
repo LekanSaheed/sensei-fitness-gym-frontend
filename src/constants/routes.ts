@@ -30,6 +30,8 @@ export const NEW_CHECK_IN = `${CHECK_INS}/new`;
 
 export const PROFILE = `${DASHBOARD}/profile`;
 
+export const LEADERBOARD = `${DASHBOARD}/leaderboard`;
+
 export const INACTIVITY_FEEDBACK = "/inactivity-feedback";
 
 // ADMIN

@@ -8,9 +8,17 @@ import { LeaderboardPeriod } from "@/types/Leaderboard";
 import { Cup, Ranking } from "iconsax-react";
 import moment from "moment";
 import React, { useState } from "react";
+import Link from "next/link";
+import { LEADERBOARD } from "@/constants/routes";
+import { ArrowRight2 } from "iconsax-react";
+import { ordinal } from "@/utils/ordinal";
 
-/** Member dashboard: who has checked in the most this week / month */
-const Leaderboard = () => {
+/**
+ * Who has checked in the most this week / month / all time.
+ * `compact` (dashboard home) shows the podium and your standing, with a link
+ * to the full leaderboard page.
+ */
+const Leaderboard = ({ compact = false }: { compact?: boolean }) => {
   const [period, setPeriod] = useState<LeaderboardPeriod>("week");
 
   const { data, isLoading, isFetching, isError, refetch } =
@@ -22,7 +30,9 @@ const Leaderboard = () => {
 
   const rest = entries.filter((e) => e.rank > 3);
 
-  const periodWord = period === "week" ? "week" : "month";
+  /** "this week" / "this month" / "so far" */
+  const periodPhrase =
+    period === "week" ? "this week" : period === "month" ? "this month" : "so far";
 
   return (
     <section className="relative overflow-hidden rounded-[24px] bg-default-black text-white p-5 shadow-sm dark:border dark:border-border">
@@ -40,8 +50,10 @@ const Leaderboard = () => {
             </h2>
             {board && (
               <p className="text-[12px] text-white/50 mt-1">
-                {moment(board.start).format("D MMM")} –{" "}
-                {moment(board.end).format("D MMM")} · top {board.size}
+                {board.start && board.end
+                  ? `${moment(board.start).format("D MMM")} – ${moment(board.end).format("D MMM")}`
+                  : "All time"}{" "}
+                · top {board.size}
               </p>
             )}
           </div>
@@ -66,7 +78,7 @@ const Leaderboard = () => {
             {entries.length === 0 ? (
               <div className="mt-6 rounded-[16px] bg-white/[0.06] border border-white/10 p-6 text-center">
                 <Ranking size={28} color="var(--color-default)" variant="Bulk" className="mx-auto mb-2" />
-                <p className="font-semibold text-[14px]">No check-ins yet this {periodWord}</p>
+                <p className="font-semibold text-[14px]">No check-ins {periodPhrase === "so far" ? "yet" : `yet ${periodPhrase}`}</p>
                 <p className="text-[12px] text-white/60 mt-1">
                   Be the first on the board: check in today.
                 </p>
@@ -82,8 +94,8 @@ const Leaderboard = () => {
                 <p className="font-semibold">You&apos;re not on the leaderboard yet</p>
                 <p className="text-white/60 text-[12px] mt-0.5">
                   {board.me.checkIns > 0
-                    ? `You have ${board.me.checkIns} check-in${board.me.checkIns === 1 ? "" : "s"} this ${periodWord}. Keep showing up to break into the top ${board.size}.`
-                    : `Check in this ${periodWord} to get on the board. Only the top ${board.size} are shown.`}
+                    ? `You have ${board.me.checkIns} check-in${board.me.checkIns === 1 ? "" : "s"} ${periodPhrase}. Keep showing up to break into the top ${board.size}.`
+                    : `Check in to get on the board. Only the top ${board.size} are shown.`}
                 </p>
               </div>
             )}
@@ -91,13 +103,25 @@ const Leaderboard = () => {
             {board && board.me.rank !== null && board.me.rank > 3 && (
               <p className="mt-4 text-[13px] text-white/70">
                 You&apos;re{" "}
-                <span className="text-default-tertiary font-bold">#{board.me.rank}</span>{" "}
-                this {periodWord} with {board.me.checkIns} check-in
+                <span className="text-default-tertiary font-bold">{ordinal(board.me.rank)}</span>{" "}
+                {periodPhrase} with {board.me.checkIns} check-in
                 {board.me.checkIns === 1 ? "" : "s"}.
               </p>
             )}
 
-            {rest.length > 0 && (
+            {compact && entries.length > 0 && (
+              <Link
+                href={LEADERBOARD}
+                className="mt-4 flex items-center justify-center gap-1.5 rounded-full border border-white/15 px-4 py-2.5 text-[13px] font-semibold hover:bg-white/10 transition"
+              >
+                {rest.length > 0
+                  ? `See all ${entries.length} on the leaderboard`
+                  : "Open the leaderboard"}
+                <ArrowRight2 size={14} color="currentColor" />
+              </Link>
+            )}
+
+            {!compact && rest.length > 0 && (
               <ol className="mt-4 max-h-[360px] overflow-y-auto -mx-1 px-1 space-y-1.5 [scrollbar-width:thin]">
                 {rest.map((entry) => (
                   <li
@@ -108,8 +132,8 @@ const Leaderboard = () => {
                         : "bg-white/[0.05]"
                     }`}
                   >
-                    <span className="w-7 text-center font-league text-[20px] text-white/60 tabular-nums">
-                      {entry.rank}
+                    <span className="w-10 text-center font-league text-[20px] text-white/60 tabular-nums">
+                      {ordinal(entry.rank)}
                     </span>
                     <LeaderAvatar
                       name={entry.name}

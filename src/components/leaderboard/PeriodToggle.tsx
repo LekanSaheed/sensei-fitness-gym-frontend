@@ -4,6 +4,7 @@ import React from "react";
 const OPTIONS: { value: LeaderboardPeriod; label: string }[] = [
   { value: "week", label: "This week" },
   { value: "month", label: "This month" },
+  { value: "all", label: "All time" },
 ];
 
 /** Weekly / monthly switch for a leaderboard */
@@ -32,7 +33,7 @@ const PeriodToggle = ({
           role="tab"
           aria-selected={active}
           onClick={() => onChange(o.value)}
-          className={`rounded-full px-3.5 py-1.5 text-[12px] font-semibold transition ${
+          className={`rounded-full px-3 sm:px-3.5 py-1.5 text-[12px] whitespace-nowrap font-semibold transition ${
             active
               ? "bg-default text-white shadow-sm"
               : tone === "dark"

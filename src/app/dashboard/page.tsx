@@ -20,7 +20,7 @@ const UserHomePage = () => {
       <QuickActions />
       <SubscriptionCard />
       <CheckInCalendar />
-      <Leaderboard />
+      <Leaderboard compact />
     </div>
   );
 };

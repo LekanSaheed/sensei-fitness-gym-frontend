@@ -25,6 +25,12 @@ export interface SectionCardProps {
   classNames?: Partial<{
     value: string;
   }>;
+  /** Makes the card a filter button */
+  onClick?: () => void;
+  /** Highlights the card as the active filter */
+  selected?: boolean;
+  /** Tooltip / accessible hint for clickable cards */
+  title?: string;
 }
 
 const SectionCard: FunctionComponent<SectionCardProps> = ({
@@ -34,12 +40,40 @@ const SectionCard: FunctionComponent<SectionCardProps> = ({
   loading,
   dropdown = { selected: null, options: [], keyName: "" },
   classNames,
+  onClick,
+  selected,
+  title,
 }) => {
   const [open, setOpen] = useState(false);
 
   const updateSearchParams = useUpdateSearchParams();
   return (
-    <Card className="relative h-full gap-3 py-5 !bg-none !bg-white border-gray-200/80 rounded-[18px] !shadow-[0_1px_2px_rgb(0_0_0/0.04),0_8px_24px_-12px_rgb(0_0_0/0.08)] transition hover:border-default/40">
+    <Card
+      role={onClick ? "button" : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      aria-pressed={onClick ? !!selected : undefined}
+      title={title}
+      onClick={onClick}
+      onKeyDown={
+        onClick
+          ? (e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                onClick();
+              }
+            }
+          : undefined
+      }
+      className={`relative h-full gap-3 py-5 !bg-none !bg-white rounded-[18px] !shadow-[0_1px_2px_rgb(0_0_0/0.04),0_8px_24px_-12px_rgb(0_0_0/0.08)] transition hover:border-default/40 ${
+        selected
+          ? "border-default ring-4 ring-default/15"
+          : "border-gray-200/80"
+      } ${
+        onClick
+          ? "cursor-pointer focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-default/30"
+          : ""
+      }`}
+    >
       <CardHeader>
         <CardDescription
           className={`text-[11px] font-semibold uppercase tracking-wider text-gray-500 ${

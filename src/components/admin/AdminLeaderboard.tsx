@@ -11,6 +11,7 @@ import { Cup, Ranking } from "iconsax-react";
 import moment from "moment";
 import Link from "next/link";
 import React, { ReactNode, useState } from "react";
+import { ordinal } from "@/utils/ordinal";
 
 const memberLink = (entry: LeaderboardEntry, children: ReactNode) =>
   entry._id ? (
@@ -48,7 +49,11 @@ const AdminLeaderboard = () => {
           </h2>
           <p className="text-[12px] text-gray-500">
             {board
-              ? `${moment(board.start).format("D MMM")} – ${moment(board.end).format("D MMM YYYY")} · top ${board.size} members by check-ins`
+              ? `${
+                  board.start && board.end
+                    ? `${moment(board.start).format("D MMM")} – ${moment(board.end).format("D MMM YYYY")}`
+                    : "All time"
+                } · top ${board.size} members by check-ins`
               : "Top members by check-ins"}
           </p>
         </div>
@@ -61,7 +66,8 @@ const AdminLeaderboard = () => {
         <div className="rounded-[14px] border border-dashed border-gray-300 p-8 text-center">
           <Ranking size={28} color="var(--color-default)" variant="Bulk" className="mx-auto mb-2" />
           <p className="font-semibold text-[14px]">
-            No member check-ins this {period === "week" ? "week" : "month"} yet
+            No member check-ins{" "}
+            {period === "week" ? "this week" : period === "month" ? "this month" : ""} yet
           </p>
         </div>
       )}
@@ -101,8 +107,8 @@ const AdminLeaderboard = () => {
               <ol className="max-h-[440px] overflow-y-auto divide-y [scrollbar-width:thin]">
                 {rest.map((entry) => (
                   <li key={entry.rank} className="flex items-center gap-3 px-3 py-2.5 hover:bg-gray-50">
-                    <span className="w-7 text-[13px] font-semibold text-gray-500 tabular-nums">
-                      #{entry.rank}
+                    <span className="w-9 text-[13px] font-semibold text-gray-500 tabular-nums">
+                      {ordinal(entry.rank)}
                     </span>
                     <LeaderAvatar
                       name={entry.name}

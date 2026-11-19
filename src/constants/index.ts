@@ -12,7 +12,9 @@ import {
   MoneySend,
   People,
   Profile,
+  Ranking,
   ReceiptEdit,
+  ReceiptText,
   SecurityUser,
   Setting2,
 } from "iconsax-react";
@@ -28,6 +30,7 @@ import {
   ACCESS_CONTROL,
   CHECK_INS,
   DASHBOARD,
+  LEADERBOARD,
   MANAGE_PLANS,
   MEMBERS,
   PAYMENT_LOGS,
@@ -50,12 +53,13 @@ export const currency = "₦";
 export const DEFAULT_ERROR_MESSAGE =
   "There was a problem while processing the request, please try again later";
 
+/** Member bottom navigation; Home is drawn as the raised centre button */
 export const nav_links: NavLink[] = [
+  { label: "Leaders", path: LEADERBOARD, icon: Ranking },
   { label: "Check-ins", path: CHECK_INS, icon: LocationTick },
-  // { label: "Subscriptions", path: SUBSCRIPTIONS, icon: MoneySend },
   { label: "Home", path: DASHBOARD, icon: Home3 },
-  // { label: "Profile", path: PROFILE, icon: Profile },
   { label: "Profile", path: PROFILE, icon: Profile },
+  { label: "Plans", path: SUBSCRIPTIONS, icon: ReceiptText },
 ];
 
 export interface IMenu {

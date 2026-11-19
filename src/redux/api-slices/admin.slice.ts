@@ -5,6 +5,22 @@ import {
   ResponseType,
 } from "@/types";
 import { api } from "../api";
+
+export interface RevenueChart {
+  view: "week" | "month" | "year";
+  year: number;
+  month: number | null;
+  start: string;
+  end: string;
+  unit: "day" | "month";
+  totalRevenue: number;
+  transactions: number;
+  /** Revenue for the period before (last week / month / year) */
+  previousTotal: number;
+  data: { label: string; total: number; count: number }[];
+  /** Years with payments, newest first */
+  years: number[];
+}
 import { Leaderboard, LeaderboardPeriod } from "@/types/Leaderboard";
 
 export interface CheckInLocationSettings {
@@ -251,15 +267,13 @@ const adminApi = api.injectEndpoints({
         invalidatesTags: ["admin", "admins"],
       }),
       getRevenueChartData: build.query<
-        ResponseType<{
-          data: { label: string; total: number }[];
-          totalRevenue: number;
-        }>,
-        { preset: string }
+        ResponseType<RevenueChart>,
+        { view?: "week"; year?: number; month?: number }
       >({
-        query: ({ preset }) => ({
-          url: `/admin/dashboard/revenue-chart?preset=${preset}`,
+        query: ({ view, year, month }) => ({
+          url: "/admin/dashboard/revenue-chart",
           method: "get",
+          params: view === "week" ? { view } : { year, ...(month ? { month } : {}) },
         }),
       }),
       getRevenuePageAnalytics: build.query<

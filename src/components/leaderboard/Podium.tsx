@@ -2,6 +2,7 @@ import { LeaderboardEntry } from "@/types/Leaderboard";
 import { Crown1 } from "iconsax-react";
 import React, { ReactNode } from "react";
 import LeaderAvatar from "./LeaderAvatar";
+import { ordinal, ordinalSuffix } from "@/utils/ordinal";
 
 type Tone = "dark" | "light";
 
@@ -76,8 +77,8 @@ const Podium = ({
             className="flex flex-col items-center text-center min-w-0"
             aria-label={
               entry
-                ? `Position ${rank}: ${entry.name}, ${entry.checkIns} check-ins`
-                : `Position ${rank}: open`
+                ? `${ordinal(rank)} place: ${entry.name}, ${entry.checkIns} check-ins`
+                : `${ordinal(rank)} place: open`
             }
           >
             <div className="relative mb-2">
@@ -128,6 +129,9 @@ const Podium = ({
                 className={`font-league leading-none text-white/95 drop-shadow ${style.number}`}
               >
                 {rank}
+                <span className="text-[0.45em] align-top ml-0.5 uppercase">
+                  {ordinalSuffix(rank)}
+                </span>
               </span>
             </div>
           </li>

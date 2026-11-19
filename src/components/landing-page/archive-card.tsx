@@ -13,7 +13,7 @@ const ArchiveCard = ({ event }: { event: ArchiveEventSummary }) => (
   >
     <PhotoStack
       images={event.preview}
-      count={event.imageCount}
+      count={event.totalImageCount ?? event.imageCount}
       maxLayers={2}
       alt={event.title}
       className="mx-4 group-focus-visible:ring-4 group-focus-visible:ring-default/40 rounded-[18px]"
@@ -26,7 +26,13 @@ const ArchiveCard = ({ event }: { event: ArchiveEventSummary }) => (
         {event.title}
       </h3>
       <p className="text-[12px] text-white/50 mt-1.5">
-        {event.imageCount} photo{event.imageCount === 1 ? "" : "s"}
+        {(() => {
+          const photos = event.totalImageCount ?? event.imageCount;
+
+          return `${photos} photo${photos === 1 ? "" : "s"}`;
+        })()}
+        {event.subfolderCount > 0 &&
+          ` · ${event.subfolderCount} album${event.subfolderCount === 1 ? "" : "s"}`}
       </p>
     </div>
   </Link>

@@ -17,8 +17,20 @@ import {
 } from "@/utils";
 import { UserTick } from "iconsax-react";
 import { ACTIVITY_ZONES, ZONE_META } from "@/types/ActivityZone";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React from "react";
+
+const CARD_FILTER_KEYS = [
+  "subscriptionStatus",
+  "trainer",
+  "registered",
+  "activityZone",
+] as const;
+
+type CardFilterKey = (typeof CARD_FILTER_KEYS)[number];
+
+/** The table's "All" option is the same as no filter */
+const paramValue = (v: string | null) => (!v || v === "all" ? "" : v);
 
 const UsersPage = () => {
   const columns: ColumnProps[] = [
@@ -55,6 +67,7 @@ const UsersPage = () => {
       subscriptionStatus: searchParams.get("subscriptionStatus") || "",
       trainer: searchParams.get("trainer") || "",
       activityZone: searchParams.get("activityZone") || "",
+      registered: searchParams.get("registered") || "",
     }),
   );
 
@@ -132,29 +145,71 @@ const UsersPage = () => {
 
   const membersAnalytics = getMembersAnalyticsQuery?.data?.data;
 
-  const cards: { description: string; value: number | undefined }[] = [
-    { description: "Total Members", value: membersAnalytics?.totalMembers },
+  const pathname = usePathname();
+
+  /** Each card is a preset of these table filters ({} = no filter) */
+  const cards: {
+    description: string;
+    value: number | undefined;
+    filter: Partial<Record<CardFilterKey, string>>;
+  }[] = [
+    {
+      description: "Total Members",
+      value: membersAnalytics?.totalMembers,
+      filter: {},
+    },
     {
       description: "Total Active Members",
       value: membersAnalytics?.activeMembers,
+      filter: { subscriptionStatus: "active" },
     },
     {
       description: "Registered This Month",
       value: membersAnalytics?.registeredThisMonth,
+      filter: { registered: "this-month" },
     },
     {
       description: "Members Without Active Sub",
       value: membersAnalytics?.membersWithoutActiveSub,
+      filter: { subscriptionStatus: "no-active" },
     },
     {
       description: "Active Members With Trainers",
       value: membersAnalytics?.totalMembersWithTrainers,
+      filter: { subscriptionStatus: "active", trainer: "assigned" },
     },
     {
       description: "Active Members Without Trainers",
       value: membersAnalytics?.totalMembersWithOutTrainers,
+      filter: { subscriptionStatus: "active", trainer: "not-assigned" },
     },
   ];
+
+  /** A card is selected when the table's filters are exactly its preset */
+  const isCardSelected = (filter: Partial<Record<CardFilterKey, string>>) =>
+    CARD_FILTER_KEYS.every(
+      (key) => paramValue(searchParams.get(key)) === (filter[key] || "")
+    );
+
+  /** Apply a card's filters (or clear them when it's already selected) */
+  const selectCard = (filter: Partial<Record<CardFilterKey, string>>) => {
+    const params = new URLSearchParams(searchParams.toString());
+
+    const next = isCardSelected(filter) ? {} : filter;
+
+    CARD_FILTER_KEYS.forEach((key) => {
+      if (next[key]) params.set(key, next[key]!);
+      else params.delete(key);
+    });
+
+    params.delete("page");
+
+    const query = params.toString();
+
+    router.replace(query ? `${pathname}?${query}` : pathname, {
+      scroll: false,
+    });
+  };
 
   const filters: TableFilter[] = [
     {
@@ -165,6 +220,15 @@ const UsersPage = () => {
         { label: "Subscription Active", value: "active" },
         { label: "Subscription Expired", value: "expired" },
         { label: "No subscription", value: "no-sub" },
+        { label: "No active subscription", value: "no-active" },
+      ],
+    },
+    {
+      keyName: "registered",
+      title: "Registered",
+      options: [
+        { label: "Any time", value: "all" },
+        { label: "This month", value: "this-month" },
       ],
     },
     {
@@ -194,8 +258,16 @@ const UsersPage = () => {
         {cards.map((card, id) => {
           return (
             <SectionCard
-              {...card}
+              description={card.description}
+              value={card.value}
               key={id}
+              onClick={() => selectCard(card.filter)}
+              selected={isCardSelected(card.filter)}
+              title={
+                isCardSelected(card.filter) && id > 0
+                  ? "Click to clear this filter"
+                  : `Show ${card.description.toLowerCase()} in the table`
+              }
               loading={
                 getMembersAnalyticsQuery?.isLoading ||
                 getMembersAnalyticsQuery?.isFetching

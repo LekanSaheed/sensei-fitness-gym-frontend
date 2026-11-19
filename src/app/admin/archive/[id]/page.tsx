@@ -6,6 +6,9 @@ import ArchiveEventForm from "@/components/content/ArchiveEventForm";
 import GalleryPicker from "@/components/content/GalleryPicker";
 import ImageUploader from "@/components/content/ImageUploader";
 import FormCard from "@/components/FormCard";
+import FolderCard from "@/components/content/FolderCard";
+import NewFolderModal from "@/components/content/NewFolderModal";
+import Link from "next/link";
 import SectionLoader from "@/components/SectionLoader";
 import { DEFAULT_ERROR_MESSAGE } from "@/constants";
 import { ADMIN_ARCHIVE, PUBLIC_ARCHIVE } from "@/constants/routes";
@@ -21,8 +24,11 @@ import { ErrorResponse } from "@/types";
 import { isFetchBaseQueryError } from "@/utils";
 import { cldImage } from "@/utils/images";
 import {
+  ArrowRight2,
   DocumentUpload,
   Export,
+  Folder2,
+  FolderAdd,
   Gallery,
   GalleryAdd,
   Star1,
@@ -87,6 +93,8 @@ const ArchiveFolderPage = () => {
 
   const [pickerOpen, setPickerOpen] = useState(false);
 
+  const [subfolderOpen, setSubfolderOpen] = useState(false);
+
   const dirty =
     !!event &&
     !!form &&
@@ -107,16 +115,44 @@ const ArchiveFolderPage = () => {
     );
   }
 
+  const draftAncestor = event.ancestors.find((a) => !a.isPublished);
+
+  const hasContent =
+    event.images.length > 0 ||
+    event.subfolders.some((f) => f.isPublished && f.totalImageCount > 0);
+
+  const onWebsite = event.isPublished && !draftAncestor && hasContent;
+
+  const canNest = event.depth < event.maxDepth;
+
   return (
     <div className="flex flex-col gap-6">
+      <nav aria-label="Folder path" className="flex flex-wrap items-center gap-1 text-[13px] text-gray-500 -mb-2">
+        <Link href={ADMIN_ARCHIVE} className="hover:text-default hover:underline">
+          Archive
+        </Link>
+        {event.ancestors.map((a) => (
+          <React.Fragment key={a._id}>
+            <ArrowRight2 size={12} color="currentColor" />
+            <Link href={`${ADMIN_ARCHIVE}/${a._id}`} className="hover:text-default hover:underline truncate max-w-[180px]">
+              {a.title}
+            </Link>
+          </React.Fragment>
+        ))}
+        <ArrowRight2 size={12} color="currentColor" />
+        <span className="font-semibold text-gray-800 truncate max-w-[220px]">{event.title}</span>
+      </nav>
+
       <FormCard
         title="Event details"
         description={
-          event.isPublished && event.images.length === 0
-            ? "Published, but hidden on the website until it has at least one image."
-            : event.isPublished
-            ? "Published: this folder is visible on the website."
-            : "Draft: only admins can see this folder."
+          !event.isPublished
+            ? "Draft: only admins can see this folder."
+            : draftAncestor
+            ? `Published, but hidden on the website because "${draftAncestor.title}" above it is a draft.`
+            : !hasContent
+            ? "Published, but hidden on the website until it (or a published subfolder) has images."
+            : "Published: this folder is visible on the website."
         }
       >
         <ArchiveEventForm value={form} onChange={setForm} />
@@ -124,11 +160,17 @@ const ArchiveFolderPage = () => {
           <div className="flex items-center gap-1">
             <Alert
               title="Delete this folder?"
-              description="The folder is removed from the archive and the website. Its images stay in the gallery."
+              description={
+                event.descendantCount > 0
+                  ? `This also deletes the ${event.descendantCount} subfolder${event.descendantCount === 1 ? "" : "s"} inside it. They're removed from the archive and the website; their images stay in the gallery.`
+                  : "The folder is removed from the archive and the website. Its images stay in the gallery."
+              }
               loading={deleteStatus.isLoading}
               onContinueClick={async () =>
                 notify((await deleteFolder(event._id)) as Result, () =>
-                  router.replace(ADMIN_ARCHIVE)
+                  router.replace(
+                    event.parent ? `${ADMIN_ARCHIVE}/${event.parent}` : ADMIN_ARCHIVE
+                  )
                 )
               }
               alertTrigger={
@@ -138,7 +180,7 @@ const ArchiveFolderPage = () => {
                 </button>
               }
             />
-            {event.isPublished && event.images.length > 0 && (
+            {onWebsite && (
               <a
                 href={`${PUBLIC_ARCHIVE}/${event.slug}`}
                 target="_blank"
@@ -166,6 +208,46 @@ const ArchiveFolderPage = () => {
             }
           />
         </div>
+      </FormCard>
+
+      <FormCard>
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+          <div>
+            <h2 className="text-[16px] font-bold tracking-tight">
+              Subfolders ({event.subfolders.length})
+            </h2>
+            <p className="text-[12px] text-gray-500">
+              {canNest
+                ? "Group photos inside this event, for example one folder per day or activity."
+                : `Folders can only be nested ${event.maxDepth} levels deep.`}
+            </p>
+          </div>
+          {canNest && (
+            <Button
+              label="New subfolder"
+              icon={FolderAdd}
+              variant="outlined"
+              color="black"
+              size="sm"
+              fullRadius
+              onClick={() => setSubfolderOpen(true)}
+            />
+          )}
+        </div>
+        {event.subfolders.length === 0 ? (
+          <p className="flex items-center gap-2 rounded-[14px] border border-dashed border-gray-300 px-4 py-3 text-[13px] text-gray-500">
+            <Folder2 size={18} color="currentColor" variant="Bulk" />
+            No subfolders yet.
+          </p>
+        ) : (
+          <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-5 gap-y-6">
+            {event.subfolders.map((sub) => (
+              <li key={sub._id}>
+                <FolderCard event={sub} />
+              </li>
+            ))}
+          </ul>
+        )}
       </FormCard>
 
       <FormCard>
@@ -287,6 +369,13 @@ const ArchiveFolderPage = () => {
           gallery.
         </p>
       </FormCard>
+
+      <NewFolderModal
+        open={subfolderOpen}
+        setOpen={setSubfolderOpen}
+        parent={event._id}
+        parentTitle={event.title}
+      />
 
       <GalleryPicker
         open={pickerOpen}

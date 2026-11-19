@@ -12,6 +12,8 @@ export interface ArchiveEventInput {
   description: string;
   eventDate: string;
   isPublished: boolean;
+  /** Create inside this folder */
+  parent?: string | null;
 }
 
 const contentApi = api.injectEndpoints({
@@ -82,7 +84,10 @@ const contentApi = api.injectEndpoints({
         }),
         invalidatesTags: ["archive"],
       }),
-      deleteArchiveEvent: build.mutation<ResponseType, string>({
+      deleteArchiveEvent: build.mutation<
+        ResponseType<{ deleted: number; parent: string | null }>,
+        string
+      >({
         query: (id) => ({ url: `/admin/archive/${id}`, method: "delete" }),
         invalidatesTags: ["archive", "gallery"],
       }),

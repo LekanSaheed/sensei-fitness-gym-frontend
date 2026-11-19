@@ -5,6 +5,7 @@ import { ArrowLeft2, Moon, Sun1 } from "iconsax-react";
 import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import {
+  LEADERBOARD,
   CHECK_INS,
   DASHBOARD,
   NEW_CHECK_IN,
@@ -27,6 +28,7 @@ const pathLabels: Record<string, { label: string; subtitle?: string }> = {
   [SUBSCRIPTIONS]: { label: "My Subscriptions", subtitle: "Your plan history" },
   [CHECK_INS]: { label: "Training log", subtitle: "Every session you've logged" },
   [PROFILE]: { label: "Profile", subtitle: "Your account and settings" },
+  [LEADERBOARD]: { label: "Leaderboard", subtitle: "Who's showing up the most" },
 };
 
 function getGreeting() {
