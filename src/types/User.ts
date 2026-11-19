@@ -16,7 +16,11 @@ interface IUser {
   permissions?: Permission[];
   hasActiveSub: boolean;
   registrationFeeWaivedBy: Pick<IUser, "firstname" | "lastname"> | null;
+  /** Set when an admin recorded the fee as paid at the desk */
+  registrationFeePayment?: { _id: string; amount: number; createdAt: string } | null;
   phoneNumber: string;
+  /** When the account was created */
+  createdAt: string;
   lastLoginAt?: string | null;
   lastCheckInAt?: string | null;
   activity?: MemberActivity;

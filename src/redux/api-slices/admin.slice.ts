@@ -1,4 +1,5 @@
 import {
+  PaginationInfo,
   ICheckIn,
   PaginatedResponse,
   PaginationQuery,
@@ -197,10 +198,21 @@ const adminApi = api.injectEndpoints({
         invalidatesTags: ["plans"],
       }),
       getPaymentsLogs: build.query<
-        PaginatedResponse<PaymentLog[]>,
-        PaginationQuery
+        ResponseType<{
+          paginationInfo: PaginationInfo;
+          data: PaymentLog[];
+          /** Only when filtered to one member (userId) */
+          summary?: {
+            totalPaid: number;
+            successful: number;
+            all: number;
+            lastPaidAt: string | null;
+          };
+        }>,
+        PaginationQuery & Partial<{ statusFilter: string; userId: string }>
       >({
         query: (query) => `/admin/payments?${formatQuery(query)}`,
+        providesTags: ["payment-logs"],
       }),
       getMembersSubscriptions: build.query<
         PaginatedResponse<(ISubscription & { user: IUser })[]>,
@@ -211,7 +223,13 @@ const adminApi = api.injectEndpoints({
       }),
       activateMemberSub: build.mutation<
         ResponseType,
-        { userId: string; planId: string; includesTrainer: boolean }
+        {
+          userId: string;
+          planId: string;
+          includesTrainer: boolean;
+          /** Save a front-desk payment (default) or activate without one */
+          recordPayment: boolean;
+        }
       >({
         query: (payload) => ({
           url: `/admin/subscriptions/activate-member`,
@@ -287,13 +305,16 @@ const adminApi = api.injectEndpoints({
       >({
         query: () => "/admin/payments/revenue-analytics",
       }),
-      waiveRegistrationFee: build.mutation<ResponseType, { userId: string }>({
+      waiveRegistrationFee: build.mutation<
+        ResponseType,
+        { userId: string; recordPayment: boolean }
+      >({
         query: (payload) => ({
           url: "/admin/members/waive-registration-fee",
           method: "post",
           body: payload,
         }),
-        invalidatesTags: ["member", "members"],
+        invalidatesTags: ["member", "members", "payment-logs"],
       }),
       getMembersPieChartData: build.query<
         ResponseType<{

@@ -20,6 +20,10 @@ const Alert: FunctionComponent<{
   alertTrigger?: ReactNode;
   loading?: boolean;
   onContinueClick?: VoidFunction;
+  /** Extra content between the description and the buttons */
+  children?: ReactNode;
+  /** Text on the confirm button */
+  continueLabel?: string;
 }> = ({
   open,
   setOpen,
@@ -28,6 +32,8 @@ const Alert: FunctionComponent<{
   alertTrigger,
   loading,
   onContinueClick,
+  children,
+  continueLabel = "Continue",
 }) => {
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
@@ -46,6 +52,7 @@ const Alert: FunctionComponent<{
             {description}
           </AlertDialogDescription>
         </AlertDialogHeader>
+        {children}
         <AlertDialogFooter className="grid grid-cols-2 gap-2 sm:flex-none">
           <AlertDialogCancel className="rounded-full h-11 border-gray-200">
             Cancel
@@ -55,7 +62,7 @@ const Alert: FunctionComponent<{
             disabled={loading}
             className="rounded-full h-11 bg-default hover:bg-default/90 text-white"
           >
-            {loading ? "Please wait" : "Continue"}
+            {loading ? "Please wait" : continueLabel}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

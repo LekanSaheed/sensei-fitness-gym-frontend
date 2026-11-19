@@ -37,6 +37,8 @@ export interface ISubscriptionPlan {
   allowedDays: WeekDay[];
   weekStart: WeekDay;
   _id: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 export type PaymentMode = "gateway" | "admin";
 
@@ -58,7 +60,8 @@ export interface ISubscription {
   startDate: Date;
   endDate: Date;
   paymentMode: PaymentMode;
-  paymentRef: string;
+  /** null when an admin activated the plan without recording a payment */
+  paymentRef: string | null;
   activatedBy?: string;
   planNameSnapshot: string;
   planDurationInDaysSnapshot: number;

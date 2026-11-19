@@ -66,7 +66,7 @@ const Header = () => {
       label: `${namePrefix || "Member"} Subscriptions`,
     },
     [`${MEMBER_ROUTE}/payments`]: {
-      label: `${namePrefix || "Member"} Payments Logs`,
+      label: `${namePrefix || "Member"} Payments`,
     },
     [PAYMENT_LOGS]: {
       label: "Payments Logs",

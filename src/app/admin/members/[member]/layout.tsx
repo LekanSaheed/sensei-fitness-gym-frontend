@@ -3,6 +3,7 @@
 import TabLinks from "@/components/tab-links";
 import { MEMBERS } from "@/constants/routes";
 import { useSearchParams } from "next/navigation";
+import { useUserCanPerformAction } from "@/hooks/usePermissions";
 import React, { ReactNode } from "react";
 
 const MemberLayout = ({
@@ -16,6 +17,8 @@ const MemberLayout = ({
 
   const currentPath = `${MEMBERS}/${member}`;
 
+  const canSeePayments = useUserCanPerformAction()(["view_payment_logs"]);
+
   return (
     <div>
       <TabLinks
@@ -24,7 +27,9 @@ const MemberLayout = ({
           { label: "Profile", path: currentPath },
           { label: "Subscriptions", path: `${currentPath}/subscriptions` },
           { label: "Check-ins", path: `${currentPath}/check-ins` },
-          { label: "Payments", path: `${currentPath}/payments` },
+          ...(canSeePayments
+            ? [{ label: "Payments", path: `${currentPath}/payments` }]
+            : []),
         ]}
       />
       {children}

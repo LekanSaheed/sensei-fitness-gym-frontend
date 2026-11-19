@@ -146,6 +146,9 @@ const SubscriptionsPage = () => {
               row?.planDurationInDaysSnapshot > 1 ? "s" : ""
             }`,
             hasTrainer: row?.includesTrainer ? "Yes" : "No",
+            paymentRef: row?.paymentRef || (
+              <span className="text-gray-400 italic">Not recorded</span>
+            ),
             status: (
               <div className="inline-flex items-center">
                 <div
@@ -187,11 +190,14 @@ const ActivateMemberSubModal = ({
     selectedMember: UserWithSub | null;
     selectedPlan: SelectDropdownOption | null;
     includesTrainer: boolean;
+    recordPayment: boolean;
   }>({
     searchQuery: "",
     selectedMember: null,
     selectedPlan: null,
     includesTrainer: false,
+    // On by default: the member paid at the desk
+    recordPayment: true,
   });
 
   const debouncedSearchValue = useDebounceValue(state.searchQuery, 500);
@@ -233,6 +239,7 @@ const ActivateMemberSubModal = ({
       userId: state?.selectedMember?._id || "",
       includesTrainer: state.includesTrainer,
       planId: state.selectedPlan?.externalId as string,
+      recordPayment: state.recordPayment,
     });
 
     if ("error" in res && isFetchBaseQueryError(res.error)) {
@@ -262,6 +269,11 @@ const ActivateMemberSubModal = ({
   );
 
   const hasTrainer = (RawSelectedPlan?.trainerFee || 0) > 0;
+
+  const planTotal = RawSelectedPlan
+    ? RawSelectedPlan.price +
+      (state.includesTrainer ? RawSelectedPlan.trainerFee || 0 : 0)
+    : null;
 
   if (!open) return <></>;
 
@@ -424,6 +436,24 @@ const ActivateMemberSubModal = ({
           </ItemGroup>
         </div>
       )}
+      <label className="mt-3 flex items-start gap-3 rounded-[14px] border border-gray-200 p-3.5 cursor-pointer has-[:checked]:border-default has-[:checked]:bg-default/5">
+        <input
+          type="checkbox"
+          checked={state.recordPayment}
+          onChange={(e) => handleStateChange({ recordPayment: e.target.checked })}
+          className="mt-0.5 size-4 shrink-0 accent-[var(--color-default)]"
+        />
+        <span>
+          <span className="block text-[13px] font-semibold">
+            Save a payment record
+          </span>
+          <span className="block text-[12px] text-gray-500 mt-0.5">
+            {state.recordPayment
+              ? `A ${planTotal !== null ? FormatNumber.ngnAmount(planTotal) : "front-desk"} payment will be added to payment logs and revenue.`
+              : "Untick for free or migrated memberships. The plan is activated, but nothing is added to payments or revenue."}
+          </span>
+        </span>
+      </label>
       <Alert
         title={
           state?.selectedMember?.latestSubscription
@@ -432,7 +462,11 @@ const ActivateMemberSubModal = ({
         }
         description={`Are you sure you want to ${
           state?.selectedMember?.latestSubscription ? "renew" : "activate "
-        } membership for ${state?.selectedMember?.firstname}?`}
+        } membership for ${state?.selectedMember?.firstname}? ${
+          state.recordPayment
+            ? "A payment will be recorded."
+            : "No payment will be recorded."
+        }`}
         alertTrigger={
           <Button
             color="black"

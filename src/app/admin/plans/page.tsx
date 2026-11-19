@@ -30,7 +30,9 @@ import {
   ReceiptAdd,
   ReceiptEdit,
   Timer1,
+  UserTick,
 } from "iconsax-react";
+import moment from "moment";
 import toast from "react-hot-toast";
 
 const PlansPage = () => {
@@ -40,13 +42,12 @@ const PlansPage = () => {
   const plans = data?.data || [];
 
   const columns: ColumnProps[] = [
-    { label: "Plan Name", field: "name" },
-    { field: "price", label: "Price", fieldType: "currency" },
-    { field: "trainerFee", label: "Trainer Fee", fieldType: "currency" },
-    { field: "planType", label: "Plan Type" },
-    { field: "duration", label: "Duration In Days" },
-    { field: "createdAt", fieldType: "date", label: "Date Created" },
-    { field: "updatedAt", fieldType: "date", label: "Date Modified" },
+    { label: "Plan", field: "planCell" },
+    { label: "Price", field: "priceCell" },
+    { label: "Trainer", field: "trainerCell" },
+    { label: "Plan Type", field: "planType" },
+    { label: "Duration", field: "durationCell" },
+    { label: "Updated", field: "updatedCell" },
   ];
 
   const [selected, setSelected] = useState("");
@@ -80,17 +81,40 @@ const PlansPage = () => {
           return {
             id,
             ...plan,
-            duration: `${plan?.durationInDays} Day${
-              plan?.durationInDays > 1 ? "s" : ""
-            }`,
-            planType: (
+            planCell: <PlanNameCell plan={plan} />,
+            priceCell: (
               <div>
-                <p>{plan?.type}</p>
-                {plan?.type === PlanType.SessionBased && (
-                  <>
-                    <p>{plan?.checkInsPerWeek}x per week</p>
-                    <p>{plan.totalCheckIns} total checkins</p>
-                  </>
+                <p className="font-semibold text-gray-900 tabular-nums">
+                  {FormatNumber.ngnAmount(plan.price)}
+                </p>
+                {(plan.trainerFee || 0) > 0 && (
+                  <p className="text-[11px] text-gray-500 tabular-nums">
+                    {FormatNumber.ngnAmount(plan.price + plan.trainerFee)} with
+                    trainer
+                  </p>
+                )}
+              </div>
+            ),
+            trainerCell:
+              (plan.trainerFee || 0) > 0 ? (
+                <span className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-2.5 py-1 text-[12px] font-semibold text-gray-800 tabular-nums">
+                  <UserTick size={13} color="currentColor" variant="Bold" />+
+                  {FormatNumber.ngnAmount(plan.trainerFee)}
+                </span>
+              ) : (
+                <span className="text-[12px] text-gray-400">Not offered</span>
+              ),
+            planType: <PlanTypeCell plan={plan} />,
+            durationCell: <DurationCell days={plan.durationInDays} />,
+            updatedCell: (
+              <div className="text-[12px]">
+                <p className="text-gray-800">
+                  {plan.updatedAt ? moment(plan.updatedAt).fromNow() : "—"}
+                </p>
+                {plan.createdAt && (
+                  <p className="text-gray-400">
+                    Created {moment(plan.createdAt).format("D MMM YYYY")}
+                  </p>
                 )}
               </div>
             ),
@@ -103,6 +127,122 @@ const PlansPage = () => {
         setOpen={() => setSelected("")}
       />
       <CreateNewPlan open={open} setOpen={setOpen} />
+    </div>
+  );
+};
+
+const WEEK: WeekDay[] = [
+  WeekDay.Monday,
+  WeekDay.Tuesday,
+  WeekDay.Wednesday,
+  WeekDay.Thursday,
+  WeekDay.Friday,
+  WeekDay.Saturday,
+  WeekDay.Sunday,
+];
+
+/** Name, one-line description and a badge when members can't buy it */
+const PlanNameCell = ({ plan }: { plan: ISubscriptionPlan }) => (
+  <div className="max-w-[260px]">
+    <div className="flex items-center gap-2">
+      <p className="font-semibold text-gray-900 truncate">{plan.name}</p>
+      {plan.isActive === false && (
+        <span className="shrink-0 rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-gray-500">
+          Hidden
+        </span>
+      )}
+    </div>
+    {plan.description && (
+      <p className="text-[11px] text-gray-500 truncate" title={plan.description}>
+        {plan.description}
+      </p>
+    )}
+  </div>
+);
+
+/** 30 -> "30 days" with "1 month" underneath */
+const DurationCell = ({ days }: { days: number }) => {
+  const approx =
+    days % 365 === 0
+      ? `${days / 365} year${days / 365 === 1 ? "" : "s"}`
+      : days % 30 === 0 && days >= 30
+      ? `${days / 30} month${days / 30 === 1 ? "" : "s"}`
+      : days % 7 === 0 && days >= 7
+      ? `${days / 7} week${days / 7 === 1 ? "" : "s"}`
+      : days >= 28
+      ? `about ${Math.round(days / 30)} month${Math.round(days / 30) === 1 ? "" : "s"}`
+      : null;
+
+  return (
+    <div>
+      <p className="font-semibold text-gray-900 tabular-nums">
+        {days} day{days === 1 ? "" : "s"}
+      </p>
+      {approx && <p className="text-[11px] text-gray-500">{approx}</p>}
+    </div>
+  );
+};
+
+/**
+ * Linear: a badge saying members can come any day.
+ * Session based: the limits plus a Mon-Sun strip with the allowed days lit.
+ */
+const PlanTypeCell = ({ plan }: { plan: ISubscriptionPlan }) => {
+  if (plan.type !== PlanType.SessionBased) {
+    return (
+      <div>
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-sky-200 bg-sky-50 px-2.5 py-1 text-[12px] font-semibold text-sky-700">
+          <CalendarTick size={14} color="currentColor" variant="Bold" />
+          Linear
+        </span>
+        <p className="text-[11px] text-gray-500 mt-1">Check in any day</p>
+      </div>
+    );
+  }
+
+  const allowed = new Set(plan.allowedDays || []);
+
+  return (
+    <div className="min-w-[190px]">
+      <span className="inline-flex items-center gap-1.5 rounded-full border border-violet-200 bg-violet-50 px-2.5 py-1 text-[12px] font-semibold text-violet-700">
+        <Timer1 size={14} color="currentColor" variant="Bold" />
+        Session based
+      </span>
+      <div className="flex flex-wrap gap-1.5 mt-1.5 text-[11px]">
+        <span className="rounded-[6px] bg-gray-100 px-1.5 py-0.5 font-semibold text-gray-700 tabular-nums">
+          {plan.checkInsPerWeek ?? "—"}× a week
+        </span>
+        <span className="rounded-[6px] bg-gray-100 px-1.5 py-0.5 font-semibold text-gray-700 tabular-nums">
+          {plan.totalCheckIns ?? "—"} check-ins total
+        </span>
+      </div>
+      <div
+        className="flex gap-1 mt-1.5"
+        aria-label={`Allowed days: ${[...allowed].join(", ") || "none"}`}
+      >
+        {WEEK.map((day) => {
+          const on = allowed.has(day);
+
+          const startsWeek = plan.weekStart === day;
+
+          return (
+            <span
+              key={day}
+              title={`${day}${on ? " (allowed)" : ""}${startsWeek ? " · week starts" : ""}`}
+              className={`size-7 rounded-full inline-flex items-center justify-center text-[10px] font-bold ${
+                on ? "bg-violet-600 text-white" : "bg-gray-100 text-gray-400"
+              }`}
+            >
+              {day.slice(0, 2)}
+            </span>
+          );
+        })}
+      </div>
+      {plan.weekStart && (
+        <p className="text-[11px] text-gray-500 mt-1">
+          Week starts {plan.weekStart}
+        </p>
+      )}
     </div>
   );
 };

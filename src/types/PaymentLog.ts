@@ -6,7 +6,8 @@ export type PaymentLogStatus = "pending" | "successful" | "failed" | "expired";
 interface PaymentLog {
   _id: string;
   user: Pick<IUser, "firstname" | "lastname" | "email" | "_id">;
-  plan: string;
+  /** null for a registration-fee-only payment */
+  plan: string | null;
   subscription: string | null;
   amount: number;
   paymentMode: PaymentMode;
