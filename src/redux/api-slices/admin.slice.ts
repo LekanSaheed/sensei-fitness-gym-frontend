@@ -60,6 +60,11 @@ export type UserWithSub = IUser & {
         activatedBy: string | { firstname: string; lastname: string } | null;
       })
     | null;
+  /** Queued plan that starts when the current one ends (member detail only) */
+  upcomingSubscription?: Pick<
+    ISubscription,
+    "planNameSnapshot" | "startDate" | "endDate" | "planDurationInDaysSnapshot" | "includesTrainer"
+  > | null;
 };
 
 export interface QrCheckInPreview {
@@ -229,6 +234,8 @@ const adminApi = api.injectEndpoints({
           includesTrainer: boolean;
           /** Save a front-desk payment (default) or activate without one */
           recordPayment: boolean;
+          /** "after": queue behind the running plan; "now": replace it */
+          startMode?: "after" | "now";
         }
       >({
         query: (payload) => ({

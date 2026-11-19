@@ -42,7 +42,8 @@ export interface ISubscriptionPlan {
 }
 export type PaymentMode = "gateway" | "admin";
 
-export type SubscriptionStatus = "active" | "expired" | "canceled";
+/** "scheduled": paid for, waiting for the running plan to end */
+export type SubscriptionStatus = "active" | "expired" | "canceled" | "scheduled";
 
 export interface ISubscription {
   user: string;
@@ -94,6 +95,13 @@ const subscriptionApi = api.injectEndpoints({
       getActiveSubscription: build.query<ResponseType<ISubscription>, null>({
         query: () => "/subscriptions/active",
       }),
+      /** The member's next queued plan (null when none) */
+      getUpcomingSubscription: build.query<
+        ResponseType<ISubscription | null>,
+        null
+      >({
+        query: () => "/subscriptions/upcoming",
+      }),
       subscribe: build.mutation<
         ResponseType<{ authorization_url: string }>,
         { includeTrainer: boolean; plan: string }
@@ -105,7 +113,12 @@ const subscriptionApi = api.injectEndpoints({
         }),
       }),
       activateSub: build.query<
-        ResponseType<{ status: "success" | "failed" | "pending" | "reversed" }>,
+        ResponseType<{
+          status: "success" | "failed" | "pending" | "reversed";
+          /** true when the plan was queued behind a running one */
+          scheduled?: boolean;
+          startDate?: string;
+        }>,
         string
       >({
         query: (ref) => `/subscriptions/activate?ref=${ref}`,
@@ -228,6 +241,7 @@ const subscriptionApi = api.injectEndpoints({
 export const {
   useGetPlansQuery,
   useGetActiveSubscriptionQuery,
+  useGetUpcomingSubscriptionQuery,
   useSubscribeMutation,
   useActivateSubQuery,
   useCheckInMutation,

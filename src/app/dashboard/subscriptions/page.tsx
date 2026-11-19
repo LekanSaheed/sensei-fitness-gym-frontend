@@ -25,6 +25,10 @@ const statusStyles: Record<SubscriptionStatus, { pill: string; dot: string }> = 
     pill: "bg-gray-500/10 text-gray-600 dark:text-gray-300",
     dot: "bg-gray-500",
   },
+  scheduled: {
+    pill: "bg-sky-500/10 text-sky-700 dark:text-sky-300",
+    dot: "bg-sky-500",
+  },
 };
 
 const SubscriptionsPage = () => {

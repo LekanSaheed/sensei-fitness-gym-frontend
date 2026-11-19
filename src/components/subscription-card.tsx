@@ -3,11 +3,18 @@ import {
   PlanType,
   useGetActiveSubscriptionQuery,
   useGetCheckInAnalyticsQuery,
+  useGetUpcomingSubscriptionQuery,
 } from "@/redux/api-slices/subscription.slice";
 import moment from "moment";
 import Link from "next/link";
 import React, { ReactNode } from "react";
-import { InfoCircle, MoneyRemove, Crown1, ArrowRight2 } from "iconsax-react";
+import {
+  InfoCircle,
+  MoneyRemove,
+  Crown1,
+  ArrowRight2,
+  CalendarTick,
+} from "iconsax-react";
 import ProgressRing from "./dashboard/ProgressRing";
 import SectionTitle from "./dashboard/SectionTitle";
 
@@ -18,6 +25,8 @@ const SubscriptionCard = () => {
   const getActiveSubQuery = useGetActiveSubscriptionQuery(null);
 
   const getCheckInAnalytics = useGetCheckInAnalyticsQuery(null);
+
+  const upcoming = useGetUpcomingSubscriptionQuery(null).data?.data || null;
 
   const checkInAnalytics = getCheckInAnalytics.data?.data || null;
 
@@ -216,6 +225,26 @@ const SubscriptionCard = () => {
               <p className="text-[12px] leading-[140%] text-amber-800 dark:text-amber-200">
                 Ensure you check-in to the gym on your session days as there
                 are no rollovers for missed days
+              </p>
+            </div>
+          </div>
+        )}
+
+        {upcoming && (
+          <div className="mt-4 pt-4 border-t border-gray-200/70 dark:border-border flex items-start gap-3">
+            <span className="size-9 rounded-[12px] bg-sky-500/10 inline-flex items-center justify-center shrink-0">
+              <CalendarTick size={18} color="var(--color-sky-600)" variant="Bold" />
+            </span>
+            <div className="text-[13px] min-w-0">
+              <p className="font-semibold">
+                Next plan: {upcoming.planNameSnapshot}
+              </p>
+              <p className="text-gray-500 dark:text-muted-foreground">
+                Starts {moment(upcoming.startDate).format("ddd, D MMM YYYY")}
+                {isSessionBased
+                  ? ", or sooner if you use up your sessions"
+                  : ", when this plan ends"}
+                .
               </p>
             </div>
           </div>

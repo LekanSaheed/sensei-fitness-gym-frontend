@@ -45,6 +45,7 @@ const STATUS_STYLE: Record<SubscriptionStatus, { pill: string; dot: string }> = 
   active: { pill: "bg-emerald-50 text-emerald-700 border-emerald-200", dot: "bg-emerald-500" },
   expired: { pill: "bg-rose-50 text-rose-600 border-rose-200", dot: "bg-rose-500" },
   canceled: { pill: "bg-gray-100 text-gray-600 border-gray-200", dot: "bg-gray-400" },
+  scheduled: { pill: "bg-sky-50 text-sky-700 border-sky-200", dot: "bg-sky-500" },
 };
 
 /** White card used for every section on this page */
@@ -342,6 +343,31 @@ const Member = () => {
               </div>
             )}
           </Panel>
+
+          {memberDetails.upcomingSubscription && (
+            <Panel title="Next plan">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <p className="text-[16px] font-bold tracking-tight">
+                    {memberDetails.upcomingSubscription.planNameSnapshot}
+                  </p>
+                  <p className="text-[12px] text-gray-500">
+                    {memberDetails.upcomingSubscription.planDurationInDaysSnapshot} day
+                    {memberDetails.upcomingSubscription.planDurationInDaysSnapshot === 1 ? "" : "s"}
+                    {memberDetails.upcomingSubscription.includesTrainer ? " · includes a trainer" : ""}
+                  </p>
+                </div>
+                <span className={`inline-flex items-center gap-1.5 rounded-[5px] border px-2 py-1 text-[12px] font-medium ${STATUS_STYLE.scheduled.pill}`}>
+                  <span className={`size-[6px] rounded-full ${STATUS_STYLE.scheduled.dot}`} />
+                  Scheduled
+                </span>
+              </div>
+              <p className="text-[12px] text-gray-600 mt-3">
+                Starts {moment(memberDetails.upcomingSubscription.startDate).format("ddd, D MMM YYYY")} and runs until{" "}
+                {moment(memberDetails.upcomingSubscription.endDate).format("D MMM YYYY")}, right after the current plan.
+              </p>
+            </Panel>
+          )}
 
           <MemberActivitySection member={memberDetails} />
         </div>

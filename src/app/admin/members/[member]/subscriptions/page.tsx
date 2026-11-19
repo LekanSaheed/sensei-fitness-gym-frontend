@@ -37,6 +37,7 @@ const SubscriptionsPage = () => {
   const statusClass: Record<SubscriptionStatus, string> = {
     expired: "bg-rose-500",
     canceled: "bg-gray-500",
+    scheduled: "bg-sky-500",
     active: "bg-emerald-500",
   };
 

@@ -108,6 +108,7 @@ const SubscriptionsPage = () => {
   const statusClass: Record<SubscriptionStatus, string> = {
     expired: "bg-rose-500",
     canceled: "bg-gray-500",
+    scheduled: "bg-sky-500",
     active: "bg-emerald-500",
   };
 
@@ -129,6 +130,7 @@ const SubscriptionsPage = () => {
               { label: "Active", value: "active" },
               { label: "Expired", value: "expired" },
               { label: "Canceled", value: "canceled" },
+              { label: "Scheduled", value: "scheduled" },
             ],
             title: "Status",
             classNames: {
@@ -191,6 +193,7 @@ const ActivateMemberSubModal = ({
     selectedPlan: SelectDropdownOption | null;
     includesTrainer: boolean;
     recordPayment: boolean;
+    startMode: "after" | "now";
   }>({
     searchQuery: "",
     selectedMember: null,
@@ -198,6 +201,8 @@ const ActivateMemberSubModal = ({
     includesTrainer: false,
     // On by default: the member paid at the desk
     recordPayment: true,
+    // Renewals wait for the running plan by default
+    startMode: "after",
   });
 
   const debouncedSearchValue = useDebounceValue(state.searchQuery, 500);
@@ -213,10 +218,16 @@ const ActivateMemberSubModal = ({
 
   const noMember = debouncedSearchValue && members.length < 1 && !isError;
 
-  const disabled =
-    !state.selectedMember ||
-    state.selectedMember?.latestSubscription?.status === "active" ||
-    !state.selectedPlan;
+  const disabled = !state.selectedMember || !state.selectedPlan;
+
+  const runningPlan =
+    state.selectedMember?.latestSubscription?.status === "active"
+      ? state.selectedMember.latestSubscription
+      : null;
+
+  const queuedStart = runningPlan
+    ? moment(runningPlan.endDate).add(1, "minute").startOf("day")
+    : null;
 
   const [activate, activateStatus] = useActivateMemberSubMutation();
 
@@ -240,6 +251,7 @@ const ActivateMemberSubModal = ({
       includesTrainer: state.includesTrainer,
       planId: state.selectedPlan?.externalId as string,
       recordPayment: state.recordPayment,
+      startMode: runningPlan ? state.startMode : "after",
     });
 
     if ("error" in res && isFetchBaseQueryError(res.error)) {
@@ -410,7 +422,8 @@ const ActivateMemberSubModal = ({
                                   size={15}
                                   color="var(--color-amber-500)"
                                 />{" "}
-                                {member?.firstname} has an active subscription
+                                {member?.firstname} has an active plan until{" "}
+                                {moment(memberSub?.endDate).format("D MMM YYYY")}. A new plan can start after it.
                               </>
                             ) : (
                               <>
@@ -435,6 +448,45 @@ const ActivateMemberSubModal = ({
             })}
           </ItemGroup>
         </div>
+      )}
+      {runningPlan && queuedStart && (
+        <fieldset className="mt-3 rounded-[14px] border border-gray-200 p-3.5">
+          <legend className="px-1 text-[12px] font-semibold text-gray-700">
+            {state.selectedMember?.firstname} has a running plan ({runningPlan.planNameSnapshot})
+          </legend>
+          {(
+            [
+              {
+                value: "after",
+                title: "Start after the current plan",
+                text: `Starts ${queuedStart.format("ddd, D MMM YYYY")}. No days are lost.`,
+              },
+              {
+                value: "now",
+                title: "Replace the current plan now",
+                text: "The current plan is canceled and the new one starts today. Use for corrections.",
+              },
+            ] as const
+          ).map((opt) => (
+            <label
+              key={opt.value}
+              className="flex items-start gap-3 rounded-[10px] p-2 cursor-pointer has-[:checked]:bg-default/5"
+            >
+              <input
+                type="radio"
+                name="startMode"
+                value={opt.value}
+                checked={state.startMode === opt.value}
+                onChange={() => handleStateChange({ startMode: opt.value })}
+                className="mt-0.5 size-4 shrink-0 accent-[var(--color-default)]"
+              />
+              <span>
+                <span className="block text-[13px] font-semibold">{opt.title}</span>
+                <span className="block text-[12px] text-gray-500 mt-0.5">{opt.text}</span>
+              </span>
+            </label>
+          ))}
+        </fieldset>
       )}
       <label className="mt-3 flex items-start gap-3 rounded-[14px] border border-gray-200 p-3.5 cursor-pointer has-[:checked]:border-default has-[:checked]:bg-default/5">
         <input
@@ -463,6 +515,12 @@ const ActivateMemberSubModal = ({
         description={`Are you sure you want to ${
           state?.selectedMember?.latestSubscription ? "renew" : "activate "
         } membership for ${state?.selectedMember?.firstname}? ${
+          runningPlan
+            ? state.startMode === "now"
+              ? "Their current plan will be canceled. "
+              : `It starts on ${queuedStart?.format("D MMM YYYY")}, after the current plan. `
+            : ""
+        }${
           state.recordPayment
             ? "A payment will be recorded."
             : "No payment will be recorded."

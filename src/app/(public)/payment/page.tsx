@@ -8,6 +8,7 @@ import { Clock, CloseCircle, TickCircle } from "iconsax-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import React from "react";
+import moment from "moment";
 
 const PaymentConfirmationPage = () => {
   const searchParams = useSearchParams();
@@ -50,6 +51,13 @@ const PaymentConfirmationPage = () => {
                   : "yellow",
               size: 80,
             }
+          )}
+          {status === "success" && data?.data?.scheduled && data.data.startDate && (
+            <p className="mt-4 max-w-[320px] text-center text-[14px]">
+              Payment received. Your new plan will start on{" "}
+              <strong>{moment(data.data.startDate).format("ddd, D MMM YYYY")}</strong>,
+              when your current plan ends.
+            </p>
           )}
           {status === "success" && (
             <Link href={DASHBOARD} className="mt-4">
